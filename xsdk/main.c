@@ -57,6 +57,16 @@
 // START hold is gone (user). Then the user's picks: ibara360's TRAINING page (core/fe.c tr_*), HITBOX ALL (the enemies'
 // and bullets' boxes), SECRET COMMANDS (the arcade's START commands as rows), the faster boot with NOW LOADING (below,
 // "the faster boot").
+// Test 15 (version 0.15): TRAINING's TEAM skips the arcade's SELECT TYPE (SELECT TEAM / TEAM EDIT / RANDOM EDIT /
+// SELECT PLAYER) or flies CUSTOM riders; the PLAYER page (riders + types A-D, guests' FORMATION, LIVES, BOMBS, BOMB
+// FRAGMENTS, SHOT POWER, OPTION POWER); no states in the training pause; SECRET COMMANDS' DEFAULT; OPTIONS' help fits.
+// Test 16 (version 0.16): a menu keeps its size while it is open (pieces too long for 1.5x at 1x alone), SELECT PLAYER
+// with one rider for every life (riders 2 and 3 off), TYPE rows, the DEBUG MENU's INFINITE LIVES / INFINITE BOMBS.
+// Test 17 (version 0.17): the demo's music stopped by START into the title, the arcade's copyright lines back on the
+// title with "CHASE HACK BY COIN-OP" under them, FORMATION's SECRET 1-5, TRAINING INFINITE LIVES, DEBUG INVINCIBILITY.
+// Test 18 (version 0.18): the title menu's help lines fit (PLAY = START A RUN), TEAM at the top of the PLAYER EDIT page
+// (was the TRAINING page's PLAYER), TRAINING's SHOT / OPTION POWER at the first rider start only (0xD42 hook: the
+// course's forced full power no longer wins, a lost rider's power drops as in the game).
 
 #include <stdarg.h>
 #include <stdbool.h>
@@ -1911,8 +1921,7 @@ static void ticker_stop(void)
 
 int main(void)
 {
-	xsdk_log_write("batrider360 version 0.14 (test 14): EXIT in the title's menu (no BACK + START quit), ibara360's "
-		"TRAINING page, HITBOX ALL, SECRET COMMANDS, faster boot with NOW LOADING");
+	xsdk_log_write("batrider360 version 0.19 (test 19): TRAINING's MEDAL row (the starting medal value, ibara360's)");
 	struct timespec boot_t0, t0;
 	clock_gettime(CLOCK_MONOTONIC, &boot_t0);
 	NTSTATUS st = xsdk_gpu_open();

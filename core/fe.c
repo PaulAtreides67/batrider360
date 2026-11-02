@@ -28,8 +28,12 @@ enum {
 	/* test 14 (work/t14/r1/REPORT.md): P1's shot level / bombs / gauge, the current pilot word, the rank and its cap,
 	 * the course's stage byte, CHASE!'s state and its extends bank */
 	PL_PILOT = 0x12, PL_SHOT = 0x110, PL_SHOTP = 0x111, PL_BOMBS = 0x112, PL_GAUGE = 0x113,
+	/* test 15 (work/t15/r1/REPORT.md): SELECT TYPE's choice x 2, the guests' formation, the options' level, P1's HUD
+	 * repaint bits (0x40 gauge, 0x80 bombs) */
+	TYPE_MODE = 0x20E488, PL_FORM = 0x22, PL_OPTLV = 0x104, PL_REPAINT = 1,
 	RANK_NOW = 0x20F9D0, RANK_CAP = 0x20F9D8, STAGE_NO = 0x20E6A9, CS_STATE = 0x201000, CS_BANK = 0x201026,
 	SOUND_ON = 0x20FA07, DEMO_SOUND = 0x20F9F7, SE_WAIT = 0x20E589,
+	MEDAL = 0x20E459,                   /* test 19: the next medal's step x 2 (gadgets.c's; 0 = 100 .. 0x24 = 10000) */
 	RANK0 = 0x20FA24, RANK_STRIDE = 0xC4, RANK_KEEP = 0x8C, RANK_BYTES = 4 * RANK_KEEP,
 	PRACTICE_TABLE = 0x1391C, PRACTICE_N = 25,
 	LANG_SITE = 0x13A34,
@@ -141,22 +145,40 @@ enum { PG_TITLE, PG_PRACTICE, PG_PLAY, PG_END, PG_SETTINGS_UNUSED };
 /* the title's menu rows (test 9: ibara360's MENU; test 14: EXIT at the bottom, user: instead of BACK + START held)
  * and the TRAINING page's (test 14, its section below) */
 enum { TM_PLAY, TM_TRAINING, TM_LOAD, TM_REPLAYS, TM_OPTIONS, TM_EXIT, TM_ROWS };
-enum { TR_START, TR_MODE, TR_TEAM, TR_STAGE, TR_BOSS, TR_LIVES, TR_BOMBS, TR_SHOT, TR_RANK, TR_INV, TR_INFB, TR_SPEED,
-	TR_HITBOX, TR_DIPS, TR_ROWS };
+enum { TR_START, TR_MODE, TR_PLAYER, TR_STAGE, TR_BOSS, TR_MEDAL, TR_RANK, TR_INV, TR_INFL, TR_INFB, TR_SPEED, TR_HITBOX,
+	TR_DIPS, TR_ROWS };
+/* test 15: TEAM's values (the arcade's SELECT TYPE choices skipped to, CUSTOM = the PLAYER page's riders) and the
+ * PLAYER page's rows */
+enum { TT_CHOOSE, TT_SAME, TT_SELECT_TEAM, TT_TEAM_EDIT, TT_RANDOM_EDIT, TT_SELECT_PLAYER, TT_CUSTOM, TT_N };
+/* (test 16: a TYPE row under each rider; test 18: TEAM moved here from the TRAINING page, at the top) */
+enum { PR_TEAM, PR_RIDER, PR_TYPE, PR_RIDER2, PR_TYPE2, PR_RIDER3, PR_TYPE3, PR_FORM, PR_LIVES, PR_BOMBS, PR_FRAGS, PR_SHOT,
+	PR_OPTS, PR_ROWS };
 static int tr_cur;
 static int tr_quit_title;               /* the training pause's QUIT TO TITLE: the run's end goes to the title's menu */
 /* a training run's own (h_credit clears them): P1's flags last frame, the first rider started, the stage byte then,
  * CHASE! lives still to bank, the stage cleared */
 static int tr_rider, tr_started, tr_stage0, tr_bank, tr_cleared, tr_play_t;
-enum { TR_FIRST_LATE = 40 };
+static int tr_powered;                  /* test 18: the run's first rider start had SHOT / OPTION POWER */
+/* test 15: CUSTOM's team: the SELECT TEAM screen confirmed by the host (tr_custom 1), the riders written
+ * TR_CUSTOM_LATE frames after the game's team (work/t15/r1/REPORT.md 2: any of F+1..F+19) */
+static int tr_custom, tr_custom_t;
+enum { TR_FIRST_LATE = 40, TR_CUSTOM_LATE = 5 };
 /* the TRAINING page's run values (the game's own start values first) */
 enum { TR_LIVES_MIN = 1, TR_LIVES_MAX = 9, TR_BOMBS_MAX = 4, TR_SHOT_MAX = 4, TR_SPEEDS = 3, TR_RANK_GAME = -1,
-	TR_CHASE_RANK_MIN = 51, TR_CHASE_RANK_MAX = 76 };
+	TR_CHASE_RANK_MIN = 51, TR_CHASE_RANK_MAX = 76, TR_PILOTS = 18, TR_TYPES = 4, TR_FORMS = 11, TR_FRAGS = 40,
+	TR_OPTS_FULL = 3, TR_MEDALS = 19 };
 static const int tr_speed_pct[TR_SPEEDS] = { 100, 75, 50 };
+static const int tr_medals[TR_MEDALS] = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000,
+	6000, 7000, 8000, 9000, 10000 };
 typedef struct {
 	int team, stage, boss, lives, bombs, shot, rank, inv, infb, speed;
+	int pilot[3], type[3], form, frags, opts;   /* test 15: the PLAYER page's */
+	int solo;                           /* test 16: TEAM SELECT PLAYER flies RIDER 1 alone (0 = CHOOSE, the screen) */
+	int infl;                           /* test 17: INFINITE LIVES */
+	int medal;                          /* test 19: MEDAL, the starting medal value's step (tr_medals) */
 } Training;
-#define TR_DEFAULT { 1, 0, 0, 3, 1, 4, TR_RANK_GAME, 0, 0, 0 }   /* TRAINING's own: 3 lives, 1 bomb, full power */
+/* TRAINING's own: 3 lives, 1 bomb, full power, medals at 100; CUSTOM's riders the first team's, type A */
+#define TR_DEFAULT { 1, 0, 0, 3, 1, 4, TR_RANK_GAME, 0, 0, 0, { 0, 1, 2 }, { 0, 0, 0 }, 0, 0, TR_OPTS_FULL, 0, 0, 0 }
 static Training tr = TR_DEFAULT;
 enum { SPL_WAIT, SPL_ON, SPL_DONE };
 static int prog_now;                    /* the program running = the MODE of the board */
@@ -174,6 +196,9 @@ static int veil;                        /* black: -1 until a RETRY / RESTART's t
 static uint16_t team[4];
 static int opt_dirty, music_played;
 static int invuln, not_kept, snap_taken;
+/* test 16: the DEBUG MENU's INFINITE LIVES / INFINITE BOMBS (this session only; set outside a credit, a credit with
+ * either on is INVULNERABLE's kind: red, no replay, not in the rankings); test 17: INVINCIBILITY the same way */
+static int db_lives, db_bombs, db_inv;
 static uint8_t snap[RANK_BYTES];
 /* Test 13 (user: "apply the same rules as ibara when it comes to score validity", ibara360 test 117's): red = this
  * credit's score is invalid (a continue, GAME SETTINGS off their defaults in ORIGINAL, TRAINING, INVULNERABLE, RESTART
@@ -204,10 +229,10 @@ static int host_dirty;
  * game. Not in save states or replays. */
 enum {
 	OV_NONE, OV_OPTIONS, OV_SCREEN, OV_CONTROLS, OV_SOUND, OV_DEBUG, OV_DIPS, OV_STATES, OV_REPLAYS, OV_MANUAL,
-	OV_PROMPT, OV_COMMANDS,
+	OV_PROMPT, OV_COMMANDS, OV_PLAYER,
 };
 static int ovl, ovl_stack[8], ovl_depth;
-static int ov_cur[OV_COMMANDS + 1];                 /* each page's row */
+static int ov_cur[OV_PLAYER + 1];                   /* each page's row */
 static int ov_armed;                                /* the row asked once (A = YES, B = NO), -1 none */
 static char ov_msg[FE_HM_CHARS];                    /* a result in the help's place until the cursor moves */
 static int st_save, st_mode;                        /* SAVE / LOAD STATE: which, the MODE shown */
@@ -285,9 +310,14 @@ static void replay_drop(const char *why)
 static int gs_any(void);
 static void credit_flags(void)
 {
-	red = practice || invuln || (prog_now == FE_ORIGINAL && gs_any());
-	rp_drop = practice || invuln;
-	rp_why = practice ? "TRAINING" : invuln ? "INVULNERABLE" : "";
+	const char *cheat = db_lives ? "INFINITE LIVES" : db_bombs ? "INFINITE BOMBS" : db_inv ? "INVINCIBILITY" : "";
+	red = practice || invuln || cheat[0] || (prog_now == FE_ORIGINAL && gs_any());
+	rp_drop = practice || invuln || cheat[0];
+	rp_why = practice ? "TRAINING" : invuln ? "INVULNERABLE" : cheat;
+	if (cheat[0]) {
+		not_kept = 1;
+		LOG("fe: %s ON (score not kept)", cheat);
+	}
 	credit_gen++;
 }
 
@@ -556,7 +586,7 @@ static int hexbytes(const char *s, uint8_t *out)
 }
 
 static uint32_t h_splash(void), h_title(void), h_credit(void), h_course(void), h_after_game(void),
-	h_setup(void), h_name_entry(void), h_hit(void), h_text_dma(void);
+	h_setup(void), h_name_entry(void), h_hit(void), h_text_dma(void), h_type(void), h_opts(void), h_power(void);
 
 /* Hook sites: the displaced instruction (checked), the trampoline's copy of it (PC-relative ones made absolute),
  * where the trampoline jumps back to, and the C side. A handler returns the PC to go on at, 0 = the trampoline. */
@@ -576,6 +606,9 @@ static const Hook hooks[] = {
 	{ 0x013F4E, "303900204062", "303900204062", 0x013F54, h_name_entry },  /* move.w 0x204062,d0 */
 	{ 0x02FC1A, "4A390020F9FE", "4A390020F9FE", 0x02FC20, h_hit },         /* tst.b 0x20F9FE (rider hit) */
 	{ 0x001C28, "33C000500082", "33C000500082", 0x001C2E, h_text_dma },    /* move.w d0,0x500082 (vblank) */
+	{ 0x0132F4, "4A390020FA22", "4A390020FA22", 0x0132FA, h_type },        /* tst.b 0x20FA22 (SELECT TYPE) */
+	{ 0x000D48, "1D7C00020104", "1D7C00020104", 0x000D4E, h_opts },        /* move.b #2,(0x104,a6) (TRAINING) */
+	{ 0x000D42, "1D7C00030110", "1D7C00030110", 0x000D48, h_power },       /* move.b #3,(0x110,a6) (TRAINING) */
 };
 enum { NHOOKS = sizeof hooks / sizeof hooks[0] };
 
@@ -699,6 +732,8 @@ static void switch_program(int m)
  * arcade logo, drawn since test 10, came out black. They go in here when they are not there (harness work/t10 pc/pf:
  * the copy then equals the splash path's for those palettes). */
 enum { PAL_COPY = 0x20E9C8, LOGO_PAL = 84, LOGO_PALS = 22, LOGO_PAL_ROM = 0x9C666 };
+/* test 17: the arcade title's copyright text lines (0 = bottom), kept in the title picture */
+enum { TITLE_COPY_LO = 3, TITLE_COPY_HI = 5 };
 
 static void logo_palettes(void)
 {
@@ -811,8 +846,11 @@ static uint32_t h_credit(void)
 	}
 	practice = phase == 2;
 	phase = pulse = 0;
-	tr_rider = tr_started = tr_bank = tr_cleared = tr_play_t = 0;
+	tr_rider = tr_started = tr_bank = tr_cleared = tr_play_t = tr_powered = 0;
 	tr_stage0 = -1;
+	tr_custom_t = 0;
+	if (!practice)
+		tr_custom = 0;
 	rk_restore_snapshot();
 	rk_read(snap);
 	snap_taken = 1;
@@ -825,8 +863,9 @@ static uint32_t h_credit(void)
 		restore_team = replay = 0;
 	br_set_dips(dsw_for(prog_now), DSWC);
 	swallow = 0;                    /* (a replay starts with none, as its playback does) */
-	LOG("fe: credit: %s%s%s, DSW %04X (board frame %u)", prog_now == FE_CHASE ? "CHASE!" : "ORIGINAL",
-		practice ? " PRACTICE" : "", red && !practice ? " (score invalid: GAME SETTINGS)" : "", dsw_for(prog_now),
+	LOG("fe: credit: %s%s%s%s%s, DSW %04X (board frame %u)", prog_now == FE_CHASE ? "CHASE!" : "ORIGINAL",
+		practice ? " PRACTICE" : "", red && !practice ? " (score invalid: " : "",
+		red && !practice ? rp_why[0] ? rp_why : "GAME SETTINGS" : "", red && !practice ? ")" : "", dsw_for(prog_now),
 		(unsigned)br_frame_count());
 	/* the 68000 reads the DIPs again (0x15304), then the displaced instruction */
 	push_return(tramp_of[2]);
@@ -918,6 +957,53 @@ static uint32_t h_setup(void)
 	return 0x10A68;
 }
 
+/* Test 15 (work/t15/r1/REPORT.md 1): 0x132F4 = SELECT TYPE's start (jsr from 0x1B0C). A training run whose TEAM is one
+ * of its choices skips the screen as its confirm 0x395EA leaves it (0x20E488 = choice x 2, 0x20E6A0 = 2) and returns;
+ * CUSTOM goes to SELECT TEAM (confirmed by the host, the riders written after it: tr_frame). */
+static int tr_team_eff(void);
+static uint32_t h_type(void)
+{
+	const int t = practice ? tr_team_eff() : TT_CHOOSE;
+	if (t < TT_SELECT_TEAM)
+		return 0;
+	br_wr8(TYPE_MODE, (uint8_t)(t == TT_CUSTOM ? 0 : (t - TT_SELECT_TEAM) * 2));
+	br_wr8(IN_PLAY, 2);
+	const uint32_t sp = br_reg(M68K_REG_SP);
+	br_set_reg(M68K_REG_SP, sp + 4);
+	LOG("fe: TRAINING: SELECT TYPE skipped (%02X)", br_rd8(TYPE_MODE));
+	return rd32(sp);
+}
+
+/* Test 15 (REPORT.md 4): 0xD48, a training course's rider start: option level 2 and four option pickups (0xD4E..0xD54,
+ * one f170 each; level L = L + 1 pickups, the guests' third and fourth options with them). OPTION POWER below full:
+ * level 0 and only the last tr.opts pickups (none = no options). */
+static uint32_t h_opts(void)
+{
+	if (!practice || tr.opts >= TR_OPTS_FULL)
+		return 0;
+	br_wr8(br_reg(M68K_REG_A6) + PL_OPTLV, 0);
+	return 0xD56 - 2 * (uint32_t)tr.opts;
+}
+
+/* Test 18 (user: "shot power was set to 1, yet my rider spawned with shot power 4"; "upon death, shot power and option
+ * power should decrease normally"): 0xD42, the training course's forced shot 3 at every rider start. The run's first
+ * start gets SHOT POWER here, in the routine that would overwrite it (tr_frame's write a frame edge away could come
+ * before it), then h_opts' OPTION POWER; every later start skips 0xD42-0xD54 as a course below 6 does, so a lost
+ * rider's power drops as in the game. */
+static uint32_t h_power(void)
+{
+	if (!practice)
+		return 0;
+	if (tr_powered)
+		return 0xD56;
+	tr_powered = 1;
+	const uint32_t a6 = br_reg(M68K_REG_A6);
+	br_wr8(a6 + PL_SHOT, (uint8_t)(tr.shot - 1));
+	br_wr8(a6 + PL_SHOTP, 0);
+	LOG("fe: TRAINING: SHOT POWER %d, OPTION POWER %d at the first rider start", tr.shot, tr.opts);
+	return 0xD48;
+}
+
 /* 0x13F4E, "anyone to enter a name?": not for a credit whose score is not kept (spec 5.3). */
 static uint32_t h_name_entry(void)
 {
@@ -941,10 +1027,10 @@ static uint32_t h_text_dma(void)
 }
 
 /* 0x2FC1A, a rider hit: INVULNERABLE takes the arcade's own invincibility path (spec 2.5); test 14: TRAINING's
- * INVINCIBLE in a training run too */
+ * INVINCIBLE in a training run too; test 17: the DEBUG MENU's INVINCIBILITY in a credit (not a replay's playback) */
 static uint32_t h_hit(void)
 {
-	return invuln || (practice && tr.inv) ? 0x2FC24 : 0;
+	return invuln || (practice && tr.inv) || (db_inv && !pb_on && in_credit()) ? 0x2FC24 : 0;
 }
 
 /* ---- init ---- */
@@ -1189,9 +1275,10 @@ static int open_manual(void)
 static void draw_title_page(void)
 {
 	static const char *const names[TM_ROWS] = { "PLAY", "TRAINING", "LOAD STATE", "REPLAY DATA", "OPTIONS", "EXIT" };
-	static const char *const helps[TM_ROWS] = { "MODE, CONTINUES,\nDIP SWITCHES", "A STAGE OR A BOSS WITH YOUR\nLIVES, BOMBS, POWER AND RANK",
-		"CONTINUE FROM A SAVE STATE", "WATCH RECORDED REPLAYS", "SCREEN, GADGETS, CONTROLS,\nSOUND, MANUAL",
-		"BACK TO THE DASHBOARD" };
+	/* (test 18: two lines of 18 letters at the plain menu's 2x; the user's PLAY line, the others cut to fit) */
+	static const char *const helps[TM_ROWS] = { "START A RUN", "PRACTICE A STAGE\nOR A BOSS FIGHT",
+		"CONTINUE FROM A\nSAVE STATE", "WATCH RECORDED\nREPLAYS", "SCREEN, GADGETS,\nSOUND, CONTROLS",
+		"BACK TO THE\nDASHBOARD" };
 	if (launch_t < 0 && exit_t < 0 && !ovl) {
 		m_begin(168, 0, "%s", "");
 		J->hm_plain = 1;
@@ -1201,8 +1288,9 @@ static void draw_title_page(void)
 		m_help(FE_C_CYAN, helps[title_cur]);
 		m_line(FE_C_GREEN, "A = CONFIRM");
 	}
-	put(2, 9, "ARRANGED BY", P_WHITE, 0);
-	put(1, 5, "COIN-OP GAME STUDIO", P_BLUE, 0);
+	/* test 17: the arcade's copyright lines are back above (fe_video), the hack's credit under them */
+	put(1, 4, "CHASE HACK BY", P_WHITE, 0);
+	put(1, 18, "COIN-OP", P_BLUE, 0);
 }
 
 /* ---- PLAY (the title's page): START RUN, MODE, CONTINUES, DIP SWITCHES ---- */
@@ -1314,8 +1402,11 @@ static const uint8_t tr_boss_n[TR_STAGES + 1] = { 1, 2, 2, 2, 5, 1, 1, 4 };
 enum { TR_PACKED = 1 << 30 };
 static int tr_pack(void)
 {
+	/* (test 15: TEAM SAME keeps test 14's bit 24, the other TEAM values bits 26-28; the PLAYER page's riders, formation,
+	 * fragments and options stay out: no save states in TRAINING since test 15) */
 	return TR_PACKED | tr.stage | tr.boss << 4 | tr.lives << 8 | tr.bombs << 12 | tr.shot << 16 | tr.speed << 20 |
-		tr.inv << 22 | tr.infb << 23 | tr.team << 24 | tr_quit_title << 25;
+		tr.inv << 22 | tr.infb << 23 | (tr.team == TT_SAME) << 24 | tr_quit_title << 25 |
+		(tr.team == TT_SAME ? 0 : tr.team) << 26 | tr.infl << 29;
 }
 
 static void tr_unpack(int a, int rank)
@@ -1328,7 +1419,8 @@ static void tr_unpack(int a, int rank)
 	tr.speed = a >> 20 & 3;
 	tr.inv = a >> 22 & 1;
 	tr.infb = a >> 23 & 1;
-	tr.team = a >> 24 & 1;
+	tr.infl = a >> 29 & 1;
+	tr.team = a >> 24 & 1 ? TT_SAME : (a >> 26 & 7) < TT_N ? a >> 26 & 7 : TT_CHOOSE;
 	tr_quit_title = a >> 25 & 1;
 	tr.rank = rank;
 }
@@ -1363,10 +1455,37 @@ static void tr_clamp(void)
 			tr.rank;
 }
 
+/* test 15: TEAM SAME before a team was flown is the game's SELECT TYPE (CHOOSE) */
+static int tr_team_eff(void)
+{
+	return tr.team == TT_SAME && !team_captured ? TT_CHOOSE : tr.team;
+}
+
+/* Test 16 (user: "player select ... should disable rider 2 and 3 completely"): TEAM SELECT PLAYER with a RIDER
+ * picked = that rider (and TYPE) in every slot, as the arcade's SELECT PLAYER copies its pilot (REPORT.md 1, 0x8288):
+ * its screen confirmed by the host and the words written after it, CUSTOM's way (tr_custom_team) */
+static int tr_solo(void)
+{
+	return tr_team_eff() == TT_SELECT_PLAYER && tr.solo;
+}
+
 static int tr_row_grey(int i)
 {
-	return (i == TR_TEAM && !team_captured) || (i == TR_DIPS && host.mode != FE_ORIGINAL);
+	return i == TR_DIPS && host.mode != FE_ORIGINAL;
 }
+
+/* test 15: the riders by the SELECT PLAYER screen's names (work/t15/r1/REPORT.md 2); the Battle Garegga guests 9-12 by
+ * their machines (two pilots each) */
+static const char *const tr_pilot_names[TR_PILOTS] = { "D.D", "SHORTY", "JYUJI", "MARIA", "GOLDEN", "STRAWMAN",
+	"BIRTHDAY", "TAG-T", "ADAM", "SILVER SWORD", "GRASSHOPPER", "FLYING BARON", "WILD SNAIL", "GAIN", "CHITTA",
+	"MIYAMOTO", "BORNNAM", "CARPET" };
+static const char *const tr_team_names[TT_N] = { "CHOOSE", "SAME", "SELECT TEAM", "TEAM EDIT", "RANDOM EDIT",
+	"SELECT PLAYER", "CUSTOM" };
+/* FORMATION: DEFAULT (the game's), the five a guest's C and commands give, the five special ones its option items give
+ * after the hidden counters (REPORT.md 3); +0x22's values */
+static const char *const tr_form_names[TR_FORMS] = { "DEFAULT", "V", "BACK", "FRONT", "CIRCLE", "CONTROL", "SECRET 1",
+	"SECRET 2", "SECRET 3", "SECRET 4", "SECRET 5" };
+enum { TR_GUEST_FIRST = 9, TR_GUEST_LAST = 12 };
 
 static void tr_build(void)
 {
@@ -1375,45 +1494,176 @@ static void tr_build(void)
 	const int starting = start_due || switch_due || resetting >= 0;
 	m_begin(228, 17, "%s  TRAINING", game_word(host.mode));
 	snprintf(v[TR_MODE], sizeof v[0], "%s", mode_word(host.mode));
-	snprintf(v[TR_TEAM], sizeof v[0], "%s", tr.team && team_captured ? "SAME" : "CHOOSE");
 	snprintf(v[TR_STAGE], sizeof v[0], "%s", tr.stage == TR_EXTRA ? "EXTRA BOSSES" :
 		prac_name(tr_stage_entry[tr.stage]));
 	snprintf(v[TR_BOSS], sizeof v[0], "%s", tr.stage != TR_EXTRA && !tr.boss ? "OFF" : prac_name(tr_entry()));
-	snprintf(v[TR_LIVES], sizeof v[0], "%d", tr.lives);
-	snprintf(v[TR_BOMBS], sizeof v[0], "%d", tr.bombs);
-	snprintf(v[TR_SHOT], sizeof v[0], "%d", tr.shot);
+	snprintf(v[TR_MEDAL], sizeof v[0], "%d", tr_medals[tr.medal]);
 	if (tr.rank == TR_RANK_GAME)
 		snprintf(v[TR_RANK], sizeof v[0], "DEFAULT");
 	else
 		snprintf(v[TR_RANK], sizeof v[0], "%d%%", tr.rank);
 	snprintf(v[TR_INV], sizeof v[0], "%s", tr.inv ? "ON" : "OFF");
+	snprintf(v[TR_INFL], sizeof v[0], "%s", tr.infl ? "ON" : "OFF");
 	snprintf(v[TR_INFB], sizeof v[0], "%s", tr.infb ? "ON" : "OFF");
 	snprintf(v[TR_SPEED], sizeof v[0], "%d%%", tr_speed_pct[tr.speed]);
 	snprintf(v[TR_HITBOX], sizeof v[0], "%s", hitbox_names[host.hitbox]);
 	if (host.mode == FE_ORIGINAL && gs_any())
 		snprintf(v[TR_DIPS], sizeof v[0], "CHANGED");
-	static const char *const names[TR_ROWS] = { "START RUN", "MODE", "TEAM", "STAGE", "START AT BOSS", "LIVES", "BOMBS",
-		"SHOT POWER", "RANK", "INVINCIBLE", "INFINITE BOMBS", "GAME SPEED", "HITBOX", "DIP SWITCHES" };
+	static const char *const names[TR_ROWS] = { "START RUN", "MODE", "PLAYER EDIT", "STAGE", "START AT BOSS", "MEDAL", "RANK",
+		"INVINCIBLE", "INFINITE LIVES", "INFINITE BOMBS", "GAME SPEED", "HITBOX", "DIP SWITCHES" };
 	for (int i = 0; i < TR_ROWS; i++) {
 		FeRow *r = m_row(names[i], v[i][0] ? v[i] : NULL, i == tr_cur, tr_row_grey(i), v[i][0] && i != TR_DIPS);
 		if (i == TR_DIPS && v[i][0] && tr_cur != i)
 			r->value_c = FE_C_RED;
 	}
 	static const char *const helps[TR_ROWS] = { "PLAY WITH THE SETTINGS BELOW", "CHASE! OR THE ORIGINAL GAME",
-		"CHOOSE = THE GAME'S TEAM SELECT\nSAME = THE LAST TEAM FLOWN", "THE STAGE TO TRAIN ON",
-		"OFF = FROM THE STAGE'S START\nOR STRAIGHT TO ONE OF ITS BOSSES", "LIVES AT THE START",
-		"BOMBS AT THE START", "SHOT POWER AT THE START", "DEFAULT = THE GAME'S OWN\nA PERCENTAGE = HELD THERE (LB/RB 10%)",
-		"NO DAMAGE", "THE BOMBS NEVER RUN OUT", "SLOW THE GAME DOWN\n(THE MUSIC KEEPS ITS SPEED)",
+		"TEAM, RIDERS, FORMATION, LIVES,\nBOMBS, SHOT AND OPTION POWER", "THE STAGE TO TRAIN ON",
+		"OFF = FROM THE STAGE'S START\nOR STRAIGHT TO ONE OF ITS BOSSES", "STARTING MEDAL VALUE",
+		"DEFAULT = THE GAME'S OWN\nOR HELD AT A PERCENTAGE (LB/RB 10%)",
+		"NO DAMAGE", "THE TEAM NEVER RUNS OUT", "THE BOMBS NEVER RUN OUT", "SLOW THE GAME DOWN\n(THE MUSIC KEEPS ITS SPEED)",
 		"OFF, THE RIDERS' HITBOX,\nOR EVERY HITBOX", "DIFFICULTY, TIMER, LIVES,\nBONUS LIFE" };
 	m_help(FE_C_CYAN, tr_cur == TR_START && starting ? "CHANGING THE MODE..." :
-		tr_cur == TR_TEAM && !team_captured ? "NO TEAM FLOWN YET:\nTHE GAME'S TEAM SELECT" :
 		tr_cur == TR_DIPS && host.mode != FE_ORIGINAL ? "THE ORIGINAL GAME'S ONLY" :
 		tr_cur == TR_RANK && host.mode == FE_CHASE ? "DEFAULT = THE GAME'S OWN, OR HELD\nAT 51-76% (CHASE!'S OWN LIMITS)" :
-		tr_cur == TR_LIVES && host.mode == FE_ORIGINAL ? "LIVES AT THE START\n(4 AT MOST IN THE ORIGINAL GAME)" :
 		helps[tr_cur]);
 	m_line(FE_C_GREEN, "UP/DOWN ROW, LEFT/RIGHT SET");
-	m_line(FE_C_GREEN, "%s", tr_cur == TR_DIPS ? "A = OPEN, START = PLAY" : "START = PLAY");
+	m_line(FE_C_GREEN, "%s", tr_cur == TR_DIPS || tr_cur == TR_PLAYER ? "A = OPEN, START = PLAY" : "START = PLAY");
 	m_line(FE_C_GREEN, "B / BACK = MENU");
+}
+
+/* ---- the PLAYER page (test 15, user: "a player customization mini window for all the extra options"): CUSTOM's three
+ * riders (LEFT/RIGHT the rider, LB/RB / A its type A-D = the button that confirms it in the arcade: SHOT, BOMB, C,
+ * START), the Garegga guests' FORMATION, and the run's LIVES / BOMBS / BOMB FRAGMENTS / SHOT POWER / OPTION POWER.
+ * A rider changed makes TEAM CUSTOM.
+ * Test 16 (user: "player type should be its own toggle"): a TYPE row under each rider, LEFT/RIGHT like every row (the
+ * colours and the speed: 0xD84[type] +0, -0x10, -0x20, +0x20). With TEAM SELECT PLAYER the first pair is RIDER (CHOOSE
+ * = the arcade's screen, or one rider for every life) and TYPE, riders 2 and 3 dimmed and skipped. ---- */
+static int pr_off(int i)
+{
+	if (tr_team_eff() != TT_SELECT_PLAYER)
+		return 0;
+	return (i >= PR_RIDER2 && i <= PR_TYPE3) || (i == PR_TYPE && !tr.solo);
+}
+
+static void player_build(void)
+{
+	if (pr_off(ov_cur[OV_PLAYER]))
+		ov_cur[OV_PLAYER] = PR_TEAM;
+	const int cur = ov_cur[OV_PLAYER], team = tr_team_eff(), sp = team == TT_SELECT_PLAYER;
+	char v[PR_ROWS][28];
+	snprintf(v[PR_TEAM], sizeof v[0], "%s", tr_team_names[team]);
+	for (int k = 0; k < 3; k++) {
+		snprintf(v[PR_RIDER + 2 * k], sizeof v[0], "%s", sp && !k && !tr.solo ? "CHOOSE" : tr_pilot_names[tr.pilot[k]]);
+		snprintf(v[PR_TYPE + 2 * k], sizeof v[0], "%c", 'A' + tr.type[k]);
+	}
+	for (int i = 0; i < PR_ROWS; i++)
+		if (pr_off(i))
+			snprintf(v[i], sizeof v[0], "-");
+	snprintf(v[PR_FORM], sizeof v[0], "%s", tr_form_names[tr.form]);
+	snprintf(v[PR_LIVES], sizeof v[0], "%d", tr.lives);
+	snprintf(v[PR_BOMBS], sizeof v[0], "%d", tr.bombs);
+	snprintf(v[PR_FRAGS], sizeof v[0], "%d/%d", tr.frags, TR_FRAGS);
+	snprintf(v[PR_SHOT], sizeof v[0], "%d", tr.shot);
+	snprintf(v[PR_OPTS], sizeof v[0], tr.opts ? "%d" : "NONE", tr.opts);
+	m_begin(228, 17, "%s  PLAYER EDIT", game_word(host.mode));
+	static const char *const names[PR_ROWS] = { "TEAM", "RIDER 1", "TYPE 1", "RIDER 2", "TYPE 2", "RIDER 3", "TYPE 3",
+		"FORMATION", "LIVES", "BOMBS", "BOMB FRAGMENTS", "SHOT POWER", "OPTION POWER" };
+	const int custom = tr_team_eff() == TT_CUSTOM || sp;
+	for (int i = 0; i < PR_ROWS; i++) {
+		FeRow *r = m_row(sp && i == PR_RIDER ? "RIDER" : sp && i == PR_TYPE ? "TYPE" : names[i], v[i], cur == i,
+			pr_off(i), !pr_off(i));
+		if (i >= PR_RIDER && i <= PR_TYPE3 && !custom && cur != i)
+			r->value_c = FE_C_DIM;
+	}
+	/* (test 18: SHOT and OPTION POWER at the run's first rider start only, h_power) */
+	static const char *const helps[PR_ROWS] = { "", "", "", "", "", "", "",
+		"GAREGGA SHIPS ONLY",
+		"LIVES AT THE START", "BOMBS AT EACH RIDER'S START", "40 FRAGMENTS MAKE A BOMB\n(AT EACH RIDER'S START)",
+		"SHOT POWER AT THE START", "NONE, OR THE OPTIONS' LEVEL" };
+	static const char *const team_helps[TT_N] = { "THE GAME'S SELECT TYPE SCREEN",
+		"THE LAST TEAM FLOWN", "STRAIGHT TO SELECT TEAM", "STRAIGHT TO TEAM EDIT", "STRAIGHT TO RANDOM EDIT",
+		"STRAIGHT TO SELECT PLAYER", "THE RIDERS BELOW" };
+	if (cur == PR_TEAM)
+		m_help(FE_C_CYAN, tr_solo() ? "THE RIDER BELOW FOR EVERY LIFE\n(THE GAME'S SELECT PLAYER)" : team_helps[team]);
+	else if (sp && cur == PR_RIDER)
+		m_help(FE_C_CYAN, "CHOOSE = THE GAME'S SCREEN,\nOR THIS RIDER FOR EVERY LIFE");
+	else if (cur >= PR_RIDER && cur <= PR_TYPE3 && ((cur - PR_RIDER) & 1))
+		m_help(FE_C_CYAN, custom ? "COLOURS AND SPEED: A NORMAL,\nB SLOWER, C SLOWEST, D FASTEST" :
+			"COLOURS AND SPEED (A-D)\n(SETS TEAM TO CUSTOM)");
+	else if (cur >= PR_RIDER && cur <= PR_TYPE3)
+		m_help(FE_C_CYAN, custom ? "THE TEAM'S RIDERS IN ORDER" : "THE TEAM'S RIDERS IN ORDER\n(SETS TEAM TO CUSTOM)");
+	else if (cur == PR_LIVES && host.mode == FE_ORIGINAL)
+		m_help(FE_C_CYAN, "LIVES AT THE START\n(4 AT MOST IN THE ORIGINAL GAME)");
+	else
+		m_help(FE_C_CYAN, helps[cur]);
+	m_line(FE_C_GREEN, "%s", cur == PR_FRAGS ? "LEFT/RIGHT 1, LB/RB 10" : "LEFT/RIGHT CHANGE");
+	m_line(FE_C_GREEN, "START = PLAY");
+	m_back();
+}
+
+static int wrap(int v, int d, int n) { return ((v + d) % n + n) % n; }
+
+static void player_input(const FePad *pad)
+{
+	const uint16_t press = pad->press, d = ov_dirs(pad);
+	if (press & (FE_B | FE_BACK)) {
+		ovl_back();
+		return;
+	}
+	/* (the dimmed rows skipped; a cursor left on one by a TEAM change goes to the first row) */
+	if (pr_off(ov_cur[OV_PLAYER]))
+		ov_cur[OV_PLAYER] = PR_TEAM;
+	if (ov_move(OV_PLAYER, d, PR_ROWS)) {
+		while (pr_off(ov_cur[OV_PLAYER]))
+			ov_move(OV_PLAYER, d, PR_ROWS);
+		return;
+	}
+	const int cur = ov_cur[OV_PLAYER], lr = d & FE_LEFT ? -1 : d & FE_RIGHT ? 1 : 0;
+	const int lbrb = press & FE_LB ? -1 : press & FE_RB ? 1 : 0, s = lr ? lr : press & FE_A ? 1 : 0;
+	if (cur == PR_TEAM) {
+		/* test 18: the TRAINING page's TEAM row (test 15: SAME only once a team was flown) */
+		if (!s)
+			return;
+		tr.team = wrap(tr_team_eff(), s, TT_N);
+		if (tr.team == TT_SAME && !team_captured)
+			tr.team = wrap(tr.team, s, TT_N);
+		return;
+	}
+	if (cur <= PR_TYPE3) {
+		const int k = (cur - PR_RIDER) / 2;
+		if (!s)
+			return;
+		if (cur == PR_RIDER && tr_team_eff() == TT_SELECT_PLAYER) {
+			/* CHOOSE, then the 18 riders */
+			const int n = wrap(tr.solo ? tr.pilot[0] + 1 : 0, s, TR_PILOTS + 1);
+			tr.solo = n > 0;
+			if (n)
+				tr.pilot[0] = n - 1;
+			return;
+		}
+		if ((cur - PR_RIDER) & 1)
+			tr.type[k] = wrap(tr.type[k], s, TR_TYPES);
+		else
+			tr.pilot[k] = wrap(tr.pilot[k], s, TR_PILOTS);
+		if (tr_team_eff() != TT_SELECT_PLAYER)
+			tr.team = TT_CUSTOM;
+		return;
+	}
+	switch (cur) {
+	case PR_FORM: tr.form = wrap(tr.form, s, TR_FORMS); break;
+	case PR_LIVES: tr.lives = tr.lives + s < TR_LIVES_MIN ? tr_lives_max() : tr.lives + s > tr_lives_max() ?
+		TR_LIVES_MIN : tr.lives + s; break;
+	case PR_BOMBS: tr.bombs = wrap(tr.bombs, s, TR_BOMBS_MAX + 1); break;
+	case PR_FRAGS:
+		if (lbrb)
+			tr.frags = tr.frags + 10 * lbrb < 0 ? 0 : tr.frags + 10 * lbrb > TR_FRAGS - 1 ? TR_FRAGS - 1 :
+				tr.frags + 10 * lbrb;
+		else
+			tr.frags = wrap(tr.frags, s, TR_FRAGS);
+		break;
+	case PR_SHOT: tr.shot = tr.shot + s < 1 ? TR_SHOT_MAX : tr.shot + s > TR_SHOT_MAX ? 1 : tr.shot + s; break;
+	case PR_OPTS: tr.opts = wrap(tr.opts, s, TR_OPTS_FULL + 1); break;
+	}
 }
 
 /* LIVES at the run's first rider start (REPORT.md 1): lives = the team entries from the flying pilot's up to TEAM_LAST.
@@ -1435,9 +1685,9 @@ static void tr_lives(void)
 	} else if (tr.lives == 2) {
 		t[0] = a | 1; t[1] = c; t[2] = b;
 	} else if (tr.lives >= 4) {
-		/* the fourth: the first pilot id not in the team */
-		uint16_t x = 0;
-		for (int id = 0; id < 16; id++) {
+		/* the fourth: the first pilot id not in the team (test 16: a one-rider team's own pilot) */
+		uint16_t x = c;
+		for (int id = 0; id < 16 && (c != a || c != b); id++) {
 			x = (uint16_t)(id << 4);
 			if ((c & 0xFFF0) != x && (a & 0xFFF0) != x && (b & 0xFFF0) != x)
 				break;
@@ -1455,18 +1705,59 @@ static void tr_lives(void)
  * rider start (P1's flags turn 0x8E in play) SHOT POWER and BOMBS (TRAINING's courses give full power there), at the
  * first LIVES; INFINITE BOMBS keeps 4; a RANK percentage held (RANK_CAP kept above it: the game clamps to it); the stage
  * cleared (the course plays its entry twice: the stage byte steps between) ends the run as the pause's QUIT does */
+/* INFINITE BOMBS: 4 kept (test 16: the HUD's bombs repainted when one was used, REPORT.md 5 bit 7) */
+static void inf_bombs(void)
+{
+	if (br_rd8(P1 + PL_BOMBS) == 4)
+		return;
+	br_wr8(P1 + PL_BOMBS, 4);
+	br_wr8(P1 + PL_REPAINT, (uint8_t)(br_rd8(P1 + PL_REPAINT) | 0x80));
+}
+
+/* test 15: TEAM CUSTOM's riders over the team SELECT TEAM gave (REPORT.md 2: the words written between the confirm and
+ * the rider start make the ships, shots and HUD icons; the kept struct of TEAM SAME gets them too) */
+static void tr_custom_team(void)
+{
+	const int last = br_rd8(TEAM_LAST);
+	for (int k = 0; k < 3 && k <= last; k++) {
+		const int s = tr_solo() ? 0 : k;   /* test 16: SELECT PLAYER's rider in every slot */
+		const uint16_t w = (uint16_t)(tr.pilot[s] << 4 | tr.type[s] << 2);
+		br_wr16(TEAM + k * 2, w);
+		team[k] = w;
+		team_ram[TEAM - P1 + k * 2] = (uint8_t)(w >> 8);
+		team_ram[TEAM - P1 + k * 2 + 1] = (uint8_t)w;
+	}
+	tr_custom = 0;
+	veil = VEIL_AFTER;
+	LOG("fe: TRAINING: CUSTOM team %04X %04X %04X", team[0], team[1], team[2]);
+}
+
+static void inf_lives(void);
 static void tr_frame(void)
 {
 	const int f = br_rd8(P1), in_play = br_rd8(IN_PLAY) == 0xFF;
 	tr_play_t = in_play ? tr_play_t + 1 : 0;
+	if (tr_custom && in_play && ++tr_custom_t == TR_CUSTOM_LATE)
+		tr_custom_team();
 	/* (TEAM SAME puts back a flying rider's struct: no 0x8E then, the first start is TR_FIRST_LATE frames into play) */
 	if ((f == 0x8E && tr_rider != 0x8E && in_play) || (!tr_started && (f & 0x80) && tr_play_t == TR_FIRST_LATE)) {
-		br_wr8(P1 + PL_SHOT, (uint8_t)(tr.shot - 1));
-		br_wr8(P1 + PL_SHOTP, 0);
+		/* (test 18: SHOT POWER at the first start only, also h_power's; TEAM SAME's put-back struct skips 0xD42) */
+		if (!tr_started) {
+			br_wr8(P1 + PL_SHOT, (uint8_t)(tr.shot - 1));
+			br_wr8(P1 + PL_SHOTP, 0);
+			if (f != 0x8E)
+				tr_powered = 1;     /* (TEAM SAME: no rider start ran; its later ones are the game's) */
+		}
 		br_wr8(P1 + PL_BOMBS, (uint8_t)tr.bombs);
-		br_wr8(P1 + PL_GAUGE, 0);
+		/* test 15: BOMB FRAGMENTS, the HUD's bombs and gauge repainted (REPORT.md 5); a guest's FORMATION */
+		br_wr8(P1 + PL_GAUGE, (uint8_t)tr.frags);
+		br_wr8(P1 + PL_REPAINT, (uint8_t)(br_rd8(P1 + PL_REPAINT) | 0xC0));
+		const int id = br_rd16(P1 + PL_PILOT) >> 4 & 31;
+		if (tr.form && id >= TR_GUEST_FIRST && id <= TR_GUEST_LAST)
+			br_wr16(P1 + PL_FORM, (uint16_t)(2 * (tr.form - 1)));
 		if (!tr_started) {
 			tr_started = 1;
+			br_wr8(MEDAL, (uint8_t)(2 * tr.medal));   /* test 19: MEDAL (the run's own from here) */
 			tr_lives();
 		}
 	}
@@ -1479,7 +1770,9 @@ static void tr_frame(void)
 		tr_bank = 0;
 	}
 	if (tr.infb && (f & 0x80))
-		br_wr8(P1 + PL_BOMBS, 4);
+		inf_bombs();
+	if (tr.infl && (f & 0x80))
+		inf_lives();                    /* test 17: TRAINING's INFINITE LIVES (the DEBUG MENU's way) */
 	if (tr.rank != TR_RANK_GAME && (f & 0x80)) {
 		const uint32_t r = 0xFF0000u / 100 * (uint32_t)(100 - tr.rank);
 		br_wr16(RANK_NOW, (uint16_t)(r >> 16));
@@ -1500,13 +1793,58 @@ static void tr_frame(void)
 	}
 }
 
+/* Test 16: the DEBUG MENU's INFINITE LIVES / INFINITE BOMBS, each frame of a credit while P1 flies (not in a replay's
+ * playback). Lives (work/t14/r1/REPORT.md 1, 0x2FA32): a death marks the first team word equal to the flying pilot's
+ * (bit 0) and the next word flies; it is GAME OVER only when that word is the last (TEAMSZ). So: no word marked, and
+ * a pilot flying from the last slot only is moved to the front (the others after it, their order kept). */
+static void inf_lives(void)
+{
+	const int last = br_rd8(TEAM_LAST);
+	if (last < 1 || last > 3)
+		return;
+	uint16_t t[4];
+	int changed = 0, k = 0;
+	for (int i = 0; i <= last; i++) {
+		t[i] = br_rd16(TEAM + i * 2);
+		if (t[i] != 0xFFFF && (t[i] & 1)) {
+			t[i] &= (uint16_t)~1;
+			changed = 1;
+		}
+	}
+	const uint16_t cur = br_rd16(P1 + PL_PILOT);
+	while (k <= last && t[k] != cur)
+		k++;
+	if (k == last) {
+		for (int i = last; i > 0; i--)
+			t[i] = t[i - 1];
+		t[0] = cur;
+		changed = 1;
+	}
+	if (!changed)
+		return;
+	for (int i = 0; i <= last; i++)
+		br_wr16(TEAM + i * 2, t[i]);
+	br_wr8(P1 + PL_REPAINT, (uint8_t)(br_rd8(P1 + PL_REPAINT) | 0x10));   /* the team icons */
+}
+
+static void db_frame(void)
+{
+	if (pb_on || !(br_rd8(P1) & 0x80))
+		return;
+	if (db_bombs)
+		inf_bombs();
+	if (db_lives)
+		inf_lives();
+}
+
 /* the training run starts (START RUN, or START on any row): test 9's RETRY with SAME, the team select with CHOOSE */
 static void tr_start(void)
 {
 	settings_flush();
 	prac_target = tr_entry();
-	replay = tr.team && team_captured;
-	veil = replay ? -1 : 0;
+	replay = tr_team_eff() == TT_SAME;
+	tr_custom = tr_team_eff() == TT_CUSTOM || tr_solo();   /* test 15: black until its riders are in (tr_custom_team) */
+	veil = replay || tr_custom ? -1 : 0;
 	tr_quit_title = 0;
 	page = PG_TITLE;
 	title_cur = TM_TRAINING;
@@ -1517,9 +1855,11 @@ static void tr_start(void)
 	}
 	phase = 2;
 	start_pulse();
-	LOG("fe: TRAINING %d %s (%s; team %s, lives %d, bombs %d, shot %d, rank %d, inv %d, infb %d, speed %d%%, hitbox %d)",
-		prac_target, prac_name(prac_target), mode_word(prog_now), replay ? "kept" : "chosen", tr.lives, tr.bombs, tr.shot,
-		tr.rank, tr.inv, tr.infb, tr_speed_pct[tr.speed], host.hitbox);
+	LOG("fe: TRAINING %d %s (%s; team %s%s, riders %d%c %d%c %d%c, form %d, lives %d, bombs %d, frags %d, shot %d, "
+		"opts %d, rank %d, inv %d, infl %d, infb %d, speed %d%%, hitbox %d)", prac_target, prac_name(prac_target),
+		mode_word(prog_now), tr_team_names[tr_team_eff()], tr_solo() ? " (RIDER 1 ALONE)" : "", tr.pilot[0], 'A' + tr.type[0], tr.pilot[1], 'A' + tr.type[1],
+		tr.pilot[2], 'A' + tr.type[2], tr.form, tr.lives, tr.bombs, tr.frags, tr.shot, tr.opts, tr.rank, tr.inv,
+		tr.infl, tr.infb, tr_speed_pct[tr.speed], host.hitbox);
 }
 
 /* a value row's step d (+1 RIGHT / A, -1 LEFT; RANK +-10 for LB / RB) */
@@ -1533,16 +1873,12 @@ static void tr_step(int row, int d)
 		tr_clamp();
 		LOG("fe: MODE %s", mode_word(host.mode));
 		break;
-	case TR_TEAM: if (team_captured) tr.team = !tr.team; break;
 	case TR_STAGE:
 		tr.stage = (tr.stage + TR_STAGES + 1 + d) % (TR_STAGES + 1);
 		tr.boss = 0;
 		break;
 	case TR_BOSS: tr.boss = (tr.boss + tr_bosses() + d) % tr_bosses(); break;
-	case TR_LIVES: tr.lives = tr.lives + d < TR_LIVES_MIN ? tr_lives_max() : tr.lives + d > tr_lives_max() ?
-		TR_LIVES_MIN : tr.lives + d; break;
-	case TR_BOMBS: tr.bombs = (tr.bombs + TR_BOMBS_MAX + 1 + d) % (TR_BOMBS_MAX + 1); break;
-	case TR_SHOT: tr.shot = tr.shot + d < 1 ? TR_SHOT_MAX : tr.shot + d > TR_SHOT_MAX ? 1 : tr.shot + d; break;
+	case TR_MEDAL: tr.medal = (tr.medal + TR_MEDALS + d) % TR_MEDALS; break;
 	case TR_RANK:
 		/* DEFAULT one step below 0%, the ends held (ibara360's tr_rank_step) */
 		if (tr.rank == TR_RANK_GAME)
@@ -1556,6 +1892,7 @@ static void tr_step(int row, int d)
 		tr_clamp();
 		break;
 	case TR_INV: tr.inv = !tr.inv; break;
+	case TR_INFL: tr.infl = !tr.infl; break;
 	case TR_INFB: tr.infb = !tr.infb; break;
 	case TR_SPEED: tr.speed = (tr.speed + TR_SPEEDS + d) % TR_SPEEDS; break;
 	case TR_HITBOX:
@@ -1586,8 +1923,15 @@ static void tr_input(int up, int down, int left, int right, uint16_t press)
 		}
 		return;
 	}
+	if (tr_cur == TR_PLAYER) {
+		if (a)
+			ovl_open(OV_PLAYER);
+		return;
+	}
 	if (tr_cur == TR_RANK && (press & (FE_LB | FE_RB)))
 		tr_step(TR_RANK, press & FE_LB ? -10 : 10);
+	else if (tr_cur == TR_MEDAL && (press & (FE_LB | FE_RB)))   /* (ibara360's tr_quick: 2 of its 19 values) */
+		tr_step(TR_MEDAL, press & FE_LB ? -2 : 2);
 	else if (left || right || a)
 		tr_step(tr_cur, left ? -1 : 1);
 }
@@ -1633,13 +1977,14 @@ static void options_build(void)
 	case O_SCREEN: help = "CUSTOMIZE GAME SCREEN"; break;
 	case O_GADGETS: help = "ORIGINAL WORK BY BAF,\nOLIFANTE AND DUBS"; break;
 	case O_CONTROLS: help = "CUSTOMIZE CONTROLS"; break;
-	case O_COMMANDS: help = "THE GAME'S OWN START COMMANDS:\nBULLET COLOURS, SHOT RATE, SCORES"; break;
+	/* (test 15: lines of at most 27 letters, or the page misses 1.5x in OPTIONS' box and drops to 1x) */
+	case O_COMMANDS: help = "BULLET COLOURS, SHOT RATE,\nSCORE BREAKDOWN"; break;
 	case O_SOUND: help = in_credit() ? "VOLUMES, MUTE" : "VOLUMES, MUTE, SOUND TEST"; break;
 	case O_MANUAL:
 		help = !man_pages[host.language] ? "NO BATRIDER360_MANUAL.BIN\nBESIDE THE XEX" :
 			host.language ? "THE JAPANESE MANUAL" : "THE ENGLISH MANUAL";
 		break;
-	case O_DEBUG: help = "HITBOX, RANKINGS,\nDEFAULT SETTINGS"; break;
+	case O_DEBUG: help = "HITBOX, LIVES, BOMBS,\nRANKINGS, DEFAULTS"; break;
 	case O_LANG: help = in_credit() ? "NOT DURING A CREDIT" : "THE GAME'S TEXTS AND\nTHE MANUAL"; break;
 	}
 	m_help(FE_C_CYAN, help);
@@ -1684,7 +2029,7 @@ static void options_input(const FePad *pad)
 /* ---- SECRET COMMANDS (test 14, user: the game's own START commands as menu rows; work/t14/r2/REPORT.md B) ----
  * In play the arcade takes START held + a press: RIGHT / LEFT / DOWN the colour of the normal bullets, the ball bullets
  * and the missiles; A / C its autofire faster / slower; B the score breakdown. The rows set them for every credit (the
- * game's own value with GAME), the commands still work in play. SHOT RATE changes the run, so it is grey in a credit
+ * game's own value with DEFAULT, test 15's name for test 14's GAME), the commands still work in play. SHOT RATE changes the run, so it is grey in a credit
  * (a replay keeps the value it began with); the others only change the look. None touches score, rank or rankings. */
 enum { SC_NML, SC_BAL, SC_MSL, SC_RATE, SC_BREAKDOWN, SC_ROWS };
 enum { BULLET_COLOURS = 7, SHOT_RATES = 8, NML_COLOUR = 0x20FD52, PL_RATE = 0x10C, PL_FLAGS2 = 1 };
@@ -1706,20 +2051,20 @@ static void commands_build(void)
 		if (c)
 			snprintf(v[k], sizeof v[0], "%s", colour_names[c - 1]);
 		else
-			snprintf(v[k], sizeof v[0], "GAME");
+			snprintf(v[k], sizeof v[0], "DEFAULT");
 	}
 	const int rate = opt.cmd[2] & CMD_SET ? opt.cmd[0] : 0;
 	if (rate)
 		snprintf(v[SC_RATE], sizeof v[0], "%s A SECOND", rate_names[rate - 1]);
 	else
-		snprintf(v[SC_RATE], sizeof v[0], "GAME");
+		snprintf(v[SC_RATE], sizeof v[0], "DEFAULT");
 	snprintf(v[SC_BREAKDOWN], sizeof v[0], "%s", opt.cmd[2] & CMD_SET && opt.cmd[1] ? "ON" : "OFF");
 	static const char *const names[SC_ROWS] = { "NORMAL BULLETS", "BALL BULLETS", "MISSILES", "SHOT RATE",
 		"SCORE BREAKDOWN" };
 	for (int i = 0; i < SC_ROWS; i++)
 		m_row(names[i], v[i], cur == i, i == SC_RATE && in_credit(), 1);
-	static const char *const helps[SC_ROWS] = { "NORMAL BULLETS, GAME = BLUE\n(START + RIGHT IN PLAY)",
-		"BALL BULLETS, GAME = ORANGE\n(START + LEFT IN PLAY)", "MISSILES, GAME = PINK\n(START + DOWN IN PLAY)",
+	static const char *const helps[SC_ROWS] = { "NORMAL BULLETS, DEFAULT = BLUE\n(START + RIGHT IN PLAY)",
+		"BALL BULLETS, DEFAULT = ORANGE\n(START + LEFT IN PLAY)", "MISSILES, DEFAULT = PINK\n(START + DOWN IN PLAY)",
 		"YOUR AUTOFIRE, SHOTS A SECOND\n(START + A / C IN PLAY)", "EACH SCORE ADDED, LISTED ON\nTHE LEFT (START + B IN PLAY)" };
 	m_help(FE_C_CYAN, cur == SC_RATE && in_credit() ? "NOT DURING A CREDIT\n(START + A / C IN PLAY)" : helps[cur]);
 	m_line(FE_C_GREEN, "LEFT/RIGHT CHANGE");
@@ -2117,8 +2462,9 @@ static void sound_input(const FePad *pad)
 	}
 }
 
-/* DEBUG MENU (outside a credit): HITBOX, INITIALIZE RANKINGS (this MODE's or both), DEFAULT SETTINGS */
-enum { DB_HITBOX, DB_RANKS, DB_DEFAULTS, DB_ROWS };
+/* DEBUG MENU (outside a credit): HITBOX, INFINITE LIVES, INFINITE BOMBS (test 16), INVINCIBILITY (test 17),
+ * INITIALIZE RANKINGS (this MODE's or both), DEFAULT SETTINGS */
+enum { DB_HITBOX, DB_LIVES, DB_BOMBS, DB_INV, DB_RANKS, DB_DEFAULTS, DB_ROWS };
 
 static void rk_init(int both)
 {
@@ -2141,6 +2487,7 @@ static void settings_default(void)
 	host.mode = m;
 	opt = opt_default;
 	ctl = ctl_default;
+	db_lives = db_bombs = db_inv = 0;
 	apply_language();
 	apply_volumes();
 	host_dirty = opt_dirty = 1;
@@ -2152,6 +2499,9 @@ static void debug_build(void)
 	const int cur = ov_cur[OV_DEBUG];
 	m_begin(228, 21, "%s  DEBUG MENU", game_word(prog_now));
 	m_row("HITBOX", hitbox_names[host.hitbox], cur == DB_HITBOX, 0, 1);
+	m_row("INFINITE LIVES", db_lives ? "ON" : "OFF", cur == DB_LIVES, 0, 1);
+	m_row("INFINITE BOMBS", db_bombs ? "ON" : "OFF", cur == DB_BOMBS, 0, 1);
+	m_row("INVINCIBILITY", db_inv ? "ON" : "OFF", cur == DB_INV, 0, 1);
 	FeRow *r = m_row("INITIALIZE RANKINGS", rk_both ? "BOTH MODES" : "THIS MODE", cur == DB_RANKS, 0, 1);
 	if (ov_armed == DB_RANKS)
 		r->name_c = FE_C_RED;
@@ -2164,6 +2514,9 @@ static void debug_build(void)
 		m_help(FE_C_CYAN, ov_msg);
 	else
 		m_help(FE_C_CYAN, cur == DB_HITBOX ? "PLAYER = THE RIDERS' HITBOXES\nALL = THE ENEMIES' AND BULLETS' TOO" :
+			cur == DB_LIVES ? "THE TEAM NEVER RUNS OUT\n(INVALIDATES SCORE)" :
+			cur == DB_BOMBS ? "THE BOMBS NEVER RUN OUT\n(INVALIDATES SCORE)" :
+			cur == DB_INV ? "NO DAMAGE\n(INVALIDATES SCORE)" :
 			cur == DB_RANKS ? "CLEAR THE HIGH SCORE TABLES\nOF THIS MODE OR OF BOTH" :
 			"EVERY OPTION, DIP SWITCH AND\nBUTTON BACK TO ITS DEFAULT");
 	m_line(FE_C_GREEN, "LEFT/RIGHT CHANGE");
@@ -2205,6 +2558,16 @@ static void debug_input(const FePad *pad)
 		if (lr || a) {
 			host.hitbox = (host.hitbox + (d & FE_LEFT ? HITBOX_MODES - 1 : 1)) % HITBOX_MODES;
 			host_dirty = 1;
+		}
+		break;
+	case DB_LIVES:
+	case DB_BOMBS:
+	case DB_INV:
+		if (lr || a) {
+			int *v = cur == DB_LIVES ? &db_lives : cur == DB_BOMBS ? &db_bombs : &db_inv;
+			*v = !*v;
+			LOG("fe: DEBUG %s %s", cur == DB_LIVES ? "INFINITE LIVES" : cur == DB_BOMBS ? "INFINITE BOMBS" :
+				"INVINCIBILITY", *v ? "ON" : "OFF");
 		}
 		break;
 	case DB_RANKS:
@@ -2479,9 +2842,12 @@ static void ovl_input(const FePad *pad)
 {
 	/* START on a page: every page closes (back to the pause menu, the title's page or the game) */
 	if (ovl != OV_PROMPT && (pad->press & FE_START)) {
+		const int play = ovl == OV_PLAYER;   /* test 15: the TRAINING page's START = PLAY there too */
 		if (ovl == OV_SOUND)
 			sound_stop_test();
 		ovl_close_all();
+		if (play)
+			tr_start();
 		return;
 	}
 	switch (ovl) {
@@ -2496,6 +2862,7 @@ static void ovl_input(const FePad *pad)
 	case OV_REPLAYS: rp_input(pad); break;
 	case OV_MANUAL: man_input(pad); break;
 	case OV_PROMPT: prompt_input(pad); break;
+	case OV_PLAYER: player_input(pad); break;
 	}
 }
 
@@ -2512,6 +2879,7 @@ static void ovl_build(void)
 	case OV_STATES: st_build(); break;
 	case OV_REPLAYS: rp_build(); break;
 	case OV_PROMPT: prompt_build(); break;
+	case OV_PLAYER: player_build(); break;
 	}
 }
 
@@ -2554,8 +2922,9 @@ static void title_input(int up, int down, int left, int right, uint16_t press)
  * (PS_STAGE last), the rows' order is pause_rows'. TRAINING has its RESTART (the training stage) and no RESTART STAGE. */
 enum { PS_RESUME, PS_RESTART, PS_SAVE, PS_LOAD, PS_OPTIONS, PS_INVULN, PS_QUIT, PS_STAGE, PS_QTITLE, PS_ROWS };
 static const uint8_t ps_game[] = { PS_RESUME, PS_STAGE, PS_RESTART, PS_SAVE, PS_LOAD, PS_OPTIONS, PS_INVULN, PS_QUIT };
-/* test 14: TRAINING's (ibara360's training pause): INVINCIBLE is on the TRAINING page, QUIT goes back to it */
-static const uint8_t ps_training[] = { PS_RESUME, PS_RESTART, PS_SAVE, PS_LOAD, PS_OPTIONS, PS_QUIT, PS_QTITLE };
+/* test 14: TRAINING's (ibara360's training pause): INVINCIBLE is on the TRAINING page, QUIT goes back to it;
+ * test 15 (user): no SAVE / LOAD STATE there */
+static const uint8_t ps_training[] = { PS_RESUME, PS_RESTART, PS_OPTIONS, PS_QUIT, PS_QTITLE };
 static int rs_stage, rs_state, rs_to_state;      /* RESTART STAGE: the stage's start there (its number), a STATE */
 
 void fe_set_restart(int stage, unsigned state)
@@ -2765,6 +3134,7 @@ static uint32_t menu_sig(void)
 	h ^= fnv((const uint8_t *)&host, (int)sizeof host) * 5;
 	h ^= fnv((const uint8_t *)&opt, (int)sizeof opt) * 7;
 	h ^= fnv((const uint8_t *)&ctl, (int)sizeof ctl) * 11;
+	h ^= fnv((const uint8_t *)&tr, (int)sizeof tr) * 13;   /* test 15: the PLAYER page's values */
 	return h;
 }
 
@@ -2964,6 +3334,9 @@ void fe_frame(const FePad *pad, FeOut *out)
 			if (held & FE_START)
 				sys = BR_START1;
 		}
+		/* test 15: TEAM CUSTOM's SELECT TEAM confirmed by SHOT taps (the riders come after it, tr_custom_team) */
+		if (practice && tr_custom && !paused && br_rd8(IN_PLAY) != 0xFF)
+			in = (uint16_t)(frame_no & 4 ? BR_B1 : 0);
 		if (paused) {
 			pause_build();
 			if (pause_t >= PAUSE_SE_FRAMES)
@@ -2981,6 +3354,8 @@ void fe_frame(const FePad *pad, FeOut *out)
 				hold = 1;
 			tr_frame();
 		}
+		if (!paused && !ovl && in_credit())
+			db_frame();                 /* test 16: the DEBUG MENU's INFINITE LIVES / BOMBS */
 		/* CONTINUES (spec 3); test 14: none in TRAINING (ibara360's: a GAME OVER is the TRAINING page again) */
 		const int used = br_rd8(CONT_USED);
 		br_wr8(CONT_OK, practice ? 0 : !br_rd8(CONT_SCREEN) ? (used < opt.continues ? 0xFF : 0) :
@@ -2990,11 +3365,14 @@ void fe_frame(const FePad *pad, FeOut *out)
 		if (cont_taken())
 			score_red("a continue");
 	} else {
-		/* boot, attract, demo: START -> the title */
+		/* boot, attract, demo: START -> the title; test 17 (hardware: the demo's music went on under the title): the
+		 * jump skips the demo's own end, so the music is stopped as the SOUND page's STOP does */
 		if (menu_input && (press & FE_START) && resetting < 0) {
 			if (splash == SPL_WAIT)
 				splash = SPL_DONE;
 			goto_title();
+			music_cmd(0x21, 0x00);
+			music_cmd(0x20, 0xE0);
 		}
 		if (br_rd8(SCENE) == SCENE_TITLE && !booting)
 			j->kind = FE_V_BLACK;       /* the arcade title's white flash before the title hook (test 2's prep) */
@@ -3413,13 +3791,21 @@ static const uint8_t md_tint_of[6] = { MD_WHITE, MD_YELLOW, MD_GREEN, MD_CYAN, M
 typedef struct {
 	int sc, cw, rp, lp;                 /* the letters' size (half steps) and width, the row and line pitch */
 	int win;                            /* the arrows' window in letters */
-	int nh, h;                          /* help lines, the box's height */
+	int nh, hs, h;                      /* help lines and their size, the box's height */
 	char hl[2][FE_HM_CHARS];
 } HmFit;
 
-/* the page at size sc: 1 = it all fits (text from x0 up to right, rows without a value up to row_right; the box on
- * the screen) */
-static int hm_fit(const FeVideoJob *job, int sc, int x0, int right, int row_right, HmFit *f)
+/* Test 16 (user: "rank in training reverts to smaller font; this seems to be happening randomly in any option as you
+ * keep updating, find a permanent fix"): test 12 measured all that showed (the chosen row's help, every value) and fell
+ * to 1x for the whole page when one piece did not fit, so a page changed size as its cursor or values moved. Now the
+ * size comes from the page's shape alone (its rows, lines and value column; two help lines whatever the row's help
+ * is), is chosen when a page opens (its title and row count) and kept while it stays; a name, value or help too long
+ * for 1.5x is drawn at 1x by itself (as test 12's lines were). */
+enum { WIN_MIN = 6 };                   /* the arrows' window at 1.5x needs at least this many letters */
+
+/* the page's layout at size sc (help lines at sc, or at 1x when they do not fit so); returns 1 = the box fits on the
+ * screen with nh_min help lines at least and the arrows' window is WIN_MIN letters or more */
+static int hm_fit(const FeVideoJob *job, int sc, int x0, int right, HmFit *f, int nh_min)
 {
 	const int plain = job->hm_plain;
 	f->sc = sc;
@@ -3427,33 +3813,37 @@ static int hm_fit(const FeVideoJob *job, int sc, int x0, int right, int row_righ
 	f->rp = plain ? 20 : sc == 3 ? ROW_P3 : ROW_P;
 	f->lp = plain ? 18 : sc == 3 ? LINE_P3 : LINE_P;
 	const int cw = f->cw, vx = x0 + 2 + cw * job->hm_vcol;
-	int ok = 1, need = 0;
-	for (int i = 0; i < job->hm_n; i++) {
-		const FeRow *r = &job->hm_row[i];
-		if (!job->hm_vcol || !r->value[0]) {
-			ok &= x0 + cw + 2 + md_text_w(sc, r->name) <= row_right;
-		} else if (r->arrows) {
-			const int len = (int)strlen(r->value);
-			need = len > need ? len : need;
-		} else {
-			ok &= vx + md_text_w(sc, r->value) <= right;
-		}
-	}
-	/* all the room to the box's edge, so the arrows stay put while a value changes (MUSIC TEST's titles); longer
-	 * values are cut. Less room than the values and 10 letters: 1x. */
+	/* all the room to the box's edge, so the arrows stay put while a value changes (MUSIC TEST's titles) */
 	f->win = (right - vx) / cw - 2;
-	ok &= !need || f->win >= need || f->win >= 10;
+	if (f->win < 1)
+		f->win = 1;
 	const char *rest;
+	f->hs = sc;
 	f->nh = help_lines(job->hm_help, (right - x0) / cw, f->hl, &rest);
-	ok &= !*rest;
+	if (*rest && sc == 3) {
+		f->hs = 2;
+		f->nh = help_lines(job->hm_help, (right - x0) / 8, f->hl, &rest);
+	}
 	const int rows_y = plain ? (job->hm_title[0] ? 26 : 0) : MD_BODY_Y + 8;
-	const int help_y = rows_y + f->rp * job->hm_n + (job->hm_n && f->nh ? 6 : 0);
-	const int lines_y = help_y + f->lp * f->nh + (f->nh && job->hm_nl ? 6 : 0);
-	f->h = lines_y + f->lp * job->hm_nl + (plain ? 0 : MD_BODY_END + 4);
-	if (job->pic && f->h < rows_y + 2 * FE_THUMB_W + MD_BODY_END + 8)
-		f->h = rows_y + 2 * FE_THUMB_W + MD_BODY_END + 8;
-	ok &= (job->hm_top ? 2 * job->hm_top : 0) + f->h <= MD_H - 8;
-	return ok;
+	int h = 0;
+	for (int pass = 0; pass < 2; pass++) {   /* the box as drawn (f->nh), then with nh_min help lines for the test */
+		const int nh = pass && nh_min > f->nh ? nh_min : f->nh;
+		const int help_y = rows_y + f->rp * job->hm_n + (job->hm_n && nh ? 6 : 0);
+		const int lines_y = help_y + f->lp * nh + (nh && job->hm_nl ? 6 : 0);
+		h = lines_y + f->lp * job->hm_nl + (plain ? 0 : MD_BODY_END + 4);
+		if (job->pic && h < rows_y + 2 * FE_THUMB_W + MD_BODY_END + 8)
+			h = rows_y + 2 * FE_THUMB_W + MD_BODY_END + 8;
+		if (!pass)
+			f->h = h;
+	}
+	return (job->hm_top ? 2 * job->hm_top : 0) + h <= MD_H - 8 && (!job->hm_vcol || f->win >= WIN_MIN);
+}
+
+/* a piece of text at size sc when it ends by limit, else 1x (the y moved to keep it on the row's middle) */
+static void hm_text_fit(int x, int y, int sc, int limit, int tint, const char *s)
+{
+	const int ls = sc == 3 && x + md_text_w(3, s) > limit ? 2 : sc;
+	md_text(x, y + (sc - ls) * 2, ls, tint, s);
 }
 
 static void hm_draw(uint32_t *tex, const FeVideoJob *job, const uint8_t *glyphs)
@@ -3467,11 +3857,25 @@ static void hm_draw(uint32_t *tex, const FeVideoJob *job, const uint8_t *glyphs)
 	const int w = 2 * (job->hm_w ? job->hm_w : 228), bx = (MD_W - w) / 2, x0 = bx + 18, right = bx + w - 16;
 	const int px = bx + w - 18 - 2 * FE_THUMB_H;   /* a save state's picture's left */
 	static HmFit f;                     /* (video thread only) */
-	if (plain)
-		hm_fit(job, 4, x0, right, right, &f);
-	else if (!hm_fit(job, 3, x0, right, job->pic ? px - 6 : right, &f))
-		hm_fit(job, 2, x0, right, job->pic ? px - 6 : right, &f);
+	static char page_title[FE_HM_CHARS];
+	static int page_n = -1, page_sc;
+	if (plain) {
+		hm_fit(job, 4, x0, right, &f, 0);
+	} else {
+		/* a new page: 1.5x when its shape fits so with two help lines; the same page keeps its size (1x for a frame
+		 * only if the box as drawn would leave the screen) */
+		if (job->hm_n != page_n || strcmp(job->hm_title, page_title)) {
+			page_n = job->hm_n;
+			snprintf(page_title, sizeof page_title, "%s", job->hm_title);
+			page_sc = hm_fit(job, 3, x0, right, &f, 2) ? 3 : 2;
+			LOG("menu: \"%s\" at %s (rows %d, box %d high from %d, arrows' window %d)", job->hm_title,
+				page_sc == 3 ? "1.5x" : "1x", job->hm_n, f.h, job->hm_top, f.win);
+		}
+		if (page_sc == 2 || !hm_fit(job, 3, x0, right, &f, 0))
+			hm_fit(job, 2, x0, right, &f, 0);
+	}
 	const int sc = f.sc, cw = f.cw, rp = f.rp, lp = f.lp, nh = f.nh, h = f.h;
+	const int row_right = job->pic ? px - 6 : right;
 	const int rows_y = plain ? (job->hm_title[0] ? 26 : 0) : MD_BODY_Y + 8;
 	const int help_y = rows_y + rp * job->hm_n + (job->hm_n && nh ? 6 : 0);
 	const int lines_y = help_y + lp * nh + (nh && job->hm_nl ? 6 : 0);
@@ -3513,32 +3917,31 @@ static void hm_draw(uint32_t *tex, const FeVideoJob *job, const uint8_t *glyphs)
 		}
 		if (sel)
 			md_text(x0, y, sc, MD_YELLOW, ">");
-		md_text(x0 + cw + 2, y, sc, md_tint_of[r->name_c], r->name);
-		if (!job->hm_vcol || !r->value[0])
+		const int valued = job->hm_vcol && r->value[0], vx = x0 + 2 + cw * job->hm_vcol;
+		hm_text_fit(x0 + cw + 2, y, sc, valued ? vx - 2 : row_right, md_tint_of[r->name_c], r->name);
+		if (!valued)
 			continue;
-		const int vx = x0 + 2 + cw * job->hm_vcol;
 		if (r->arrows) {
-			/* "<  VALUE  >": the arrows at the window's ends (grey, yellow on the chosen row), the value centred */
+			/* "<  VALUE  >": the arrows at the window's ends (grey, yellow on the chosen row), the value centred
+			 * (test 16: a value longer than the window at 1x in it, cut only when that is too long too) */
 			const int at = sel ? MD_YELLOW : MD_GREY;
+			const int span = cw * f.win, vs = (int)strlen(r->value) * cw <= span ? sc : 2;
 			char v[sizeof r->value];
-			snprintf(v, sizeof v, "%.*s", f.win, r->value);
-			const int len = (int)strlen(v);
+			snprintf(v, sizeof v, "%.*s", span / (4 * vs), r->value);
+			const int vw = md_text_w(vs, v);
 			md_text(vx, y, sc, at, "<");
-			md_text(vx + cw + cw * (f.win - len) / 2, y, sc, md_tint_of[r->value_c], v);
+			md_text(vx + cw + (span - vw) / 2, y + (sc - vs) * 2, vs, md_tint_of[r->value_c], v);
 			md_text(vx + cw * (f.win + 1), y, sc, at, ">");
 		} else {
-			md_text(vx, y, sc, md_tint_of[r->value_c], r->value);
+			hm_text_fit(vx, y, sc, right, md_tint_of[r->value_c], r->value);
 		}
 	}
 	for (int k = 0; k < nh; k++)
-		md_text(x0, by + help_y + lp * k, sc, md_tint_of[job->hm_help_c], f.hl[k]);
+		md_text(x0, by + help_y + lp * k + (sc - f.hs) * 2, f.hs, md_tint_of[job->hm_help_c], f.hl[k]);
 	if (!plain && job->hm_nl)
 		md_hline(gx, by + lines_y - 5, gw);
-	for (int k = 0; k < job->hm_nl; k++) {
-		const char *l = job->hm_line[k];
-		const int ls = sc == 3 && x0 + md_text_w(3, l) > right ? 2 : sc;
-		md_text(x0, by + lines_y + lp * k + (sc - ls) * 2, ls, md_tint_of[job->hm_line_c[k]], l);
-	}
+	for (int k = 0; k < job->hm_nl; k++)
+		hm_text_fit(x0, by + lines_y + lp * k, sc, right, md_tint_of[job->hm_line_c[k]], job->hm_line[k]);
 	if (job->pic) {
 		/* a save state's picture at the right, twice its size (upright: FE_THUMB_H across, FE_THUMB_W down) */
 		const int py = by + rows_y - 3;
@@ -3577,8 +3980,11 @@ void fe_video(Vdp *v, const FeVideoJob *job, uint32_t *tex)
 			memcpy(tex, title_cache, sizeof title_cache);
 			break;
 		}
+		/* test 17 (user: the original copyright back): the arcade title's text lines 3-5 kept (the (C) / RAIZING /
+		 * 8ING logo tiles, "1998", "CO.,LTD."; harness work/t17/v o_t), the rest of its text (FREE PLAY) cleared */
 		for (int i = 0; i < 0x1000; i++)
-			v->txram[i] = 0x20;
+			if (i % 64 < TITLE_COPY_LO || i % 64 > TITLE_COPY_HI)
+				v->txram[i] = 0x20;
 		front_text_palettes(v);
 		if (job->text)
 			apply_ov(v, job);
@@ -3712,6 +4118,10 @@ void fe_state_loaded(int quiet)
 	if (!quiet && in_credit()) {
 		score_red("LOAD STATE");
 		replay_drop("LOAD STATE");
+		if (db_lives || db_bombs || db_inv) {   /* test 16: the DEBUG MENU's cheats apply to the loaded run too */
+			not_kept = 1;
+			LOG("fe: DEBUG MENU cheats on the loaded run (score not kept)");
+		}
 	}
 }
 

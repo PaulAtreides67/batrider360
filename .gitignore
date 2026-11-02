@@ -22,6 +22,7 @@
 !/tools/*.py
 !/tools/*.sh
 !/tools/release_readme.txt
+!/tools/mame_release/*
 !/tools/manual/Dockerfile
 !/tools/manual/build.py
 !/tools/manual/manual.css

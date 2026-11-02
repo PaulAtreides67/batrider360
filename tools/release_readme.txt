@@ -15,7 +15,7 @@ must stay beside the .xex).
 WHAT YOU NEED
 -------------
 - An Xbox 360 that runs unsigned .xex files (RGH / JTAG, started from a dashboard such as Aurora).
-- MAME's batrider.zip (the merged set, MAME 0.2xx), from your own board. It is NOT included and never will be.
+- MAME's batrider.zip (the merged set, MAME 0.2xx), from your own board. It is NOT included.
 
 
 INSTALL
@@ -34,7 +34,13 @@ QUICK CONTROLS (the manual has the rest)
   RT             AUTO SHOT      (OPTIONS > CONTROLS changes which button does what)
   BACK           the pause menu (START stays the game's own: its START commands work in play)
   Title menu     PLAY, TRAINING, LOAD STATE, REPLAY DATA, OPTIONS, EXIT (back to the dashboard)
-  Replays        after a credit: SAVE REPLAY? -> REPLAY DATA (LB / RB speed, START pause)
+  Replays        after a run: SAVE REPLAY? -> REPLAY DATA (LB / RB speed, START pause)
+
+
+MAME (PC)
+---------
+The mame folder plays both games in MAME on a PC with the same GADGETS: CHASE! (its patched program ROMs are in
+mame\roms) and the original game. See mame\README_MAME.txt.
 
 
 CREDITS
@@ -45,4 +51,5 @@ bar Miquel), ported to the 360 with new CHASE! panels.
 Built with xsdk; the board uses Musashi (68000), superzazu's z80, ymfm (YM2151) and zlib — their licences are in
 the licences folder.
 
-This is a fan project. It contains no ROM data.
+This is a fan project for private use. The only ROM data in it is the patched CHASE! program in mame\roms;
+keep this release private.

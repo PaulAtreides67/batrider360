@@ -370,3 +370,82 @@ line scroll are DMA'd from main RAM 0x200000-0x2033FF on writes to 0x500082 (eac
   after the first (test 13: ~4.4 s incl. the 1.5 s logo hold).
   (10) Manual rewrite delegated (tools/manual, release/manual, manual.bin); README.md + allow-list .gitignore for the
   private GitHub repo PaulAtreides67/batrider360 (third_party vendored: ymfm has local edits).
+- Test 14 STAGED 2026-11-02 deploy/test14x (xex md5 a17a9a00; manual.bin + PDFs rewritten for 0.14, EN 52 / JA 56
+  pages; batrider.zip) = v0.14, release/batrider360_v0.14.zip; private GitHub PaulAtreides67/batrider360 commit 9709369
+  + tag v0.14. Awaiting SUCCESS/FAILURE.
+- Test 15 (user todo after test 14's SUCCESS 2026-11-02; user: "if it ends up too large, make a player customization
+  mini window"): research work/t15/r1 (REPORT.md = the helper's report: SELECT TYPE 0x132F4 / 0x20FD50 / 0x20E488,
+  pilots 0-17 + types A-D = SHOT/BOMB/C/START, guests' formations +0x22 incl. specials 0x0A-0x12, option pickups f170 at
+  0xD4E-0xD54, 40 fragments a bomb + HUD repaint bits 0xC0 of P1+1). core/fe.c: TRAINING rows START RUN, MODE, TEAM
+  (CHOOSE / SAME / SELECT TEAM / TEAM EDIT / RANDOM EDIT / SELECT PLAYER / CUSTOM), PLAYER (opens OV_PLAYER: RIDER 1-3
+  ship + type, FORMATION DEFAULT/V/BACK/FRONT/CIRCLE/CONTROL/SPECIAL 1-5, LIVES, BOMBS, BOMB FRAGMENTS 0-39, SHOT
+  POWER, OPTION POWER NONE/1/2/3), STAGE, START AT BOSS, RANK, INVINCIBLE, INFINITE BOMBS, GAME SPEED, HITBOX, DIP
+  SWITCHES. Hooks h_type (0x132F4: TEAM's choice skips SELECT TYPE as its confirm does) and h_opts (0xD48: level 0 +
+  the last N pickups). CUSTOM = SELECT TEAM confirmed by host SHOT taps under the veil, riders written 5 frames after
+  the confirm (tr_custom_team, team_ram too for SAME). Training pause without SAVE/LOAD STATE; SECRET COMMANDS GAME ->
+  DEFAULT; OPTIONS' SECRET COMMANDS help shortened (3 lines at 1.5x in the 184 box dropped the page to 1x). Harness
+  work/t15/v (a: CUSTOM 00A8 009C 0020 + CIRCLE + 2 bombs + 15 frags + option lv 0 verified; b: SELECT PLAYER skip;
+  c/d: OPTIONS 1.5x, training pause). Manual not updated for the new TRAINING page (TODO).
+- Test 15 STAGED 2026-11-02 deploy/test15x (xex md5 c70d24fe; test 14's manual.bin/PDFs + batrider.zip) = v0.15,
+  release/batrider360_v0.15.zip. Awaiting SUCCESS/FAILURE.
+- Test 15 SUCCESS 2026-11-02 = current .xex. User todo -> test 16: menus dropping to the small font "randomly in any
+  option as you keep updating" (RANK in TRAINING) -> permanent fix; SELECT PLAYER must disable riders 2 and 3; TYPE its
+  own toggle; DEBUG MENU INFINITE LIVES + INFINITE BOMBS.
+- Test 16 (core/fe.c): hm_fit decides 1.5x per page (title + row count) from its shape with two help lines, kept while
+  the page stays; a name / value / help line / line too long for 1.5x is drawn at 1x alone (hm_text_fit, arrows' window
+  value at 1x before a cut); "menu:" log line per page decision. PLAYER page rows RIDER/TYPE x3 (LEFT/RIGHT, no LB/RB);
+  TEAM SELECT PLAYER: RIDER = CHOOSE (the arcade's screen) or a rider for every life (tr.solo: the screen confirmed by
+  host SHOT taps, the word in all slots like 0x8288), TYPE skipped while CHOOSE, riders 2/3 dimmed + skipped; 4 LIVES of
+  a one-rider team = its own pilot. DEBUG MENU INFINITE LIVES (db_frame: no team word keeps bit 0, a pilot flying from
+  the last slot moved to the front; death routine 0x2FA32) and INFINITE BOMBS (4 + HUD repaint bit 7, also TRAINING's),
+  session only, INVULNERABLE's score rules (red, no replay, not kept; also on a LOAD STATE). Harness work/t16/v (s: solo
+  SHORTY C = 0018 x3, 3 lives; n: GAME OVER at 5013; l: 50 deaths in 30000 frames, no GAME OVER; m/r: 1.5x OPTIONS /
+  DEBUG / PLAY / TRAINING incl. RANK). Manual not updated for test 15/16.
+- Test 16 STAGED 2026-11-02 deploy/test16x (xex md5 6a949d08; test 15's manual.bin/PDFs + batrider.zip) = v0.16,
+  release/batrider360_v0.16.zip. Awaiting SUCCESS/FAILURE.
+- Test 16 SUCCESS 2026-11-02 = current .xex (user's batrider360.log, v0.16). User todo -> test 17: (1) START out of the
+  demo into the title keeps the demo's music; (2) title: the original copyright / year / company line back at the
+  bottom, plus "CHASE HACK BY COIN-OP" if text room allows; (3) PLAYER FORMATION help "GAREGGA SHIPS ONLY"; (4) the
+  guests' secret formations selectable in PLAYER (skip if none); (5) TRAINING INFINITE LIVES above INFINITE BOMBS;
+  (6) DEBUG MENU INVINCIBILITY below INFINITE BOMBS (score invalid).
+- Test 17 (core/fe.c): (1) the demo-START jump (goto_title from the attract branch) queues the SOUND page's STOP
+  (music_cmd 21 00, 20 E0): harness work/t17/v g (START in the gameplay demo: level 0 ~200 frames later) vs test 16's
+  build (OKI music on for good). (2) FE_V_TITLE keeps the arcade title's text lines 3-5 (TITLE_COPY_LO/HI: (C) RAIZING,
+  (C) 8ING logo tiles pal 0x37, "CO.,LTD." "1998"; dump op "text" in pc/harness.c, o_t), the rest cleared (FREE PLAY);
+  "CHASE HACK BY COIN-OP" on line 1 in place of ARRANGED BY / COIN-OP GAME STUDIO (c_sheet.png). (3) PLAYER FORMATION
+  help "GAREGGA SHIPS ONLY". (4) The guests' secret formations were already there since test 15 (REPORT.md 3, +0x22
+  0x0A-0x12 from the hidden counters): SPECIAL 1-5 renamed SECRET 1-5. (5) TRAINING INFINITE LIVES (TR_INFL, packed
+  bit 29, db_frame's lives logic split out as inf_lives): harness tm 14 deaths then the stage clear, tn (off) GAME
+  OVER after 3. (6) DEBUG MENU INVINCIBILITY (db_inv, h_hit in a credit outside a playback; cheat like INFINITE LIVES:
+  red, no replay, not kept, also on LOAD STATE): harness i, no death in 30000 frames. Harness pc/harness.c BR_LEVEL.
+- Test 17 STAGED 2026-11-02 deploy/test17x (xex md5 bc8ffeb0; test 16's manual.bin/PDFs + batrider.zip) = v0.17,
+  release/batrider360_v0.17.zip. Manual not updated for tests 15-17. Awaiting SUCCESS/FAILURE.
+- Test 17 SUCCESS 2026-11-02 = current .xex (user's batrider360.log, v0.17). User todo -> test 18: title menu PLAY
+  help "START A RUN", TRAINING and OPTIONS helps unfinished (cut: the plain title menu wraps 18 letters x 2 lines at
+  2x), SHOT / OPTION POWER must drop normally on a death, SHOT POWER 1 started at 4, TEAM into the PLAYER page at the
+  top + PLAYER renamed PLAYER EDIT, OPTION POWER help's "(3 = THE GAME'S TRAINING)" line removed.
+- Test 18 (core/fe.c): title helps rewritten to 18-letter lines. New hook h_power at 0xD42 (move.b #3,(0x110,a6), the
+  training course's forced shot at every rider start, 0xD36-0xD54): the run's first start writes SHOT POWER there then
+  h_opts' OPTION POWER; later starts jump to 0xD56 (as a course < 6), so the game's own reset (shot 0, option level 0)
+  and the dropped items rule. Cause of "shot 1 -> 4": tr_frame wrote at the 0x8E edge a frame before the routine
+  forced 3 (harness work/t18/v u17 reproduces 03 with the user's settings: ORIGINAL, SELECT PLAYER alone, LIVES 1,
+  INFINITE LIVES; u18 stays 00). TEAM = PR_TEAM, the PLAYER EDIT page's first row (TR_TEAM gone; TRAINING 12 rows,
+  PLAYER EDIT 13). Harness work/t18/v (p/q: power after deaths, s: menus s_sheet.png, u17/u18).
+- Test 18 STAGED 2026-11-02 deploy/test18x (xex md5 7a3aa64a; test 17's manual.bin/PDFs + batrider.zip) = v0.18,
+  release/batrider360_v0.18.zip. Manual not updated for tests 15-18. Awaiting SUCCESS/FAILURE.
+- Test 18 SUCCESS 2026-11-02 = current .xex (v0.18). User todo -> test 19: MEDAL row in TRAINING, ibara360's text.
+- Test 19 STAGED 2026-11-02 deploy/test19x (xex md5 96a01463) = v0.19: TRAINING MEDAL row under START AT BOSS (100 ..
+  10000, ibara360's 19 values, LB/RB 2 steps, help "STARTING MEDAL VALUE"), written to 0x20E459 (step x 2) at the run's
+  first rider start; a death lowers it the game's way (harness work/t19/v: 600 kept until the death, then 300).
+- Test 19 SKIPPED by the user 2026-11-02 ("just one small change"; "the game is pretty much ready") = v0.19.
+- 2026-11-02 manual rewrite (user: "better grammar and consistency ... nearly incomprehensible to the average
+  reader"): manual_en.html rewritten in plain English (one name per thing: "run", on-screen names in capitals,
+  "OPTIONS > PAGE"), updated to v0.19 (PLAYER EDIT page, MEDAL, INFINITE LIVES, training pause without states, DEBUG
+  MENU cheats + their invalid scores, SECRET COMMANDS DEFAULT); new art from harness work/t19/manual (gen.py ->
+  n.txt, make_art.py): title, commands, debug, training, player_edit, training_pause; page breaks tuned (52 pages).
+  manual_ja.html re-translated from it by a helper.
+- 2026-11-02 private release v0.19 with a mame folder (user): work/mame_rom/batriderj.zip = batrider-chase
+  out/roms' four patched program ROMs only (its old nested 2021 layout folder dropped), batrider-chase
+  out/artwork/batriderj = the GADGETS for BOTH games (user: "the gadgets for arcade batrider use my improved
+  layout": gadgets.lua no longer refuses the stock program, view "GADGETS"; MAME-checked on stock and CHASE!),
+  tools/mame_release (two .bat launchers with MAME=/ROMS= to set, README_MAME.txt). mkrelease.sh allows only that zip.

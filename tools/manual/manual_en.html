@@ -28,7 +28,7 @@
 	<div class="h"><span>Getting started</span><span class="pg" data-to="start"></span></div>
 	<div class="s"><span>Controls</span><span class="pg" data-to="controls"></span></div>
 	<div class="s"><span>The title menu and PLAY</span><span class="pg" data-to="starting"></span></div>
-	<div class="h"><span>Flying a Batrider</span><span class="pg" data-to="fly"></span></div>
+	<div class="h"><span>How to play</span><span class="pg" data-to="fly"></span></div>
 	<div class="h"><span>CHASE! mode</span><span class="pg" data-to="chase"></span></div>
 	<div class="s"><span>The rules at a glance</span><span class="pg" data-to="rules"></span></div>
 	<div class="s"><span>Chain and multiplier</span><span class="pg" data-to="chain"></span></div>
@@ -38,14 +38,14 @@
 	<div class="h"><span>The original game</span><span class="pg" data-to="original"></span></div>
 	<div class="s"><span>Training</span><span class="pg" data-to="training"></span></div>
 	<div class="s"><span>Options</span><span class="pg" data-to="options"></span></div>
-	<div class="s"><span>Pausing, and the end of a credit</span><span class="pg" data-to="pause"></span></div>
+	<div class="s"><span>Pausing, and the end of a run</span><span class="pg" data-to="pause"></span></div>
 	<div class="s"><span>Valid and invalid scores</span><span class="pg" data-to="valid"></span></div>
 	<div class="h"><span>Save states</span><span class="pg" data-to="states"></span></div>
 	<div class="s"><span>Replays</span><span class="pg" data-to="replays"></span></div>
-	<div class="s"><span>The manual on the screen</span><span class="pg" data-to="manualpage"></span></div>
+	<div class="s"><span>Reading this manual on the screen</span><span class="pg" data-to="manualpage"></span></div>
 	<div class="h"><span>The gadgets</span><span class="pg" data-to="gadgets"></span></div>
-	<div class="s"><span>What the game keeps</span><span class="pg" data-to="keeps"></span></div>
-	<div class="h"><span>If something is not right</span><span class="pg" data-to="trouble"></span></div>
+	<div class="s"><span>Saved files</span><span class="pg" data-to="keeps"></span></div>
+	<div class="h"><span>Troubleshooting</span><span class="pg" data-to="trouble"></span></div>
 	<div class="s"><span>Credits</span><span class="pg" data-to="credits"></span></div>
 </div>
 </section>
@@ -54,122 +54,124 @@
 <section class="s-gs newpage">
 <div class="kicker">A.D. 2014 — N.Y. Manhattan</div>
 <h1 id="start">Getting started</h1>
-<p class="lead">Three Batriders, one credit. Put the game beside its ROM set, tell it how your display stands, and press START.</p>
-<p>ARMED POLICE BATRIDER is RAIZING’s 1998 arcade shooting game. <b style="color:var(--navy)">CHASE!</b> is an arranged mode by COIN-OP GAME STUDIO that sits beside the original game on one title screen: a chain to build, medals that fly to you, and a rank that stays within reach. This booklet is for the <b>Xbox 360 version 0.14</b>: both games, a training mode, save states and replays, and gadgets beside the game that show what the arcade board is thinking.</p>
+<p class="lead">Copy three files to your console, start the game, and press START.</p>
+<p>ARMED POLICE BATRIDER is a 1998 arcade shooting game by RAIZING. <b style="color:var(--navy)">CHASE!</b> is a new mode for it made by COIN-OP GAME STUDIO. It adds a chain to build, medals that fly to your ship, and a difficulty that never gets out of hand. This Xbox 360 version (<b>version 0.19</b>) contains both CHASE! and the original arcade game, plus a training mode, save states, replays, and information panels (the “gadgets”) beside the game screen.</p>
 
 <h2>What you need</h2>
 <ul>
-	<li>An <b>Xbox 360 console that runs homebrew .xex files</b> from a dashboard such as Aurora.</li>
-	<li>Your own <b>MAME ROM set batrider.zip</b>: the merged set, with the Japanese board (batriderj) inside it. CHASE! is made from it as the game loads.</li>
-	<li>A controller: the game is for one player, on the first one connected.</li>
+	<li>An <b>Xbox 360 that can run homebrew .xex files</b> from a dashboard such as Aurora.</li>
+	<li>The <b>MAME ROM set batrider.zip</b> (the merged set, which includes the Japanese version, batriderj). You must supply it yourself. CHASE! is built from it each time the game starts.</li>
+	<li>One controller. The game is for one player and uses the first controller connected.</li>
 </ul>
-<p>Put <span class="file">batrider360.xex</span>, <span class="file">batrider360_manual.bin</span> and <span class="file">batrider.zip</span> in one folder on a drive the console can write to — its hard drive or a USB drive — and start <span class="file">batrider360.xex</span> from the dashboard.</p>
+<p>Copy <span class="file">batrider360.xex</span>, <span class="file">batrider360_manual.bin</span> and <span class="file">batrider.zip</span> into the same folder, on the console’s hard drive or a USB drive, then start <span class="file">batrider360.xex</span> from your dashboard.</p>
 
-<h2>Power on</h2>
-<p>The console’s logo comes first, then <b>NOW LOADING</b> while the ROM set is read; the very first time, the game also prepares its menu sounds and keeps them in <span class="file">batrider360_menusnd.bin</span>. Then come the arcade board’s WARNING screen, COIN-OP GAME STUDIO’s logo and the game’s own opening; <span class="b st">START</span> goes to the title screen. (A dark red screen means the ROM set was not found: page <span class="pg" data-to="trouble"></span>.)</p>
+<h2>Starting the game</h2>
+<p>First you will see <b>NOW LOADING</b> while the ROM set is read. The first time you start the game it also creates its menu sounds and saves them as <span class="file">batrider360_menusnd.bin</span>. After that come the arcade game’s WARNING screen, the COIN-OP GAME STUDIO logo, and the game’s opening. Press <span class="b st">START</span> at any time to go straight to the title screen. If the screen stays dark red, the ROM set was not found (see page <span class="pg" data-to="trouble"></span>).</p>
 
-<h2 id="screen">Upright game, upright or sideways display</h2>
-<p>BATRIDER is an upright game: the arcade cabinet’s monitor stands on its short edge. <b>ROTATION</b> in OPTIONS’ GENERAL SCREEN (page <span class="pg" data-to="genscreen"></span>) tells the game how your display stands:</p>
+<h2 id="screen">Vertical game, horizontal or vertical display</h2>
+<p>BATRIDER is a vertical game: the screen is taller than it is wide, as on the original arcade cabinet. The <b>ROTATION</b> setting in OPTIONS &gt; GENERAL SCREEN (page <span class="pg" data-to="genscreen"></span>) tells the game how your display is set up:</p>
 <table>
-	<thead><tr><th style="width:15%">Rotation</th><th style="width:35%">Your display</th><th>The picture</th></tr></thead>
+	<thead><tr><th style="width:15%">ROTATION</th><th style="width:35%">Your display</th><th>What you see</th></tr></thead>
 	<tbody>
-	<tr><td class="k">OFF</td><td>Standing the usual way</td><td>Upright in the middle, the <b>gadgets</b> on both sides (page <span class="pg" data-to="gadgets"></span>). A new install starts here.</td></tr>
-	<tr><td class="k">LEFT</td><td>On its side, its top edge on your <b>left</b></td><td>Turned to fill the length of the screen, the gadgets in strips at its top and bottom.</td></tr>
-	<tr><td class="k">RIGHT</td><td>On its side, its top edge on your <b>right</b></td><td>The same, turned the other way.</td></tr>
+	<tr><td class="k">OFF</td><td>Normal (horizontal)</td><td>The game in the middle of the screen, with the <b>gadgets</b> on both sides (page <span class="pg" data-to="gadgets"></span>). This is the default.</td></tr>
+	<tr><td class="k">LEFT</td><td>Turned on its side, with its top edge on your <b>left</b></td><td>The game fills the whole screen, with the gadgets in strips above and below it.</td></tr>
+	<tr><td class="k">RIGHT</td><td>Turned on its side, with its top edge on your <b>right</b></td><td>The same, turned the other way.</td></tr>
 	</tbody>
 </table>
 <div class="row" style="justify-content:center">
-	<figure style="flex:0 0 47%"><div class="slot" data-file="work/gadgets_yoko_chase.png" data-ar="16/9" data-label="ROTATION OFF, CHASE!"></div><figcaption><b>ROTATION OFF:</b> the game upright on an upright television, the gadgets beside it.</figcaption></figure>
+	<figure style="flex:0 0 47%"><div class="slot" data-file="work/gadgets_yoko_chase.png" data-ar="16/9" data-label="ROTATION OFF, CHASE!"></div><figcaption><b>ROTATION OFF:</b> a normal TV, with the gadgets beside the game.</figcaption></figure>
 	<figure style="flex:0 0 15%"><div class="slot" data-file="work/gadgets_tate_chase.png" data-ar="9/16" data-label="ROTATION LEFT / RIGHT"></div><figcaption><b>LEFT / RIGHT</b>, shown upright.</figcaption></figure>
 </div>
-<p>Either way the game and its menus read upright, as the pictures in this booklet are shown.</p>
-<div class="caution"><span class="lbl">CAUTION</span><p>Not every television is built to stand on its side. Use a display or a mount made to be turned, never block its vents, and do not turn a set while it is switched on.</p></div>
+<p>With either setting, the game and its menus appear the right way up, as in the pictures in this manual.</p>
+<div class="caution"><span class="lbl">CAUTION</span><p>Not every TV is designed to be stood on its side. Only turn a display or mount that is made for it, never cover its vents, and never turn it while it is switched on.</p></div>
 
 <h1 id="controls" class="newpage first">Controls</h1>
 <table>
-	<thead><tr><th style="width:30%">Control</th><th>What it does</th></tr></thead>
+	<thead><tr><th style="width:30%">Button</th><th>What it does</th></tr></thead>
 	<tbody>
-	<tr><td>Left stick or <span class="b dp">✚</span> d-pad</td><td>Move the ship; move through menus (held, it repeats)</td></tr>
-	<tr><td><span class="b a">A</span></td><td><b>SHOT</b> — hold to fire. In menus: choose, or the next value</td></tr>
-	<tr><td><span class="b bb">B</span></td><td><b>BOMB</b>. In menus: back</td></tr>
-	<tr><td><span class="b x">X</span></td><td><b>SPECIAL</b>: options’ formation (Battle Garegga guests); in CHASE!, the Chase Break. On the state and replay pages: delete</td></tr>
-	<tr><td>RT</td><td><b>AUTO SHOT</b> — fires by itself while held, 30 times a second</td></tr>
-	<tr><td><span class="b bk">BACK</span></td><td>While a stage is running: <b>the pause menu</b>. In menus: back. In a replay: its pause</td></tr>
-	<tr><td><span class="b st">START</span></td><td>Boot screens: to the title. Title pages: choose; PLAY and TRAINING: play. In a stage: the arcade’s own START, for its secret commands (page <span class="pg" data-to="commands"></span>). OPTIONS pages: close them all</td></tr>
-	<tr><td><span class="b lb">LB</span> / <span class="b rb">RB</span></td><td>In a replay: slower / faster. On the TRAINING page’s RANK: 10% at a time. In the manual: a page back / on</td></tr>
+	<tr><td>Left stick or <span class="b dp">✚</span> d-pad</td><td>Move your ship. In menus: move the cursor (hold to repeat).</td></tr>
+	<tr><td><span class="b a">A</span></td><td><b>SHOT</b>: hold to fire. In menus: select, or change to the next value.</td></tr>
+	<tr><td><span class="b bb">B</span></td><td><b>BOMB</b>. In menus: go back.</td></tr>
+	<tr><td><span class="b x">X</span></td><td><b>SPECIAL</b>: changes the formation of your options (Battle Garegga guest riders only). In CHASE! it also sets off the Chase Break. On the save state and replay pages: delete.</td></tr>
+	<tr><td>RT</td><td><b>AUTO SHOT</b>: fires automatically while held.</td></tr>
+	<tr><td><span class="b bk">BACK</span></td><td>During a stage: open the <b>pause menu</b>. In menus: go back. During a replay: pause the replay.</td></tr>
+	<tr><td><span class="b st">START</span></td><td>On the opening screens: skip to the title. On the PLAY and TRAINING pages: start playing. During play: the arcade game’s own START button, used for its secret commands (page <span class="pg" data-to="commands"></span>). In OPTIONS: close all pages at once.</td></tr>
+	<tr><td><span class="b lb">LB</span> / <span class="b rb">RB</span></td><td>During a replay: slower / faster. On some menu rows: change the value in bigger steps. In the on-screen manual: previous / next page.</td></tr>
 	</tbody>
 </table>
-<p><b>CONTROLS</b> in OPTIONS gives each of A, B, X, Y, LB, RB, LT and RT its job in the game: SHOT, BOMB, SPECIAL, AUTO SHOT or nothing (page <span class="pg" data-to="ctlpage"></span>). Above is how a new install starts. The menus always answer to A, B, X, START and BACK, whatever CONTROLS says.</p>
-<div class="note"><span class="lbl">NOTE</span><p><b>EXIT</b>, the title menu’s last row, goes back to the dashboard. What the game keeps is written as it changes, so nothing is lost.</p></div>
+<p>You can change which button does what in OPTIONS &gt; <b>CONTROLS</b> (page <span class="pg" data-to="ctlpage"></span>). The table above shows the default layout. The menus always use A, B, X, START and BACK, whatever you set in CONTROLS.</p>
 </section>
 
 <section class="s-gs newpage">
 <h1 id="starting" class="first">The title menu and PLAY</h1>
 <figure class="fl w40"><img class="shot" src="art/title.png" alt=""><figcaption>The title menu.</figcaption></figure>
-<p>The title screen carries a menu of six rows. Up and down choose; <span class="b a">A</span> or <span class="b st">START</span> opens the row. The line under the menu says what it is for.</p>
+<p>The title screen has a menu with six rows. Press up and down to choose a row, and <span class="b a">A</span> to open it. The line under the menu explains the selected row.</p>
 <table class="plain">
 	<tbody>
-	<tr><td style="width:40%">PLAY</td><td>A credit of the game (below)</td></tr>
-	<tr><td>TRAINING</td><td>A stage or a boss, set up as you like (page <span class="pg" data-to="training"></span>)</td></tr>
-	<tr><td>LOAD STATE</td><td>Back to a moment you kept (page <span class="pg" data-to="states"></span>)</td></tr>
-	<tr><td>REPLAY DATA</td><td>Your replays (page <span class="pg" data-to="replays"></span>)</td></tr>
-	<tr><td>OPTIONS</td><td>Screen, gadgets, controls, sound, manual (page <span class="pg" data-to="options"></span>)</td></tr>
-	<tr><td>EXIT</td><td>Back to the dashboard</td></tr>
+	<tr><td style="width:40%">PLAY</td><td>Start a run (see below).</td></tr>
+	<tr><td>TRAINING</td><td>Practise a stage or a boss with your own settings (page <span class="pg" data-to="training"></span>).</td></tr>
+	<tr><td>LOAD STATE</td><td>Continue from a save state (page <span class="pg" data-to="states"></span>).</td></tr>
+	<tr><td>REPLAY DATA</td><td>Watch your saved replays (page <span class="pg" data-to="replays"></span>).</td></tr>
+	<tr><td>OPTIONS</td><td>Screen, gadgets, controls, sound and more (page <span class="pg" data-to="options"></span>).</td></tr>
+	<tr><td>EXIT</td><td>Quit to the dashboard. Settings and scores are already saved, so nothing is lost.</td></tr>
 	</tbody>
 </table>
-<p>There are no coins: both games are in free play. Left alone on the title menu for half a minute, the title gives way to the game’s demonstration; START brings it back.</p>
+<p>There are no coins to insert: both games are set to free play. If you leave the title menu alone for about 30 seconds, the game’s demo starts. Press START to return to the title.</p>
 <div class="clear"></div>
-<h2>Play</h2>
+<h2>PLAY</h2>
 <figure class="fr w48"><img class="shot" src="art/play.png" alt=""><figcaption>The PLAY page.</figcaption></figure>
-<p>PLAY opens a page of four rows. Left and right (or <span class="b a">A</span>) change a value; <span class="b st">START</span> plays from any row; <span class="b bb">B</span> or <span class="b bk">BACK</span> goes back to the title menu.</p>
+<p>PLAY opens a page with four rows. Press left and right (or <span class="b a">A</span>) to change a value. Press <span class="b st">START</span> on any row to start playing, or <span class="b bb">B</span> / <span class="b bk">BACK</span> to return to the title menu.</p>
 <table class="plain">
 	<tbody>
-	<tr><td style="width:40%">START RUN</td><td>A credit of the MODE below</td></tr>
-	<tr><td>MODE</td><td>CHASE! or ORIGINAL (below)</td></tr>
-	<tr><td>CONTINUES</td><td>3, 5 or 7 continues after a GAME OVER, in both games</td></tr>
-	<tr><td>DIP SWITCHES</td><td>The original game’s settings (page <span class="pg" data-to="settings"></span>). Grey in CHASE!; CHANGED in red when they are not the factory’s</td></tr>
+	<tr><td style="width:40%">START RUN</td><td>Start a run of the selected MODE.</td></tr>
+	<tr><td>MODE</td><td>CHASE! or ORIGINAL (see below).</td></tr>
+	<tr><td>CONTINUES</td><td>How many continues you get after a GAME OVER: 3, 5 or 7. This applies to both games.</td></tr>
+	<tr><td>DIP SWITCHES</td><td>Settings for the original game (page <span class="pg" data-to="settings"></span>). Greyed out in CHASE!. Shows CHANGED in red when they differ from the defaults.</td></tr>
 	</tbody>
 </table>
 <div class="clear"></div>
-<h2 id="mode">MODE: CHASE! or the original game</h2>
+<h2 id="mode">MODE: CHASE! or ORIGINAL</h2>
 <table>
-	<thead><tr><th style="width:20%">Mode</th><th>START RUN plays</th></tr></thead>
+	<thead><tr><th style="width:20%">MODE</th><th>START RUN plays</th></tr></thead>
 	<tbody>
-	<tr><td class="k">CHASE!</td><td>A credit of the arranged mode: the chain, the magnet, the Chase Break, and a rank that runs between 50% and 75%. This is the MODE a new install starts in.</td></tr>
-	<tr><td class="k">ORIGINAL</td><td>A credit of the original game, exactly as the arcade board plays it (page <span class="pg" data-to="original"></span>).</td></tr>
+	<tr><td class="k">CHASE!</td><td>The CHASE! mode: chain, medal magnet, Chase Break, and a difficulty (rank) that stays between 50% and 75%. This is the default MODE.</td></tr>
+	<tr><td class="k">ORIGINAL</td><td>The original arcade game, exactly as it plays in the arcade (page <span class="pg" data-to="original"></span>).</td></tr>
 	</tbody>
 </table>
-<p>Each MODE keeps its <b>own rankings</b>, so CHASE! scores and original-game scores never share a table. A change is made at once: the board starts the other game behind the menu, and the menus’ headings name it (BATRIDER CHASE! or BATRIDER). TRAINING has the same MODE row.</p>
+<p>Each MODE has its <b>own high score tables</b>, so CHASE! scores and original scores are never mixed. When you change MODE, the other game starts up behind the menu straight away, and the menu headings change to show which game is selected (BATRIDER CHASE! or BATRIDER). The TRAINING page has the same MODE setting.</p>
 
-<h2>Three choices before take-off</h2>
-<p>A credit begins with three screens. Each has a timer and takes the highlighted choice when it runs out.</p>
+<h2>Before take-off: three choices</h2>
+<p>Every run starts with three selection screens. Each has a timer; when it runs out, the highlighted choice is taken.</p>
 <div class="row c r3 sm">
 	<figure><img class="shot" src="art/course_select.png" alt=""><figcaption>SELECT COURSE</figcaption></figure>
 	<figure><img class="shot" src="art/type_select.png" alt=""><figcaption>SELECT TYPE</figcaption></figure>
 	<figure><img class="shot" src="art/team_select.png" alt=""><figcaption>SELECT TEAM</figcaption></figure>
 </div>
-<p><b>SELECT COURSE</b> describes the course under the cursor at the foot of the screen.</p>
+<p><b>SELECT COURSE</b> chooses the course. The bottom of the screen describes the selected one.</p>
 <table>
-	<thead><tr><th style="width:18%">Course</th><th style="width:12%">Stages</th><th>What it is</th></tr></thead>
+	<thead><tr><th style="width:18%">Course</th><th style="width:12%">Stages</th><th>Description</th></tr></thead>
 	<tbody>
-	<tr><td class="k">TRAINING</td><td>3</td><td>AUTO BOMBER: when you are hit with a bomb in stock, it goes off by itself. In the original game only: CHASE! has no auto bomb</td></tr>
-	<tr><td class="k">NORMAL</td><td>5</td><td>NORMAL BOMBER: the intermediate course</td></tr>
-	<tr><td class="k">ADVANCE</td><td>7</td><td>NORMAL BOMBER: the advanced course</td></tr>
-	<tr><td class="k">SPECIAL</td><td>bosses</td><td>ONLY BOSS, FULL POWER UP: the bosses one after another, your ship at full power from the start</td></tr>
+	<tr><td class="k">TRAINING</td><td>3</td><td>AUTO BOMBER: if you are hit while you have a bomb, it goes off automatically. Original game only; CHASE! has no auto bomb.</td></tr>
+	<tr><td class="k">NORMAL</td><td>5</td><td>NORMAL BOMBER: the intermediate course.</td></tr>
+	<tr><td class="k">ADVANCE</td><td>7</td><td>NORMAL BOMBER: the advanced course.</td></tr>
+	<tr><td class="k">SPECIAL</td><td>bosses</td><td>ONLY BOSS, FULL POWER UP: the bosses one after another, with your ship at full power from the start.</td></tr>
 	</tbody>
 </table>
-<p>(The arcade’s TRAINING course is a course of the game. The title menu’s TRAINING is this version’s practice mode: page <span class="pg" data-to="training"></span>.)</p>
-<figure class="fr w40"><img class="shot" src="art/team_edit.jpg" alt=""><figcaption><b>TEAM EDIT:</b> a guest rider</figcaption></figure>
-<p><b>SELECT TYPE</b> decides who flies.</p>
-<h3>SELECT TEAM</h3><p>One of the three ready-made teams below.</p>
-<h3>TEAM EDIT</h3><p>Your own team: pick any three riders, one after another. The screen shows each rider’s machine, weapon and bomber.</p>
-<h3>RANDOM EDIT</h3><p>Three riders left to chance.</p>
-<h3>SELECT PLAYER</h3><p>One rider of your choice, who flies all three of the credit’s turns.</p>
+<p>The TRAINING <i>course</i> is part of the arcade game; the TRAINING <i>mode</i> on the title menu is a separate practice mode (page <span class="pg" data-to="training"></span>).</p>
+<p><b>SELECT TYPE</b> chooses how you pick your riders:</p>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:40%">SELECT TEAM</td><td>One of the three ready-made teams below.</td></tr>
+	<tr><td>TEAM EDIT</td><td>Pick any three riders, one at a time.</td></tr>
+	<tr><td>RANDOM EDIT</td><td>Three riders chosen at random.</td></tr>
+	<tr><td>SELECT PLAYER</td><td>One rider who flies all of the run’s lives.</td></tr>
+	</tbody>
+</table>
 <h2>The riders</h2>
-<p>TEAM EDIT and SELECT PLAYER show every rider on a roster of two rows: the nine Batriders along the top, and nine <b>guest riders</b> from RAIZING’s earlier shooting games along the second. Left and right move along a row; up and down change rows.</p>
+<p>TEAM EDIT and SELECT PLAYER show all the riders in two rows: the nine Batriders on top, and nine <b>guest riders</b> from RAIZING’s earlier shooting games below. Press left and right to move along a row, and up and down to switch rows.</p>
 <div class="clear"></div>
-<h2>The teams</h2>
-<p>A team is three riders. They fly one at a time, in order: when one is shot down the next takes over, and the credit ends with the third. (In the original game, the DIP switches can make it one to four: page <span class="pg" data-to="settings"></span>.)</p>
+<h2>Teams</h2>
+<p>A team has three riders, and each rider is one life. They fly one at a time: when one is shot down, the next one takes over, and the game is over when the last one goes down. (In the original game the DIP switches can change the number of lives from one to four: page <span class="pg" data-to="settings"></span>.)</p>
 <div class="row c r3 sm">
 	<figure><img class="shot" src="art/team_police.jpg" alt=""><figcaption><b>POLICE TEAM</b><br>D.D, Shorty, Jyuji</figcaption></figure>
 	<figure><img class="shot" src="art/team_psychic.jpg" alt=""><figcaption><b>PSYCHIC TEAM</b><br>Maria, Golden, Strawman</figcaption></figure>
@@ -179,48 +181,48 @@
 
 <!-- ============================================================ HOW TO PLAY -->
 <section class="s-play newpage">
-<h1 id="fly" class="first">Flying a Batrider</h1>
-<p class="lead">The stage scrolls up the screen. Shoot what comes, pick up what it leaves, and reach the boss with riders to spare.</p>
+<h1 id="fly" class="first">How to play</h1>
+<p class="lead">The stage scrolls up the screen. Shoot the enemies, collect what they leave behind, and reach the boss with lives to spare.</p>
 <table>
-	<thead><tr><th style="width:20%"></th><th style="width:12%">Default</th><th></th></tr></thead>
+	<thead><tr><th style="width:20%">Action</th><th style="width:12%">Default</th><th></th></tr></thead>
 	<tbody>
-	<tr><td class="k">SHOT</td><td><span class="b a">A</span></td><td>Hold to fire. While the button is up, the shot charge builds.</td></tr>
-	<tr><td class="k">AUTO SHOT</td><td>RT</td><td>Hold, and the shot fires by itself at CONTROLS’ AUTOFIRE rate.</td></tr>
-	<tr><td class="k">BOMB</td><td><span class="b bb">B</span></td><td>Your rider’s bomb. Bombs are kept in stock along the bottom of the screen.</td></tr>
-	<tr><td class="k">SPECIAL</td><td><span class="b x">X</span></td><td>For the four Battle Garegga guests, steps the formation of the options flying with you (V, BACK, FRONT, CIRCLE, CONTROL). In CHASE! it is also the Chase Break.</td></tr>
+	<tr><td class="k">SHOT</td><td><span class="b a">A</span></td><td>Hold to fire. While you are not firing, your shot charges up.</td></tr>
+	<tr><td class="k">AUTO SHOT</td><td>RT</td><td>Fires automatically while held, at the AUTOFIRE rate set in CONTROLS.</td></tr>
+	<tr><td class="k">BOMB</td><td><span class="b bb">B</span></td><td>Uses one of your bombs. Your bomb stock is shown at the bottom of the screen.</td></tr>
+	<tr><td class="k">SPECIAL</td><td><span class="b x">X</span></td><td>For the four Battle Garegga guest riders only: changes the formation of your options (V, BACK, FRONT, CIRCLE, CONTROL). In CHASE! it also sets off the Chase Break.</td></tr>
 	</tbody>
 </table>
 <figure class="fr w36"><img class="shot" src="art/fly.png" alt=""></figure>
-<p>Your ship is the one at the bottom. Its riders take turns: the team’s icons at the top left show who is flying and who is waiting.</p>
-<p>Small enemies fall to a few shots. Larger ones, and the ground targets among the buildings, take more — and leave more behind.</p>
+<p>Your ship is at the bottom of the screen. The icons at the top left show your team: the rider flying now and the riders still waiting.</p>
+<p>Small enemies go down in a few shots. Large enemies and ground targets take more hits, but leave more items behind.</p>
 <div class="clear"></div>
-<h2>What enemies leave behind</h2>
-<p>Items are handed out in a fixed order that repeats: a medal, a power-up, a medal, a power-up, an option — five times round, the last of them a large power-up.</p>
+<h2>Items</h2>
+<p>Enemies drop items in a fixed, repeating order: medal, power-up, medal, power-up, option. This pattern repeats five times, and the last power-up in the cycle is a large one.</p>
 <table>
 	<thead><tr><th style="width:30%">Item</th><th></th></tr></thead>
 	<tbody>
-	<tr><td class="k">POWER / BIG P</td><td>Shot power-ups, small and large</td></tr>
-	<tr><td class="k">OPTION</td><td>A gun pod that flies with your ship</td></tr>
-	<tr><td class="k">BOMB / BIG B</td><td>Bomb stock, small and large</td></tr>
-	<tr><td class="k">MEDAL</td><td>Points — see below</td></tr>
-	<tr><td class="k">1UP</td><td>Brings back a rider who has been shot down</td></tr>
+	<tr><td class="k">POWER / BIG P</td><td>Increases your shot power (small and large).</td></tr>
+	<tr><td class="k">OPTION</td><td>A gun pod that flies alongside your ship.</td></tr>
+	<tr><td class="k">BOMB / BIG B</td><td>Adds to your bomb stock (small and large).</td></tr>
+	<tr><td class="k">MEDAL</td><td>Points (see below).</td></tr>
+	<tr><td class="k">1UP</td><td>Brings back a rider who has been shot down.</td></tr>
 	</tbody>
 </table>
 <h2>Medals</h2>
-<p>Each medal you collect makes the next one worth more, up a ladder of 19 steps:</p>
+<p>Every medal you collect makes the next one worth more. There are 19 steps:</p>
 <p class="small">100 · 200 · 300 · 400 · 500 · 600 · 700 · 800 · 900 · 1,000 · 2,000 · 3,000 · 4,000 · 5,000 · 6,000 · 7,000 · 8,000 · 9,000 · 10,000</p>
-<p>Let one medal fall off the bottom of the screen and the ladder starts again from 100.</p>
+<p>If a medal falls off the bottom of the screen, the value goes back to 100.</p>
 <h2>Rank</h2>
-<p>The game watches how you are doing. Shooting, picking up items and staying alive push its <b>rank</b> up, and a higher rank is a harder game; losing a rider brings it down again. The original game lets rank run free. CHASE! starts it at 50% and never lets it past 75%.</p>
+<p>The game keeps track of how well you are doing with a hidden difficulty level called <b>rank</b>. Shooting, collecting items and staying alive raise the rank, and a higher rank makes the game harder. Losing a life lowers it again. In the original game the rank can go as high as it likes. In CHASE! it starts at 50% and never goes above 75%.</p>
 <h2>Bosses</h2>
-<p>Every stage ends with a boss, and every boss has a time limit. CHASE! counts it down in seconds at the top of the screen. When the time is up, the fight is over whether the boss has fallen or not.</p>
+<p>Every stage ends with a boss, and every boss has a time limit. In CHASE! the remaining time is shown in seconds at the top of the screen. When time runs out, the fight ends whether you have destroyed the boss or not.</p>
 </section>
 
 <!-- ============================================================ CHASE! MODE -->
 <section class="s-chase newpage">
 <div class="kicker">CHASE! mode</div>
 <h1 id="chase">The CHASE! screen</h1>
-<p class="lead">A CHASE! credit redraws the top of the screen and adds a rail down its left edge. This is the whole game in two glances.</p>
+<p class="lead">In CHASE! the top of the screen is redrawn and a status bar is added down the left edge. Together they show everything you need.</p>
 <div class="callfig" style="margin:6mm 0 6mm">
 	<img class="shot" src="art/hud_top.png" alt="" style="display:block;width:100%">
 	<div class="lead-v" style="left:24%;top:-3mm;height:3mm"></div><div class="dot" style="left:24%;top:-3.2mm">1</div>
@@ -235,14 +237,14 @@
 </div>
 <ol class="calls cols2">
 	<li><span class="dot">1</span><span><b>Your score</b></span></li>
-	<li><span class="dot">2</span><span><b>The top score</b>, in amber</span></li>
-	<li><span class="dot">3</span><span><b>Boss time</b> left, in seconds</span></li>
-	<li><span class="dot">4</span><span><b>Your team.</b> A rider who is down is drawn dark</span></li>
-	<li><span class="dot">5</span><span><b>Lives</b>: riders still flying plus extends in the bank. Red at one</span></li>
-	<li><span class="dot">6</span><span><b>The stage line.</b> EXTEND, MAX LIVES and CASH IN (a Chase Break) flash here</span></li>
-	<li><span class="dot">7</span><span><b>The boss’s hit points.</b> Amber; red in its last quarter</span></li>
-	<li><span class="dot">8</span><span><b>The boss’s name</b></span></li>
-	<li><span class="dot">9</span><span><b>The CHASE tag</b>: this credit plays by CHASE!’s rules</span></li>
+	<li><span class="dot">2</span><span><b>High score</b> (in amber)</span></li>
+	<li><span class="dot">3</span><span><b>Boss time</b> remaining, in seconds</span></li>
+	<li><span class="dot">4</span><span><b>Your team.</b> Riders who have been shot down are shown dark</span></li>
+	<li><span class="dot">5</span><span><b>Lives</b>: riders still flying plus any banked extends. Red when you have one left</span></li>
+	<li><span class="dot">6</span><span><b>Message line.</b> Shows EXTEND, MAX LIVES and CASH IN (a Chase Break)</span></li>
+	<li><span class="dot">7</span><span><b>Boss health bar.</b> Amber; red in the last quarter</span></li>
+	<li><span class="dot">8</span><span><b>Boss name</b></span></li>
+	<li><span class="dot">9</span><span><b>CHASE tag</b>: shows that CHASE! rules are in use</span></li>
 </ol>
 <div style="display:flex;gap:4mm;margin-top:4mm;break-inside:avoid">
 	<div class="callfig" style="flex:0 0 14%;margin-left:4mm">
@@ -254,26 +256,26 @@
 		<div class="lead-h" style="top:70%;left:10%;width:calc(90% + 3mm)"></div><div class="dot" style="left:calc(100% + 3.4mm);top:70%">14</div>
 	</div>
 	<ol class="calls" style="flex:1;margin-left:4mm">
-		<li><span class="dot">10</span><span><b>The multiplier</b>, x1 to x8. Amber at x8</span></li>
-		<li><span class="dot">11</span><span><b>C</b>: a Chase Break is ready (x4 or better)</span></li>
-		<li><span class="dot">12</span><span><b>The chain</b>: kills since the last break</span></li>
-		<li><span class="dot">13</span><span><b>Forward mark.</b> An amber ^ while you fly in the upper half of the screen, a blue v in the lower half</span></li>
-		<li><span class="dot">14</span><span><b>The chain timer</b>, draining down the screen. Blue; <b>red</b> when it is nearly out; <b>white</b> while a Chase Break’s cooldown runs</span></li>
+		<li><span class="dot">10</span><span><b>Multiplier</b>, from x1 to x8. Amber at x8</span></li>
+		<li><span class="dot">11</span><span><b>C</b>: a Chase Break is ready (at x4 or higher)</span></li>
+		<li><span class="dot">12</span><span><b>Chain</b>: the number of kills since the chain started</span></li>
+		<li><span class="dot">13</span><span><b>Position marker.</b> An amber ^ while you are in the upper half of the screen, a blue v in the lower half</span></li>
+		<li><span class="dot">14</span><span><b>Chain timer</b>, emptying downwards. Blue normally, <b>red</b> when almost empty, <b>white</b> while recovering after a Chase Break</span></li>
 	</ol>
 </div>
 
 <h2 id="hitbox" class="newpage" style="margin-top:6mm">The hitbox</h2>
 <figure class="fr w40"><img class="shot" src="art/hitbox.png" alt=""></figure>
-<p>The white disc in a red ring is the only part of your ship a bullet can hurt. Everything else of the ship may overlap a bullet freely. It is drawn at the ship’s own level, so whatever the game draws above the ship covers it too.</p>
-<p>It is shown in every credit of both games. <b>HITBOX</b> on the TRAINING page and in OPTIONS’ DEBUG MENU sets what is drawn: <b>OFF</b>, <b>PLAYER</b> (your ship’s disc, as a new install has it) or <b>ALL</b>.</p>
+<p>The white dot inside a red ring is your ship’s <b>hitbox</b>: the only part of the ship that can be hit. Bullets can pass over the rest of the ship without harming you. The hitbox is drawn at the same layer as your ship, so anything drawn on top of your ship also covers it.</p>
+<p>The <b>HITBOX</b> setting (on the TRAINING page and in OPTIONS &gt; DEBUG MENU) controls what is shown in both games: <b>OFF</b>, <b>PLAYER</b> (your ship’s hitbox; the default) or <b>ALL</b>.</p>
 <div class="clear"></div>
 <figure class="fl w40"><img class="shot" src="art/hitbox_all.png" alt=""><figcaption>HITBOX ALL.</figcaption></figure>
-<p><b>ALL</b> adds the boxes the arcade board itself tests, as it tests them:</p>
+<p><b>ALL</b> also shows every collision box the game checks:</p>
 <ul>
-	<li><b style="color:#c9102e">red</b>: enemies that hurt you when you touch them;</li>
+	<li><b style="color:#c9102e">red</b>: enemies that hurt you if you touch them;</li>
 	<li><b style="color:#1f6fd0">blue</b>: targets that can only be shot, such as ground targets;</li>
 	<li><b style="color:#b0179a">magenta</b>: enemy bullets;</li>
-	<li>and your ship’s white disc, as with PLAYER.</li>
+	<li>plus your ship’s hitbox, as with PLAYER.</li>
 </ul>
 <div class="clear"></div>
 </section>
@@ -281,64 +283,64 @@
 <section class="s-chase newpage">
 <div class="kicker">CHASE! mode</div>
 <h1 id="rules">The CHASE! rules</h1>
-<p class="lead">Everything CHASE! changes, on one page. The pages after it take the parts one at a time.</p>
+<p class="lead">A summary of everything CHASE! changes. The following pages explain each part in detail.</p>
 <div class="grid2">
-	<div><h3>Rank</h3><p>Starts at 50% and climbs to 75% at most. Losing a rider lowers it, never below 50%. A high multiplier makes it climb faster.</p></div>
-	<div><h3>Chain</h3><p>Every kill adds one. Sixteen kills raise the multiplier a step, to x8. Every kill pays its value times the multiplier.</p></div>
-	<div><h3>Timer</h3><p>1.5 seconds, refilled by every kill — in full while you fly in the upper half of the screen, to one second in the lower half.</p></div>
-	<div><h3>Timer out</h3><p>Above x1: two multiplier steps lost. At x1: the chain breaks.</p></div>
-	<div><h3>Shot down</h3><p>The multiplier and the medal ladder are halved, and the timer waits three seconds.</p></div>
-	<div><h3>Bomb</h3><p>Freezes the timer while it goes off, and for a second after.</p></div>
-	<div><h3>Medals</h3><p>Pulled to your ship when you are near them — from anywhere while SHOT is held. Dropping one from the tenth step or higher breaks the chain.</p></div>
-	<div><h3>Chase Break</h3><p>SPECIAL at x4 or better: every bullet and small enemy becomes a medal; the multiplier goes back to x1 and rests five seconds.</p></div>
-	<div><h3>Extends</h3><p>Every 1,000,000 points a downed rider returns. Five lives at most.</p></div>
-	<div><h3>Enemy aim</h3><p>Shots aimed at you are loosened when you fly close to the shooter.</p></div>
+	<div><h3>Rank</h3><p>Starts at 50% and goes up to 75% at most. Losing a life lowers it, but never below 50%. A high multiplier makes it rise faster.</p></div>
+	<div><h3>Chain</h3><p>Every kill adds 1 to the chain. Every 16 kills raise the multiplier by one step, up to x8. Every kill scores its normal points times the multiplier.</p></div>
+	<div><h3>Timer</h3><p>Each kill refills the chain timer: to 1.5 seconds in the upper half of the screen, to 1 second in the lower half.</p></div>
+	<div><h3>Timer runs out</h3><p>Above x1: you lose two multiplier steps. At x1: the chain is broken.</p></div>
+	<div><h3>Losing a life</h3><p>The multiplier and the medal value are halved, and the timer pauses for three seconds.</p></div>
+	<div><h3>Bombs</h3><p>The timer pauses while a bomb goes off, and for one second after.</p></div>
+	<div><h3>Medals</h3><p>Medals near your ship are pulled in; while you hold SHOT, all medals are. Losing a medal worth 1,000 or more breaks the chain.</p></div>
+	<div><h3>Chase Break</h3><p>Press SPECIAL at x4 or higher: all bullets and small enemies turn into medals. The multiplier resets to x1 and is locked for five seconds.</p></div>
+	<div><h3>Extends</h3><p>Every 1,000,000 points brings back a lost rider. Five lives at most.</p></div>
+	<div><h3>Enemy aim</h3><p>Enemies aim less precisely when you fly close to them.</p></div>
 </div>
 <h2>Rank between 50% and 75%</h2>
-<p>A new CHASE! credit starts at rank 50%. From there the game raises it as it always does — a little every frame, more for shooting, items and extends — and CHASE! adds a push of its own for every multiplier step you hold above x1. At 75% it stops: no moment of a CHASE! credit is harder than that.</p>
-<p>Losing a rider eases the rank back toward 50% and never below it. A continue puts it back to 50% exactly.</p>
-<h2>The settings CHASE! plays on</h2>
-<p>CHASE! always uses the board’s HARD difficulty with three riders, and replaces the original game’s bonus rider with its own extends. The DIP switches do not change it, and the TRAINING course’s automatic bomb is off. It is a one-player game.</p>
+<p>A CHASE! run starts at rank 50%. The rank then rises as it normally does (a little every moment, and more when you shoot, collect items or get an extend), and CHASE! adds an extra push for every multiplier step above x1. It never goes above 75%, so CHASE! never gets harder than that.</p>
+<p>Losing a life lowers the rank towards 50%, but never below it. Continuing resets it to exactly 50%.</p>
+<h2>Fixed settings</h2>
+<p>CHASE! always plays on HARD difficulty with three lives, and uses its own extend system instead of the original game’s bonus life. The DIP switches have no effect on it, and the TRAINING course’s auto bomb is turned off. CHASE! is for one player only.</p>
 
 <div class="kicker" style="margin-top:7mm">CHASE! mode</div>
 <h1 id="chain">Chain and multiplier</h1>
-<p class="lead">Kill, and keep killing. The chain is a count of kills; the multiplier is what it is worth.</p>
-<div class="row r3">
-	<figure><img class="shot" src="art/chain_x2.jpg" alt=""><figcaption><b>x2</b> — 16 kills</figcaption></figure>
-	<figure><img class="shot" src="art/chain_x4.jpg" alt=""><figcaption><b>x4</b> — 48 kills</figcaption></figure>
-	<figure><img class="shot" src="art/chain_x8.jpg" alt=""><figcaption><b>x8</b> — 112 kills and beyond</figcaption></figure>
+<p class="lead">Keep destroying enemies without a break. The chain counts your kills, and the multiplier decides what each kill is worth.</p>
+<div class="row r3 sm">
+	<figure><img class="shot" src="art/chain_x2.jpg" alt=""><figcaption><b>x2</b>: 16 kills</figcaption></figure>
+	<figure><img class="shot" src="art/chain_x4.jpg" alt=""><figcaption><b>x4</b>: 48 kills</figcaption></figure>
+	<figure><img class="shot" src="art/chain_x8.jpg" alt=""><figcaption><b>x8</b>: 112 kills or more</figcaption></figure>
 </div>
-<p>Every enemy you destroy adds one to the chain. Every sixteen raise the multiplier one step, from x1 up to x8, and everything you destroy pays its own value times the multiplier. The chain goes on counting past x8; it is the multiplier that stops there.</p>
+<p>Every enemy you destroy adds 1 to the chain. Every 16 kills raise the multiplier by one step, from x1 up to x8, and every kill scores its normal points times the multiplier. The chain keeps counting past x8, but the multiplier stays at x8.</p>
 <h2>The timer</h2>
-<p>A kill also refills the chain timer, the gauge on the left rail:</p>
+<p>Every kill also refills the chain timer, the gauge on the left side of the screen:</p>
 <table>
-	<thead><tr><th style="width:55%">Where you are</th><th>A kill refills the timer to</th></tr></thead>
+	<thead><tr><th style="width:55%">Your position</th><th>A kill refills the timer to</th></tr></thead>
 	<tbody>
-	<tr><td><b>FORWARD</b> — the upper half of the screen</td><td>1.5 seconds (full)</td></tr>
-	<tr><td><b>BACK</b> — the lower half</td><td>1 second</td></tr>
+	<tr><td><b>Forward</b>: upper half of the screen</td><td>1.5 seconds (full)</td></tr>
+	<tr><td><b>Back</b>: lower half of the screen</td><td>1 second</td></tr>
 	</tbody>
 </table>
-<p>The forward mark on the rail tells you which it is. Push up the screen and the chain is easier to hold; hang back and every gap between enemies is half a second shorter.</p>
-<div class="tip"><span class="lbl">TIP</span><p>Against a boss, your hits count toward the chain as well, and they hold the timer up between its waves. A boss fight is a good place to climb.</p></div>
+<p>The position marker on the left bar shows which half you are in. Flying forward makes the chain easier to keep; hanging back gives you half a second less between kills.</p>
+<div class="tip"><span class="lbl">TIP</span><p>Hits on a boss also count towards the chain and keep the timer going between its attack waves. Boss fights are a good place to build up your multiplier.</p></div>
 <h2>When the timer runs out</h2>
-<figure class="fl w28"><img class="shot" src="art/timer_out.jpg" alt=""><figcaption>After a break: x1, and the count begins again.</figcaption></figure>
-<p>Above x1 you <b>lose two multiplier steps</b>, and the timer is set to one second. If nothing dies in that second you lose two more.</p>
-<p><b>At x1 the chain breaks:</b> the count goes back to zero.</p>
-<p>From x8, with no kills at all, that is four and a half seconds from a full timer to the break.</p>
+<figure class="fl w28"><img class="shot" src="art/timer_out.jpg" alt=""><figcaption>After the chain breaks: back to x1, counting from zero.</figcaption></figure>
+<p>Above x1, you <b>lose two multiplier steps</b> and the timer is set to one second. If you don’t destroy anything in that second, you lose two more steps.</p>
+<p><b>At x1, the chain breaks</b> and the count goes back to zero.</p>
+<p>Starting from x8 with a full timer and no kills, it takes four and a half seconds for the chain to break.</p>
 <div class="clear"></div>
-<h2>What else touches the chain</h2>
+<h2>Other things that affect the chain</h2>
 <table>
 	<tbody>
-	<tr><td style="width:24%">Shot down</td><td>The multiplier is <b>halved</b> (x8 becomes x4), the medal ladder is halved with it, and the timer is frozen for three seconds while the next rider arrives.</td></tr>
-	<tr><td>A bomb</td><td>The timer is frozen for as long as the bomb is going off and for one second after. Kills during it count.</td></tr>
-	<tr><td>A medal dropped</td><td>Letting a medal fall off the screen from the tenth step of the ladder (1,000) or higher <b>breaks the chain</b>.</td></tr>
-	<tr><td>A Chase Break</td><td>You spend the multiplier yourself: back to x1 (page <span class="pg" data-to="break"></span>).</td></tr>
-	<tr><td>A continue</td><td>Chain, multiplier and medal ladder start again.</td></tr>
+	<tr><td style="width:24%">Losing a life</td><td>The multiplier is <b>halved</b> (x8 becomes x4), the medal value is halved too, and the timer pauses for three seconds while your next rider arrives.</td></tr>
+	<tr><td>Using a bomb</td><td>The timer pauses while the bomb goes off and for one second after. Kills made with the bomb still count.</td></tr>
+	<tr><td>Losing a medal</td><td>If a medal worth 1,000 or more falls off the screen, the <b>chain breaks</b>.</td></tr>
+	<tr><td>A Chase Break</td><td>You spend your multiplier: it goes back to x1 (page <span class="pg" data-to="break"></span>).</td></tr>
+	<tr><td>Continuing</td><td>The chain, the multiplier and the medal value all start over.</td></tr>
 	</tbody>
 </table>
-<div class="row r3">
-	<figure><img class="shot" src="art/bomb_wait.jpg" alt=""><figcaption>A bomb going off: the timer waits.</figcaption></figure>
-	<figure><img class="shot" src="art/timer_red.jpg" alt=""><figcaption>The timer nearly out: the gauge turns red.</figcaption></figure>
+<div class="row r3 sm">
+	<figure><img class="shot" src="art/bomb_wait.jpg" alt=""><figcaption>A bomb going off: the timer pauses.</figcaption></figure>
+	<figure><img class="shot" src="art/timer_red.jpg" alt=""><figcaption>Timer almost empty: the gauge turns red.</figcaption></figure>
 	<figure><img class="shot" src="art/boss_red.jpg" alt=""><figcaption>A boss in its last quarter: the bar turns red.</figcaption></figure>
 </div>
 </section>
@@ -346,86 +348,85 @@
 <section class="s-chase newpage">
 <div class="kicker">CHASE! mode</div>
 <h1 id="medals">Medals and the magnet</h1>
-<p class="lead">The medal ladder is the original game’s. What CHASE! adds is a magnet.</p>
-<figure class="fl w44"><img class="shot" src="art/magnet.jpg" alt=""><figcaption>Medals streaming to the ship.</figcaption></figure>
-<p>A medal that comes within about a hundred pixels of your ship — some two fifths of the screen’s width — is <b>pulled straight to it</b>.</p>
-<p><b>Hold SHOT</b> and the magnet reaches the whole screen: every medal on it flies to you.</p>
-<p>Medals lying still on the ground — the ones a bomb shakes out of buildings — are pulled from anywhere, button or not.</p>
-<p>The magnet works while your rider is flying. In the moment between one rider going down and the next arriving, medals fall as they always did.</p>
+<p class="lead">Medal values work as in the original game. CHASE! adds a magnet that pulls medals to your ship.</p>
+<figure class="fl w44"><img class="shot" src="art/magnet.jpg" alt=""><figcaption>Medals flying to the ship.</figcaption></figure>
+<p>Any medal that comes within about 100 pixels of your ship (roughly two fifths of the screen’s width) is <b>pulled straight to it</b>.</p>
+<p>While you <b>hold SHOT</b>, the magnet covers the whole screen and every medal flies to you.</p>
+<p>Medals lying on the ground, such as those shaken out of buildings by a bomb, are pulled in from anywhere, even when you are not firing.</p>
+<p>The magnet only works while a rider is flying. In the moment between losing a rider and the next one arriving, medals fall normally.</p>
 <div class="clear"></div>
-<div class="tip"><span class="lbl">TIP</span><p>The magnet makes the ladder much safer to climb, and the ladder is worth protecting twice over: a medal lost from the tenth step or higher costs you the ladder and the chain.</p></div>
+<div class="tip"><span class="lbl">TIP</span><p>The magnet makes it much easier to keep the medal value high. Protect it: losing a medal worth 1,000 or more resets the medal value <i>and</i> breaks your chain.</p></div>
 </section>
 
 <section class="s-chase newpage">
 <div class="kicker">CHASE! mode</div>
 <h1 id="break">The Chase Break</h1>
-<p class="lead">Trade your multiplier for a screen full of medals.</p>
+<p class="lead">Trade in your multiplier for a screen full of medals.</p>
 <div class="row r3">
-	<figure><img class="shot" src="art/break1.jpg" alt=""><figcaption><b>1.</b> At x4 or better an amber C lights beside the multiplier.</figcaption></figure>
+	<figure><img class="shot" src="art/break1.jpg" alt=""><figcaption><b>1.</b> At x4 or higher, an amber C lights up next to the multiplier.</figcaption></figure>
 	<figure><img class="shot" src="art/break2.jpg" alt=""><figcaption><b>2.</b> Press SPECIAL: bullets and small enemies turn into medals.</figcaption></figure>
-	<figure><img class="shot" src="art/break3.jpg" alt=""><figcaption><b>3.</b> The multiplier rests at x1 while the white gauge drains.</figcaption></figure>
+	<figure><img class="shot" src="art/break3.jpg" alt=""><figcaption><b>3.</b> The multiplier stays at x1 while the white gauge empties.</figcaption></figure>
 </div>
-<p>When the multiplier is <b>x4 or better</b>, pressing SPECIAL (<span class="b x">X</span>) makes a <b>Chase Break</b>: you cash the multiplier in.</p>
+<p>When the multiplier is <b>x4 or higher</b>, press SPECIAL (<span class="b x">X</span>) to set off a <b>Chase Break</b>:</p>
 <ul>
-	<li>every enemy bullet on the screen is canceled, and every small enemy destroyed — each paying its own score;</li>
-	<li>each of them leaves a <b>medal of the ladder’s current value</b>, which the magnet brings to you. If the screen has no room for more medals, the rest are paid straight into your score at the same value;</li>
+	<li>every enemy bullet on the screen disappears, and every small enemy is destroyed (each scoring its normal points);</li>
+	<li>each of them leaves behind a <b>medal at the current medal value</b>, which the magnet pulls to you. If there are too many medals for the screen, the rest are added straight to your score at the same value;</li>
 	<li>the multiplier goes back to x1 and the chain to zero.</li>
 </ul>
-<p>Then the multiplier <b>rests for five seconds</b>. Kills still score, but they build no chain, and the rail’s gauge shows the rest draining in white. There is no second Chase Break until you have climbed back to x4.</p>
-<p>On the screen it goes by its short name: the stage line flashes <b>CASH IN</b> as it goes off.</p>
-<p>Bosses are not small enemies. If there is nothing on the screen to take — a boss alone, no bullets — the press does nothing and you keep your multiplier.</p>
-<div class="tip"><span class="lbl">TIP</span><p>A medal made by a Chase Break is a bonus, not a risk: if one of them does get away, the ladder is not reset.</p></div>
-<div class="note"><span class="lbl">NOTE</span><p>SPECIAL is also the button that changes your options’ formation. For most riders the two do not collide. A few of the guest riders change formation with SPECIAL. For those, a <b>quick press</b> (let go within half a second) changes the formation, when you let go; a <b>long press</b> (held for half a second) is the Chase Break, and the formation stays as it was.</p></div>
+<p>After that, the multiplier is <b>locked for five seconds</b>. Kills still score points but do not add to the chain, and the gauge on the left turns white while it empties. You cannot set off another Chase Break until you are back at x4.</p>
+<p>The message line shows <b>CASH IN</b> when a Chase Break goes off.</p>
+<p>Bosses are not small enemies. If there is nothing to convert (for example, just a boss and no bullets), pressing SPECIAL does nothing and you keep your multiplier.</p>
+<div class="tip"><span class="lbl">TIP</span><p>Medals created by a Chase Break are a free bonus: if one of them falls off the screen, your medal value is not reset.</p></div>
+<div class="note"><span class="lbl">NOTE</span><p>SPECIAL also changes the formation of the Battle Garegga guest riders’ options. For these riders, a <b>short press</b> (released within half a second) changes the formation when you let go, and a <b>long press</b> (held for half a second) sets off the Chase Break without changing the formation.</p></div>
 
 <div class="kicker" style="margin-top:6mm">CHASE! mode</div>
 <h1 id="lives">Lives, extends and continues</h1>
-<figure class="fl w44"><img class="shot" src="art/extend.jpg" alt=""><figcaption>The boss falls, the score passes a million: x4 lives.</figcaption></figure>
+<figure class="fl w44"><img class="shot" src="art/extend.jpg" alt=""><figcaption>The score passes one million: four lives.</figcaption></figure>
 <h3 style="color:var(--red)">Extends</h3>
-<p>Every <b>1,000,000 points</b> earns an extend, and the stage line flashes EXTEND.</p>
-<p>An extend brings back a rider who has been shot down; they rejoin at the back of the team. If nobody is down, the extend is <b>banked</b> and handed over the moment somebody is.</p>
-<p>You can hold <b>five lives at most</b> — riders flying plus extends in the bank. An extend earned at five pays <b>100,000 points</b> instead, and the line flashes MAX LIVES.</p>
-<p>The number beside your team’s icons is the count of lives. It turns red at one.</p>
+<p>Every <b>1,000,000 points</b> gives you an extend, and the message line shows EXTEND.</p>
+<p>An extend brings back a rider who has been shot down; they rejoin at the back of the team. If no one has been shot down, the extend is <b>banked</b> and used as soon as someone is.</p>
+<p>You can have <b>five lives at most</b> (riders flying plus banked extends). An extend earned when you already have five is worth <b>100,000 points</b> instead, and the message line shows MAX LIVES.</p>
+<p>The number next to your team icons is your number of lives. It turns red when you have one left.</p>
 <div class="clear"></div>
-<figure class="fr w44"><img class="shot" src="art/continue.jpg" alt=""><figcaption>CONTINUE? — START before the count reaches zero.</figcaption></figure>
+<figure class="fr w44"><img class="shot" src="art/continue.jpg" alt=""><figcaption>CONTINUE? Press START before the count reaches zero.</figcaption></figure>
 <h3 style="color:var(--red)">Continues</h3>
-<p>When the last rider goes down the game asks CONTINUE? and counts down. Press <span class="b st">START</span> to fly on with the same team.</p>
-<p>A credit has <b>three continues</b> unless PLAY’s CONTINUES says five or seven. A continue starts the chain, the multiplier and the medal ladder again and puts the rank back to 50%.</p>
-<p>A continue also marks the credit’s score as <b>invalid</b> (page <span class="pg" data-to="valid"></span>). TRAINING has no continues: its GAME OVER brings back the TRAINING page.</p>
+<p>When your last rider is shot down, the game asks CONTINUE? and starts a countdown. Press <span class="b st">START</span> to carry on with the same team.</p>
+<p>You get <b>three continues</b>, or five or seven if you set CONTINUES on the PLAY page. Continuing resets the chain, the multiplier and the medal value, and sets the rank back to 50%.</p>
+<p>Continuing also makes your score <b>invalid</b> (page <span class="pg" data-to="valid"></span>). TRAINING has no continues: after a GAME OVER you go back to the TRAINING page.</p>
 <div class="clear"></div>
 </section>
 
 <!-- ============================================================ MODES AND MENUS -->
 <section class="s-menus newpage tight">
 <h1 id="original" class="first">The original game</h1>
-<p class="lead">With PLAY’s MODE set to ORIGINAL, START RUN is ARMED POLICE BATRIDER as the arcade board plays it.</p>
-<p>None of CHASE!’s rules apply: no chain, no magnet, no Chase Break, and rank runs free. It plays on the arcade board’s factory settings — NORMAL difficulty, three riders, an extend item at every 1,500,000 points — unless you change them with the <b>DIP switches</b> (page <span class="pg" data-to="settings"></span>). It is in free play, and the screen is the game’s own, with no CHASE tag; the hitbox shows here too. The gadgets beside it work in both games (page <span class="pg" data-to="gadgets"></span>).</p>
-<p>What both games share is everything around the credit: the menus, the pause menu, the continues set on PLAY, TRAINING, save states and replays, and one player. Each keeps its own rankings.</p>
+<p class="lead">When MODE is set to ORIGINAL, START RUN plays ARMED POLICE BATRIDER exactly as it plays in the arcade.</p>
+<p>None of the CHASE! rules apply: there is no chain, no medal magnet and no Chase Break, and the rank has no limit. The game uses the arcade’s default settings (NORMAL difficulty, three lives, and an extend item every 1,500,000 points) unless you change them with the <b>DIP switches</b> (page <span class="pg" data-to="settings"></span>). It is set to free play, and the screen looks exactly like the arcade original (no CHASE tag). The hitbox and the gadgets work in both games (page <span class="pg" data-to="gadgets"></span>).</p>
+<p>Both games share everything outside of play: the menus, the pause menu, the CONTINUES setting, TRAINING, save states and replays. Each game keeps its own high score tables.</p>
 
 <h1 id="training" style="margin-top:6mm">Training</h1>
-<figure class="fr w48"><img class="shot" src="art/training.png" alt=""><figcaption>The TRAINING page: HIGH WAY’s ENVY, the rank held at 61%.</figcaption></figure>
-<p>TRAINING on the title menu opens one page where you set up a run: a stage or a boss of either game, with the lives, bombs, power and rank you want. Up and down choose a row, left and right (or <span class="b a">A</span>) change it, and <span class="b st">START</span> plays from any row. <span class="b bb">B</span> or <span class="b bk">BACK</span> goes back to the title menu.</p>
-<p>The page keeps its settings until you switch the console off, and a save state keeps them too. HITBOX, MODE and the DIP switches are the same settings as everywhere else.</p>
+<figure class="fr w48"><img class="shot" src="art/training.png" alt=""><figcaption>The TRAINING page: HIGH WAY’s boss ENVY, medals starting at 700, rank held at 61%.</figcaption></figure>
+<p>TRAINING lets you practise any stage or boss of either game, with the team, lives, bombs, power, medal value and rank you choose. Press up and down to choose a row and left and right (or <span class="b a">A</span>) to change it. Press <span class="b st">START</span> on any row to start, or <span class="b bb">B</span> / <span class="b bk">BACK</span> to return to the title menu.</p>
+<p>Your TRAINING settings are kept until you quit the game. HITBOX, MODE and the DIP switches are the same settings used everywhere else.</p>
 <div class="clear"></div>
 <table class="menu long">
 	<tbody>
-	<tr><td>START RUN</td><td>Play with the settings below.</td></tr>
-	<tr><td>MODE<small>CHASE! / ORIGINAL</small></td><td>Which game’s rules the run plays by: the same setting as PLAY’s.</td></tr>
-	<tr><td>TEAM<small>CHOOSE / SAME</small></td><td>CHOOSE: the game’s own select screens. SAME: the team you flew last, straight into the stage. Grey until you have flown a team.</td></tr>
+	<tr><td>START RUN</td><td>Start playing with the settings below.</td></tr>
+	<tr><td>MODE<small>CHASE! / ORIGINAL</small></td><td>Which game to practise. This is the same setting as on the PLAY page.</td></tr>
+	<tr><td>PLAYER EDIT</td><td>Press <span class="b a">A</span> to open the PLAYER EDIT page: team, riders, formation, lives, bombs and power (see below).</td></tr>
 	<tr><td>STAGE</td><td>M.CITY, AIRPORT, SKY HIGH, S.SYSTEM, HIGH WAY, Z.CITY, BUILDING, or EXTRA BOSSES.</td></tr>
-	<tr><td>START AT BOSS</td><td>OFF: from the stage’s start. Otherwise one of the stage’s bosses, straight away, its secret bosses included (table below). EXTRA BOSSES has no OFF.</td></tr>
-	<tr><td>LIVES<small>1 – 9 · ORIGINAL 1 – 4</small></td><td>Lives at the start (3 at first). In CHASE! the ones past four wait in the extends bank.</td></tr>
-	<tr><td>BOMBS<small>0 – 4</small></td><td>Bombs at the start and at each rider’s arrival (1 at first).</td></tr>
-	<tr><td>SHOT POWER<small>1 – 4</small></td><td>Shot power at the start and at each rider’s arrival (4, full, at first).</td></tr>
-	<tr><td>RANK<small>DEFAULT · 0 – 100%</small></td><td>DEFAULT: the game moves the rank as it always does. A percentage holds it there for the whole run; <span class="b lb">LB</span> / <span class="b rb">RB</span> step 10% at a time. In CHASE! it holds between 51% and 76%, the mode’s own limits.</td></tr>
-	<tr><td>INVINCIBLE<small>OFF / ON</small></td><td>Your ship takes no damage.</td></tr>
-	<tr><td>INFINITE BOMBS<small>OFF / ON</small></td><td>The bomb stock stays full.</td></tr>
-	<tr><td>GAME SPEED<small>100% / 75% / 50%</small></td><td>Slows the game down. The music keeps its own speed.</td></tr>
-	<tr><td>HITBOX<small>OFF / PLAYER / ALL</small></td><td>What hitboxes are drawn (page <span class="pg" data-to="hitbox"></span>).</td></tr>
-	<tr><td>DIP SWITCHES</td><td>The original game’s settings (page <span class="pg" data-to="settings"></span>). Grey in CHASE!.</td></tr>
+	<tr><td>START AT BOSS</td><td>OFF starts at the beginning of the stage. Otherwise, choose one of the stage’s bosses (secret bosses included; see the table below) to fight it straight away. EXTRA BOSSES has no OFF setting.</td></tr>
+	<tr><td>MEDAL<small>100 – 10,000</small></td><td>The medal value at the start (100 by default). <span class="b lb">LB</span> / <span class="b rb">RB</span> move two steps at a time. After that, it goes up and down as normal.</td></tr>
+	<tr><td>RANK<small>DEFAULT · 0 – 100%</small></td><td>DEFAULT lets the rank change normally. Choose a percentage to lock the rank there for the whole run; <span class="b lb">LB</span> / <span class="b rb">RB</span> change it by 10%. In CHASE! it can only be set between 51% and 76%, the mode’s own limits.</td></tr>
+	<tr><td>INVINCIBLE<small>OFF / ON</small></td><td>Your ship cannot be hit.</td></tr>
+	<tr><td>INFINITE LIVES<small>OFF / ON</small></td><td>You never run out of lives.</td></tr>
+	<tr><td>INFINITE BOMBS<small>OFF / ON</small></td><td>Your bomb stock is always full.</td></tr>
+	<tr><td>GAME SPEED<small>100% / 75% / 50%</small></td><td>Slows the game down. The music plays at normal speed.</td></tr>
+	<tr><td>HITBOX<small>OFF / PLAYER / ALL</small></td><td>Which hitboxes are shown (page <span class="pg" data-to="hitbox"></span>).</td></tr>
+	<tr><td>DIP SWITCHES</td><td>Settings for the original game (page <span class="pg" data-to="settings"></span>). Greyed out in CHASE!.</td></tr>
 	</tbody>
 </table>
 <table>
-	<thead><tr><th style="width:24%">Stage</th><th>START AT BOSS</th></tr></thead>
+	<thead><tr><th style="width:24%">STAGE</th><th>START AT BOSS choices</th></tr></thead>
 	<tbody>
 	<tr><td class="k">M.CITY</td><td>CONFRICT</td></tr>
 	<tr><td class="k">AIRPORT</td><td>BAZZCOK · GOB-ROBO</td></tr>
@@ -437,199 +438,224 @@
 	<tr><td class="k">EXTRA BOSSES</td><td>BASHINET 2 · BASHINET R · B.HEART 2 · GLOW SQUID</td></tr>
 	</tbody>
 </table>
-<h2>The run</h2>
-<p>With TEAM on CHOOSE the game’s select screens come first; with SAME the stage begins at once. A run ends when its stage or its boss is cleared, or on <b>GAME OVER</b>: training has no continues. Either way the TRAINING page comes back with START RUN chosen, so one press of START plays the same again. Training never enters the rankings, its score is shown as invalid, and it makes no replay (page <span class="pg" data-to="valid"></span>).</p>
-<h2>The training pause</h2>
-<figure class="fl w48"><img class="shot" src="art/training_pause.png" alt=""><figcaption>The TRAINING PAUSE menu.</figcaption></figure>
-<p><span class="b bk">BACK</span> during a run opens the TRAINING PAUSE menu. <span class="b a">A</span> chooses, <span class="b bb">B</span> or <span class="b bk">BACK</span> resumes.</p>
-<table class="plain">
+</section>
+
+<section class="s-menus newpage">
+<h2 id="playeredit" style="margin-top:0">PLAYER EDIT</h2>
+<figure class="fr w48"><img class="shot" src="art/player_edit.png" alt=""><figcaption>PLAYER EDIT: a CUSTOM team led by Silver Sword, with its first secret formation.</figcaption></figure>
+<p>This page sets up who flies and what they start with. Press left and right to change a value, <span class="b st">START</span> to start the run, or <span class="b bb">B</span> / <span class="b bk">BACK</span> to return to the TRAINING page.</p>
+<div class="clear"></div>
+<table class="menu long">
 	<tbody>
-	<tr><td style="width:44%">RESUME</td><td>On with the run</td></tr>
-	<tr><td>RESTART</td><td>The training stage again from its start, same team</td></tr>
-	<tr><td>SAVE STATE<br>LOAD STATE</td><td>The save state pages (page <span class="pg" data-to="states"></span>)</td></tr>
-	<tr><td>OPTIONS</td><td>OPTIONS over the run (page <span class="pg" data-to="options"></span>)</td></tr>
-	<tr><td>QUIT TO TRAINING</td><td>Back to the TRAINING page</td></tr>
-	<tr><td>QUIT TO TITLE</td><td>Back to the title menu</td></tr>
+	<tr><td>TEAM</td><td>
+		<b>CHOOSE</b>: the game’s normal SELECT TYPE screen.<br>
+		<b>SAME</b>: the team you flew last, straight into the stage with no selection screens. Only available after you have flown a team.<br>
+		<b>SELECT TEAM</b>, <b>TEAM EDIT</b>, <b>RANDOM EDIT</b>, <b>SELECT PLAYER</b>: go straight to that selection screen.<br>
+		<b>CUSTOM</b>: the three riders chosen on the rows below.</td></tr>
+	<tr><td>RIDER 1 – 3<br>TYPE 1 – 3</td><td>The riders of a CUSTOM team, in the order they fly, and their type: <b>A</b> normal, <b>B</b> slower, <b>C</b> slowest, <b>D</b> fastest (each type also has its own colours). Changing one of these rows sets TEAM to CUSTOM. With TEAM on SELECT PLAYER there is a single RIDER row: CHOOSE shows the game’s own screen, or pick a rider to fly every life.</td></tr>
+	<tr><td>FORMATION</td><td>The options’ formation at the start: DEFAULT, V, BACK, FRONT, CIRCLE, CONTROL, or one of the five secret formations (SECRET 1 – 5). Battle Garegga guest riders only.</td></tr>
+	<tr><td>LIVES<small>1 – 9 · ORIGINAL 1 – 4</small></td><td>Lives at the start (3 by default). In CHASE!, lives above four are kept as banked extends.</td></tr>
+	<tr><td>BOMBS<small>0 – 4</small></td><td>Bombs each time a rider starts (1 by default).</td></tr>
+	<tr><td>BOMB FRAGMENTS<small>0 – 39</small></td><td>Bomb fragments each time a rider starts; 40 fragments make a bomb. <span class="b lb">LB</span> / <span class="b rb">RB</span> change it by 10.</td></tr>
+	<tr><td>SHOT POWER<small>1 – 4</small></td><td>Shot power at the start of the run (4, full power, by default). When you lose a life, it drops as in the normal game.</td></tr>
+	<tr><td>OPTION POWER<small>NONE · 1 – 3</small></td><td>How many options you start the run with (3 by default). When you lose a life, it drops as in the normal game.</td></tr>
 	</tbody>
 </table>
-<p>RESTART and the two QUITs ask first: <span class="b a">A</span> again is YES, <span class="b bb">B</span> is NO.</p>
+<h2>Playing a training run</h2>
+<p>A training run ends when you clear the stage or defeat the boss, or at <b>GAME OVER</b> (there are no continues in training). Either way, you return to the TRAINING page with START RUN selected, so pressing START once plays the same run again. Training scores never go into the high score tables, are always shown as invalid, and are not saved as replays (page <span class="pg" data-to="valid"></span>).</p>
+<h2>The training pause menu</h2>
+<figure class="fl w48"><img class="shot" src="art/training_pause.png" alt=""><figcaption>The TRAINING PAUSE menu.</figcaption></figure>
+<p>Press <span class="b bk">BACK</span> during a training run to open the TRAINING PAUSE menu. Press <span class="b a">A</span> to select a row, or <span class="b bb">B</span> / <span class="b bk">BACK</span> to resume.</p>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:44%">RESUME</td><td>Continue the run.</td></tr>
+	<tr><td>RESTART</td><td>Restart the training stage from the beginning, with the same team.</td></tr>
+	<tr><td>OPTIONS</td><td>Open OPTIONS (page <span class="pg" data-to="options"></span>).</td></tr>
+	<tr><td>QUIT TO TRAINING</td><td>Return to the TRAINING page.</td></tr>
+	<tr><td>QUIT TO TITLE</td><td>Return to the title menu.</td></tr>
+	</tbody>
+</table>
+<p>RESTART and both QUIT rows ask for confirmation: press <span class="b a">A</span> again for YES or <span class="b bb">B</span> for NO. Save states are not available in training.</p>
 <div class="clear"></div>
-<div class="tip"><span class="lbl">TIP</span><p>A boss you want to learn: set START AT BOSS, TEAM SAME and INVINCIBLE, and every START puts you straight back in the fight. GAME SPEED 50% gives you time to read its patterns; HITBOX ALL shows you exactly where its bullets can hurt.</p></div>
+<div class="tip"><span class="lbl">TIP</span><p>To learn a boss: set START AT BOSS, set TEAM to SAME (in PLAYER EDIT) and turn on INVINCIBLE. Now every press of START puts you straight back into the fight. GAME SPEED 50% gives you time to study its attacks, and HITBOX ALL shows exactly where its bullets can hit you.</p></div>
 </section>
 
 <section class="s-menus newpage">
 <h1 id="options" class="first">Options</h1>
-<figure class="fl w48"><img class="shot" src="art/options.png" alt=""><figcaption>OPTIONS from the title menu.</figcaption></figure>
-<p>OPTIONS opens from the title menu and from the pause menu. Up and down choose a row; <span class="b a">A</span> opens a page; left and right change GADGETS and LANGUAGE. <span class="b bb">B</span> or <span class="b bk">BACK</span> goes back to the page under it, and <span class="b st">START</span> closes every page at once. What you change is kept (page <span class="pg" data-to="keeps"></span>).</p>
-<p>Every page is a box with its name at the top, its rows, a line of help for the row chosen, and the buttons it takes.</p>
+<figure class="fl w48"><img class="shot" src="art/options.png" alt=""><figcaption>OPTIONS, opened from the title menu.</figcaption></figure>
+<p>You can open OPTIONS from the title menu or from the pause menu. Press up and down to choose a row, and <span class="b a">A</span> to open a page; press left and right to change GADGETS and LANGUAGE. <span class="b bb">B</span> / <span class="b bk">BACK</span> goes back one page, and <span class="b st">START</span> closes all pages at once. Your changes are saved automatically (page <span class="pg" data-to="keeps"></span>).</p>
+<p>Each page shows its name at the top, then its rows, a help line for the selected row, and the buttons you can use.</p>
 <div class="clear"></div>
 <table class="plain">
 	<tbody>
-	<tr><td style="width:34%">GENERAL SCREEN</td><td>The picture: its size, place, rotation, scanlines, brightness and shape (page <span class="pg" data-to="genscreen"></span>)</td></tr>
-	<tr><td>GADGETS<small>ON / OFF</small></td><td>The panels beside the game (page <span class="pg" data-to="gadgets"></span>). They need a 16:9 screen and PICTURE SIZE INTEGER or FULL; otherwise a line under the menu says why they are off</td></tr>
-	<tr><td>CONTROLS</td><td>Each button’s job (page <span class="pg" data-to="ctlpage"></span>)</td></tr>
-	<tr><td>SECRET COMMANDS</td><td>The arcade’s own START commands (page <span class="pg" data-to="commands"></span>)</td></tr>
-	<tr><td>SOUND</td><td>Volumes and the sound tests (page <span class="pg" data-to="sound"></span>)</td></tr>
-	<tr><td>MANUAL</td><td>This booklet on the screen (page <span class="pg" data-to="manualpage"></span>)</td></tr>
-	<tr><td>DEBUG MENU</td><td>Hitboxes, rankings, default settings. From the title menu only (page <span class="pg" data-to="debug"></span>)</td></tr>
-	<tr><td>LANGUAGE<small>ENGLISH / JAPANESE</small></td><td>Outside a credit only (page <span class="pg" data-to="language"></span>)</td></tr>
+	<tr><td style="width:34%">GENERAL SCREEN</td><td>Picture size, position, rotation, scanlines, brightness and aspect ratio (page <span class="pg" data-to="genscreen"></span>).</td></tr>
+	<tr><td>GADGETS<small>ON / OFF</small></td><td>The information panels beside the game (page <span class="pg" data-to="gadgets"></span>). They need a 16:9 screen and PICTURE SIZE set to INTEGER or FULL; if they can’t be shown, a line under the menu says why.</td></tr>
+	<tr><td>CONTROLS</td><td>Button layout (page <span class="pg" data-to="ctlpage"></span>).</td></tr>
+	<tr><td>SECRET COMMANDS</td><td>The arcade game’s hidden START commands (page <span class="pg" data-to="commands"></span>).</td></tr>
+	<tr><td>SOUND</td><td>Volume and sound tests (page <span class="pg" data-to="sound"></span>).</td></tr>
+	<tr><td>MANUAL</td><td>This manual, on the screen (page <span class="pg" data-to="manualpage"></span>).</td></tr>
+	<tr><td>DEBUG MENU</td><td>Hitboxes, cheats, high score reset and default settings. Only available from the title menu (page <span class="pg" data-to="debug"></span>).</td></tr>
+	<tr><td>LANGUAGE<small>ENGLISH / JAPANESE</small></td><td>Can only be changed outside a run (page <span class="pg" data-to="language"></span>).</td></tr>
 	</tbody>
 </table>
 
 <div class="kicker" style="margin-top:5mm">Options</div>
-<h2 id="genscreen" style="margin-top:0">General screen</h2>
+<h2 id="genscreen" style="margin-top:0">GENERAL SCREEN</h2>
 <figure class="fr w48"><img class="shot" src="art/screen.png" alt=""><figcaption>GENERAL SCREEN.</figcaption></figure>
-<p>Left and right change a row; held, they repeat. The change shows at once.</p>
-<p>Moving any of CUSTOM’s rows turns PICTURE SIZE to CUSTOM by itself. CUSTOM’s values are kept for each shape of screen — 16:9 or 4:3, upright or turned — and stay grey while INTEGER or FULL is shown.</p>
+<p>Press left and right to change a row (hold to repeat). Changes take effect immediately.</p>
+<p>Changing any of the size or position rows switches PICTURE SIZE to CUSTOM automatically. Custom values are saved separately for each screen shape (16:9 or 4:3, rotated or not), and are greyed out while PICTURE SIZE is INTEGER or FULL.</p>
 <div class="clear"></div>
 <table class="plain">
 	<tbody>
-	<tr><td style="width:34%">PICTURE SIZE</td><td><b>INTEGER</b>: the largest sharp, whole-number size. <b>FULL</b> (as a new install): the full height of the screen. <b>CUSTOM</b>: the five rows below</td></tr>
-	<tr><td>SIZE<br>X SIZE, Y SIZE</td><td>CUSTOM’s size, width and height. <span class="b a">A</span>: back to 100%</td></tr>
-	<tr><td>X / Y POSITION</td><td>CUSTOM’s place. <span class="b a">A</span>: back to the centre</td></tr>
-	<tr><td>ROTATION</td><td>OFF, LEFT or RIGHT: how your display stands (page <span class="pg" data-to="screen"></span>)</td></tr>
-	<tr><td>SCANLINES</td><td>OFF / ON: dark lines between the board’s lines, as on an arcade monitor</td></tr>
-	<tr><td>SCAN STRENGTH</td><td>How dark they are: 5% to 100% (35% at first)</td></tr>
-	<tr><td>BRIGHTNESS</td><td>50% to 150% in 5% steps; 100% is the board’s own picture. <span class="b a">A</span>: back to 100%</td></tr>
-	<tr><td>SMOOTHING</td><td>OFF shows the game’s pixels as they are; ON blends them</td></tr>
-	<tr><td>ASPECT RATIO</td><td>AUTO (the console’s own setting), 16:9 or 4:3</td></tr>
+	<tr><td style="width:34%">PICTURE SIZE</td><td><b>INTEGER</b>: the largest size that keeps every pixel sharp. <b>FULL</b> (default): the full height of the screen. <b>CUSTOM</b>: set by the five rows below.</td></tr>
+	<tr><td>SIZE<br>X SIZE, Y SIZE</td><td>Custom overall size, width and height. <span class="b a">A</span> resets to 100%.</td></tr>
+	<tr><td>X / Y POSITION</td><td>Custom position. <span class="b a">A</span> resets to the centre.</td></tr>
+	<tr><td>ROTATION</td><td>OFF, LEFT or RIGHT, depending on how your display is set up (page <span class="pg" data-to="screen"></span>).</td></tr>
+	<tr><td>SCANLINES</td><td>OFF / ON: dark lines between the picture’s lines, like an arcade monitor.</td></tr>
+	<tr><td>SCAN STRENGTH</td><td>How dark the scanlines are: 5% to 100% (35% by default).</td></tr>
+	<tr><td>BRIGHTNESS</td><td>50% to 150% in 5% steps. 100% is the original brightness. <span class="b a">A</span> resets to 100%.</td></tr>
+	<tr><td>SMOOTHING</td><td>OFF shows sharp pixels; ON smooths them.</td></tr>
+	<tr><td>ASPECT RATIO</td><td>AUTO (follows the console’s setting), 16:9 or 4:3.</td></tr>
 	</tbody>
 </table>
 </section>
 
 <section class="s-menus newpage">
 <div class="kicker">Options</div>
-<h2 id="ctlpage" style="margin-top:0">Controls</h2>
-<figure class="fl w48"><img class="shot" src="art/controls.png" alt=""><figcaption>CONTROLS as a new install has them.</figcaption></figure>
-<p>One row for each of <b>A, B, X, Y, LB, RB, LT and RT</b>. Left and right give the button its job in the game:</p>
+<h2 id="ctlpage" style="margin-top:0">CONTROLS</h2>
+<figure class="fl w48"><img class="shot" src="art/controls.png" alt=""><figcaption>CONTROLS, with the default settings.</figcaption></figure>
+<p>There is one row each for <b>A, B, X, Y, LB, RB, LT and RT</b>. Press left and right to choose what the button does during play:</p>
 <table class="plain">
 	<tbody>
-	<tr><td style="width:44%">OFF</td><td>Nothing in play</td></tr>
-	<tr><td>SHOT · BOMB · SPECIAL</td><td>The arcade’s three buttons</td></tr>
-	<tr><td>AUTO SHOT</td><td>The shot, on and off at AUTOFIRE’s rate while held</td></tr>
+	<tr><td style="width:44%">OFF</td><td>Nothing.</td></tr>
+	<tr><td>SHOT · BOMB · SPECIAL</td><td>The arcade game’s three buttons.</td></tr>
+	<tr><td>AUTO SHOT</td><td>Fires automatically at the AUTOFIRE rate while held.</td></tr>
 	</tbody>
 </table>
-<p>Two buttons may do the same job. <b>AUTOFIRE</b> sets AUTO SHOT’s rate: 30, 20, 15, 12 or 10 shots a second. <b>DEFAULTS</b> puts the buttons back as they came: A SHOT, B BOMB, X SPECIAL, RT AUTO SHOT, the rest OFF. START and BACK are not on the page: BACK is the pause, START is the game’s.</p>
+<p>More than one button can have the same job. <b>AUTOFIRE</b> sets the AUTO SHOT rate: 30, 20, 15, 12 or 10 shots per second. <b>DEFAULTS</b> restores the original layout: A SHOT, B BOMB, X SPECIAL, RT AUTO SHOT, and the rest OFF. START and BACK cannot be changed: BACK always pauses, and START is always the arcade game’s START button.</p>
 <div class="clear"></div>
 
-<h2 id="commands">Secret commands</h2>
-<figure class="fr w48"><img class="shot" src="art/commands.png" alt=""><figcaption>SECRET COMMANDS.</figcaption></figure>
-<p>The arcade board has commands of its own: hold <span class="b st">START</span> during play and press a direction or a button. This page sets them for every credit, and they still work in play as on the arcade.</p>
+<h2 id="commands" class="newpage" style="margin-top:0">SECRET COMMANDS</h2>
+<div class="row" style="justify-content:center;align-items:flex-end">
+	<figure style="flex:0 0 52%"><img class="shot" src="art/commands.png" alt=""><figcaption>SECRET COMMANDS.</figcaption></figure>
+	<figure style="flex:0 0 22%"><img class="shot" src="art/breakdown.png" alt=""><figcaption>SCORE BREAKDOWN on, normal bullets RED.</figcaption></figure>
+</div>
+<p>The arcade game has hidden commands: during play, hold <span class="b st">START</span> and press a direction or a button. This page lets you set them for every run. The commands still work during play, just as in the arcade.</p>
 <table class="plain">
 	<tbody>
-	<tr><td style="width:36%">NORMAL BULLETS</td><td>Their colour. GAME is the game’s own, blue. START + right in play</td></tr>
-	<tr><td>BALL BULLETS</td><td>GAME: orange. START + left in play</td></tr>
-	<tr><td>MISSILES</td><td>GAME: pink. START + down in play</td></tr>
-	<tr><td>SHOT RATE</td><td>Your ship’s own autofire: GAME, or 60 down to 7 shots a second. START + SHOT faster, START + SPECIAL slower. Set it outside a credit</td></tr>
-	<tr><td>SCORE BREAKDOWN</td><td>OFF / ON: every score you add, listed down the left of the screen. START + BOMB in play</td></tr>
+	<tr><td style="width:36%">NORMAL BULLETS</td><td>Bullet colour. DEFAULT is the game’s own (blue). In play: START + right.</td></tr>
+	<tr><td>BALL BULLETS</td><td>DEFAULT: orange. In play: START + left.</td></tr>
+	<tr><td>MISSILES</td><td>DEFAULT: pink. In play: START + down.</td></tr>
+	<tr><td>SHOT RATE</td><td>Your ship’s built-in rapid fire: DEFAULT, or from 60 down to 7 shots per second. In play: START + SHOT for faster, START + SPECIAL for slower. Can only be set on this page outside a run.</td></tr>
+	<tr><td>SCORE BREAKDOWN</td><td>OFF / ON: lists every score you earn down the left side of the screen. In play: START + BOMB.</td></tr>
 	</tbody>
 </table>
-<div class="clear"></div>
-<figure class="fl w36"><img class="shot" src="art/breakdown.png" alt=""><figcaption>SCORE BREAKDOWN on, normal bullets RED.</figcaption></figure>
-<p>The colours are YELLOW, BLUE, GREEN, PURPLE, PINK, RED and ORANGE.</p>
-<p>None of the commands changes the score, the rank or the rankings: they are part of the arcade game.</p>
+<p>The available colours are YELLOW, BLUE, GREEN, PURPLE, PINK, RED and ORANGE.</p>
+<p>These commands are part of the original arcade game, so they never affect your score, the rank or the high score tables.</p>
 <div class="clear"></div>
 </section>
 
 <section class="s-menus newpage">
 <div class="kicker">Options</div>
-<h2 id="sound" style="margin-top:0">Sound</h2>
+<h2 id="sound" style="margin-top:0">SOUND</h2>
 <figure class="fl w48"><img class="shot" src="art/sound.png" alt=""><figcaption>SOUND.</figcaption></figure>
 <table class="plain">
 	<tbody>
-	<tr><td style="width:38%">MUSIC</td><td>0% – 100%, in tens</td></tr>
-	<tr><td>SFX</td><td>Effects and voices, 0% – 100%</td></tr>
-	<tr><td>ATTRACT</td><td>The title’s and the demonstration’s volume, as a share of the two above</td></tr>
-	<tr><td>MUTE</td><td>All sound off</td></tr>
-	<tr><td>MUSIC TEST</td><td>00 – 19, with the tune’s title. <span class="b a">A</span> plays it</td></tr>
-	<tr><td>SFX TEST</td><td>20 – D7. <span class="b a">A</span> plays it</td></tr>
+	<tr><td style="width:38%">MUSIC</td><td>Music volume, 0% – 100% in steps of 10%.</td></tr>
+	<tr><td>SFX</td><td>Sound effects and voices, 0% – 100%.</td></tr>
+	<tr><td>ATTRACT</td><td>Volume on the title screen and in the demo, as a percentage of the two settings above.</td></tr>
+	<tr><td>MUTE</td><td>Turns all sound off.</td></tr>
+	<tr><td>MUSIC TEST</td><td>00 – 19, with the title of each tune. Press <span class="b a">A</span> to play it.</td></tr>
+	<tr><td>SFX TEST</td><td>20 – D7. Press <span class="b a">A</span> to play it.</td></tr>
 	</tbody>
 </table>
-<p>The two tests are outside a credit only. In a credit, a change is heard once the game goes on.</p>
+<p>The two tests are only available outside a run. During a run, volume changes are heard once you return to the game.</p>
 <div class="clear"></div>
-<h2 id="debug">Debug menu</h2>
+<h2 id="debug">DEBUG MENU</h2>
 <figure class="fr w48"><img class="shot" src="art/debug.png" alt=""><figcaption>DEBUG MENU.</figcaption></figure>
-<p>From the title’s OPTIONS only.</p>
-<h3>Hitbox <span class="val">OFF / PLAYER / ALL</span></h3><p>The hitboxes drawn in every credit (page <span class="pg" data-to="hitbox"></span>). The same setting as TRAINING’s.</p>
-<h3>Initialize rankings <span class="val">THIS MODE / BOTH MODES</span></h3><p>Left and right choose which; <span class="b a">A</span> asks CONFIRM? in red, and a second <span class="b a">A</span> erases those rankings. <span class="b bb">B</span> takes it back.</p>
-<h3>Default settings</h3><p>Every option, DIP switch and button back to how a new install has them, after asking the same way. MODE, the rankings, save states and replays stay.</p>
+<p>Only available in OPTIONS from the title menu.</p>
+<h3>HITBOX <span class="val">OFF / PLAYER / ALL</span></h3><p>Which hitboxes are shown (page <span class="pg" data-to="hitbox"></span>). This is the same setting as on the TRAINING page.</p>
+<h3>INFINITE LIVES · INFINITE BOMBS · INVINCIBILITY <span class="val">OFF / ON</span></h3><p>Cheats for normal runs: you never run out of lives, your bomb stock stays full, or your ship cannot be hit. While any of them is on, your score is <b>invalid</b>: it is not entered in the high score tables and no replay is saved (page <span class="pg" data-to="valid"></span>). They stay on until you turn them off or quit the game.</p>
+<h3>INITIALIZE RANKINGS <span class="val">THIS MODE / BOTH MODES</span></h3><p>Erases high scores. Use left and right to choose which, then press <span class="b a">A</span>: CONFIRM? appears in red. Press <span class="b a">A</span> again to erase, or <span class="b bb">B</span> to cancel.</p>
+<h3>DEFAULT SETTINGS</h3><p>Resets every option, DIP switch and button to its default, after the same confirmation. MODE, high scores, save states and replays are not affected.</p>
 <div class="clear"></div>
-<h2 id="language">Language</h2>
+<h2 id="language">LANGUAGE</h2>
 <div class="row c r3 sm2" style="float:right;margin:0 0 1mm 3mm;width:46%">
 	<figure style="flex:1"><img class="shot" src="art/lang_en.png" alt=""><figcaption>ENGLISH</figcaption></figure>
 	<figure style="flex:1"><img class="shot" src="art/lang_ja.png" alt=""><figcaption>JAPANESE</figcaption></figure>
 </div>
-<p>ENGLISH or JAPANESE: the words on the arcade board’s COURSE and TYPE select screens (English, or the board’s own Japanese) and the language of the MANUAL. The menus stay in English. It can be changed outside a credit only; a replay plays in the language it was recorded in.</p>
+<p>ENGLISH or JAPANESE. This sets the language of the arcade game’s COURSE and TYPE selection screens, and of the on-screen MANUAL. The menus are always in English. LANGUAGE can only be changed outside a run. A replay always plays in the language it was recorded in.</p>
 <div class="clear"></div>
 </section>
 
 <section class="s-menus newpage">
 <div class="kicker">Options</div>
-<h2 id="settings" style="margin-top:0">DIP switches</h2>
-<figure class="fl w48"><img class="shot" src="art/game_settings.png" alt=""><figcaption>DIFFICULTY HARD and LIVES 4: off the factory’s, in red.</figcaption></figure>
-<p>The arcade board’s own settings for the <b>original game</b>, from PLAY or TRAINING with MODE on ORIGINAL. Left and right (or <span class="b a">A</span>) change a row; a value off the factory’s is red. <b>DEFAULT</b> puts all four back.</p>
-<p>As the page says, <b>a score is invalid if they are not the factory’s</b> (page <span class="pg" data-to="valid"></span>). CHASE! is not touched by them: it always plays on its own fixed settings.</p>
+<h2 id="settings" style="margin-top:0">DIP SWITCHES</h2>
+<figure class="fl w48"><img class="shot" src="art/game_settings.png" alt=""><figcaption>DIFFICULTY HARD and LIVES 4: changed settings are shown in red.</figcaption></figure>
+<p>These are the arcade machine’s own settings for the <b>original game</b>. Open them from the PLAY or TRAINING page with MODE set to ORIGINAL. Press left and right (or <span class="b a">A</span>) to change a row; any value that differs from the default is shown in red. <b>DEFAULT</b> resets all four.</p>
+<p>As the page warns, <b>your score is invalid if any setting differs from the default</b> (page <span class="pg" data-to="valid"></span>). CHASE! is not affected: it always uses its own fixed settings.</p>
 <div class="clear"></div>
 <table>
-	<thead><tr><th colspan="2">Choices (the factory’s in bold)</th></tr></thead>
+	<thead><tr><th colspan="2">Choices (defaults in bold)</th></tr></thead>
 	<tbody>
 	<tr><td class="k" style="width:30%">DIFFICULTY</td><td>EASY · <b>NORMAL</b> · HARD · VERY HARD</td></tr>
-	<tr><td class="k">TIMER</td><td>HIGHEST · HIGH · <b>NORMAL</b> · LOW: the time the bosses allow</td></tr>
-	<tr><td class="k">LIVES</td><td>1 · 2 · <b>3</b> · 4: riders in the team</td></tr>
-	<tr><td class="k">BONUS LIFE</td><td>NONE · 2000000 · <b>1500000</b> · 1000000: an extend item every so many points</td></tr>
+	<tr><td class="k">TIMER</td><td>HIGHEST · HIGH · <b>NORMAL</b> · LOW: how much time you get for each boss.</td></tr>
+	<tr><td class="k">LIVES</td><td>1 · 2 · <b>3</b> · 4: the number of riders in a team.</td></tr>
+	<tr><td class="k">BONUS LIFE</td><td>NONE · 2000000 · <b>1500000</b> · 1000000: an extend item every time your score passes this many points.</td></tr>
 	</tbody>
 </table>
-<p>SELECT PLAYER needs three lives: with LIVES at another number the original game’s type select does without it.</p>
+<p>SELECT PLAYER is only available when LIVES is 3. With any other number, the original game’s SELECT TYPE screen leaves it out.</p>
 </section>
 
 <section class="s-menus newpage">
 <h1 id="pause" class="first">Pausing</h1>
 <figure class="fr w48"><img class="shot" src="art/pause.png" alt=""><figcaption>The pause menu.</figcaption></figure>
-<p><span class="b bk">BACK</span> while a stage is running stops the game where it is and opens the pause menu; the music waits with it. Up and down choose a row and <span class="b a">A</span> chooses it; <span class="b bb">B</span> or <span class="b bk">BACK</span> resumes. (In a training run it is the TRAINING PAUSE: page <span class="pg" data-to="training"></span>.)</p>
+<p>Press <span class="b bk">BACK</span> during a stage to pause the game and open the pause menu. The music pauses too. Press up and down to choose a row and <span class="b a">A</span> to select it, or <span class="b bb">B</span> / <span class="b bk">BACK</span> to resume. (During training, this is the TRAINING PAUSE menu instead: page <span class="pg" data-to="playeredit"></span>.)</p>
 <div class="clear"></div>
 <table class="menu long">
 	<tbody>
-	<tr><td>RESUME</td><td>On with the game.</td></tr>
-	<tr><td>RESTART STAGE<small>&lt; STAGE / STATE &gt;</small></td><td>STAGE: back to the start of the stage you are in. STATE: back to the save state you last saved or loaded in this credit. Left and right choose when there are both. It asks first, then the stage goes on at once.</td></tr>
-	<tr><td>FULL RESTART</td><td>The credit again from stage 1, with the same team: no selects. It asks first.</td></tr>
-	<tr><td>SAVE STATE · LOAD STATE</td><td>The save state pages (page <span class="pg" data-to="states"></span>).</td></tr>
-	<tr><td>OPTIONS</td><td>OPTIONS over the game, without the DEBUG MENU (page <span class="pg" data-to="options"></span>).</td></tr>
-	<tr><td>INVULNERABLE<small>OFF / ON</small></td><td>While it is ON your ship cannot be shot down. Left, right or A changes it.</td></tr>
-	<tr><td>QUIT TO TITLE</td><td>Ends the credit, after asking. A score good enough goes to the name entry.</td></tr>
+	<tr><td>RESUME</td><td>Continue playing.</td></tr>
+	<tr><td>RESTART STAGE<small>&lt; STAGE / STATE &gt;</small></td><td>STAGE: back to the start of the current stage. STATE: back to the last save state saved or loaded in this run. Choose with left and right. Asks for confirmation.</td></tr>
+	<tr><td>FULL RESTART</td><td>Start again from stage 1 with the same team. Asks for confirmation.</td></tr>
+	<tr><td>SAVE STATE · LOAD STATE</td><td>Open the save state pages (page <span class="pg" data-to="states"></span>).</td></tr>
+	<tr><td>OPTIONS</td><td>Open OPTIONS (without the DEBUG MENU) (page <span class="pg" data-to="options"></span>).</td></tr>
+	<tr><td>INVULNERABLE<small>OFF / ON</small></td><td>While ON, your ship cannot be shot down. Change it with left, right or A.</td></tr>
+	<tr><td>QUIT TO TITLE</td><td>End the run, after confirmation. If your score is high enough, you can still enter your name.</td></tr>
 	</tbody>
 </table>
 </section>
 
 <section class="s-menus newpage">
-<p style="margin-top:2mm">A question is answered with <span class="b a">A</span> (YES) or <span class="b bb">B</span> (NO). RESTART STAGE at stage 1 keeps the score as it was and records a new replay from there; further on, or with STATE, it makes the score invalid (page <span class="pg" data-to="valid"></span>).</p>
+<p style="margin-top:2mm">Confirmations are answered with <span class="b a">A</span> (YES) or <span class="b bb">B</span> (NO). RESTART STAGE on stage 1 keeps your score valid and starts a new replay from that point. On any later stage, or with STATE, it makes your score invalid (page <span class="pg" data-to="valid"></span>).</p>
 <div class="row" style="margin-top:2mm;align-items:center">
 	<figure style="flex:0 0 46%"><img class="shot" src="art/pause_invuln.png" alt=""><figcaption>INVULNERABLE turned ON.</figcaption></figure>
-	<div class="caution" style="flex:1"><span class="lbl">CAUTION</span><p>INVULNERABLE is OFF as every credit starts. <b>The moment you turn it on, the credit’s score is invalid</b> — turning it off again does not bring it back. The credit ends without a name entry, the rankings stay as they were, and it makes no replay.</p></div>
+	<div class="caution" style="flex:1"><span class="lbl">CAUTION</span><p>INVULNERABLE is OFF at the start of every run. <b>As soon as you turn it on, your score becomes invalid</b>, and turning it off again does not undo this. You will not be able to enter your name, the high score tables are not changed, and no replay is saved.</p></div>
 </div>
-<h2 id="endcredit">The end of a credit</h2>
+<h2 id="endcredit">The end of a run</h2>
 <div class="row" style="margin-top:2mm;justify-content:center">
-	<figure style="flex:0 0 31%"><img class="shot" src="art/name_entry.png" alt=""><figcaption><b>The name entry.</b> A score in the first five of its course takes three initials, against a countdown.</figcaption></figure>
-	<figure style="flex:0 0 31%"><img class="shot" src="art/ranking.png" alt=""><figcaption><b>The ranking.</b> One table a course, kept from one session to the next.</figcaption></figure>
+	<figure style="flex:0 0 31%"><img class="shot" src="art/name_entry.png" alt=""><figcaption><b>Name entry.</b> A score in the top five for its course lets you enter three initials before the countdown ends.</figcaption></figure>
+	<figure style="flex:0 0 31%"><img class="shot" src="art/ranking.png" alt=""><figcaption><b>High scores.</b> One table per course, saved between sessions.</figcaption></figure>
 </div>
-<p>A cleared course ends with the game’s ending and staff roll (the arcade’s TRAINING course without them). Then <b>SAVE REPLAY?</b> offers to keep the whole credit, as you played it (page <span class="pg" data-to="replays"></span>).</p>
+<p>If you clear a course, you see the ending and the staff credits (the arcade’s TRAINING course has neither). The game then asks <b>SAVE REPLAY?</b> so you can keep a recording of the whole run (page <span class="pg" data-to="replays"></span>).</p>
 </section>
 
 <section class="s-menus newpage">
 <h1 id="valid" class="first">Valid and invalid scores</h1>
-<p class="lead">A score made the way the game is meant to be played is valid. Anything that helps you makes it invalid; the secret commands, CONTROLS and the screen and sound settings never do.</p>
-<p>An invalid score is shown in red: the gadgets’ TOTAL, with the STAGES row of the stage where it happened (page <span class="pg" data-to="gadgets"></span>); the score in the SAVE REPLAY? box, with a <b>*</b> and the line “* = INVALID SCORE”; and the replay’s row on REPLAY DATA, with a *. Once invalid, it stays invalid.</p>
+<p class="lead">Anything that gives you an advantage makes your score invalid. The secret commands, CONTROLS, and the screen and sound settings never do.</p>
+<p>An invalid score is shown in red: in the gadgets’ STAGES panel (page <span class="pg" data-to="gadgets"></span>), in the SAVE REPLAY? box (marked <b>*</b>), and on the REPLAY DATA page (marked *). Once invalid, it stays invalid for the rest of the run.</p>
 <table class="long">
-	<thead><tr><th style="width:34%">What happened</th><th style="width:20%">Score</th><th>Rankings and replay</th></tr></thead>
+	<thead><tr><th style="width:34%">What happened</th><th style="width:20%">Score</th><th>High scores and replay</th></tr></thead>
 	<tbody>
-	<tr><td>A continue</td><td>Invalid</td><td>The game’s own rule: a player who continued is not entered. SAVE REPLAY? is still asked</td></tr>
-	<tr><td>DIP switches off the factory’s</td><td>Invalid</td><td>Name entry as usual; SAVE REPLAY? is still asked</td></tr>
-	<tr><td>LOAD STATE in a credit</td><td>Invalid</td><td>No replay</td></tr>
-	<tr><td>RESTART STAGE past stage 1, or STATE</td><td>Invalid</td><td>No replay</td></tr>
-	<tr><td>INVULNERABLE turned on</td><td>Invalid</td><td>No name entry, the rankings as they were; no replay</td></tr>
-	<tr><td>TRAINING</td><td>Invalid</td><td>Never entered; no replay</td></tr>
-	<tr><td>RESTART STAGE at stage 1</td><td>As it was</td><td>A new replay from the stage’s start</td></tr>
-	<tr><td>FULL RESTART</td><td>A new run</td><td>Valid again (unless INVULNERABLE stays on); a new replay</td></tr>
-	<tr><td>QUIT TO TITLE</td><td>As it was</td><td>Name entry if good enough; no replay</td></tr>
+	<tr><td>You continued</td><td>Invalid</td><td>Not entered (the arcade game’s own rule). You can still save a replay.</td></tr>
+	<tr><td>DIP switches not at their defaults</td><td>Invalid</td><td>Name entry as usual. You can still save a replay.</td></tr>
+	<tr><td>LOAD STATE during a run</td><td>Invalid</td><td>No replay.</td></tr>
+	<tr><td>RESTART STAGE after stage 1, or with STATE</td><td>Invalid</td><td>No replay.</td></tr>
+	<tr><td>INVULNERABLE turned on</td><td>Invalid</td><td>No name entry, high scores unchanged, no replay.</td></tr>
+	<tr><td>A DEBUG MENU cheat on</td><td>Invalid</td><td>No name entry, high scores unchanged, no replay.</td></tr>
+	<tr><td>TRAINING</td><td>Invalid</td><td>Never entered, no replay.</td></tr>
+	<tr><td>RESTART STAGE on stage 1</td><td>Unchanged</td><td>A new replay starts from the beginning of the stage.</td></tr>
+	<tr><td>FULL RESTART</td><td>New run</td><td>Valid again (unless INVULNERABLE is still on). A new replay starts.</td></tr>
+	<tr><td>QUIT TO TITLE</td><td>Unchanged</td><td>Name entry if the score is high enough. No replay.</td></tr>
 	</tbody>
 </table>
 </section>
@@ -637,166 +663,166 @@
 <!-- ============================================================ STATES AND REPLAYS -->
 <section class="s-host newpage tight">
 <h1 id="states" class="first">Save states</h1>
-<p class="lead">Keep the game exactly as it is, and come back to that moment whenever you like.</p>
-<figure class="fl w48"><img class="shot" src="art/save_state.png" alt=""><figcaption>SAVE STATE: slot 01 just saved.</figcaption></figure>
-<p>SAVE STATE (pause menu) and LOAD STATE (pause menu and title menu) open a page of slots: <b>ten for each MODE</b>, CHASE! and ORIGINAL. Each slot shows the stage and the score it was saved at, and the chosen one a small picture of the game at that moment.</p>
-<h3>Save state</h3><p>During a credit. Choose a slot and press <span class="b a">A</span>: the game is kept there. A slot already used asks first, then is overwritten.</p>
-<h3>Load state</h3><p>Left and right show the other MODE’s slots. <span class="b a">A</span> asks, then loads the state; a state of the other MODE brings that game with it. <span class="b x">X</span> deletes a state, after asking.</p>
-<p>After a load the game waits in the pause menu: choose RESUME to fly on. Loading makes the credit’s score invalid and ends its replay (page <span class="pg" data-to="valid"></span>).</p>
+<p class="lead">Save the game at any moment and come back to it whenever you like.</p>
+<figure class="fl w48"><img class="shot" src="art/save_state.png" alt=""><figcaption>SAVE STATE: just saved in slot 01.</figcaption></figure>
+<p>SAVE STATE (in the pause menu) and LOAD STATE (in the pause menu and the title menu) open a page of slots: <b>ten for each MODE</b>, CHASE! and ORIGINAL. Each slot shows the stage and score when it was saved, and the selected slot shows a small picture of that moment.</p>
+<h3>SAVE STATE</h3><p>Available during a run. Choose a slot and press <span class="b a">A</span> to save. If the slot is already in use, you are asked before it is overwritten.</p>
+<h3>LOAD STATE</h3><p>Press left and right to see the other MODE’s slots. Press <span class="b a">A</span> to load a state (after confirmation); loading a state from the other MODE switches to that game. Press <span class="b x">X</span> to delete a state (after confirmation).</p>
+<p>After loading, the game waits in the pause menu: choose RESUME to carry on. Loading a state makes your score invalid and stops the replay recording (page <span class="pg" data-to="valid"></span>).</p>
 <div class="clear"></div>
-<div class="note"><span class="lbl">NOTE</span><p>The rankings always stay as they are kept now. Loading an old state never brings back old rankings.</p></div>
-<p>The states are files beside the .xex: <span class="file">batrider360_state_c01.bin</span> to <span class="file">_c10.bin</span> for CHASE!, <span class="file">_o01.bin</span> to <span class="file">_o10.bin</span> for ORIGINAL. A state saved by another version of batrider360 may be refused.</p>
+<div class="note"><span class="lbl">NOTE</span><p>High scores are not part of a save state. Loading an old state never brings back old high scores.</p></div>
+<p>Save states are stored as files next to the .xex: <span class="file">batrider360_state_c01.bin</span> to <span class="file">_c10.bin</span> for CHASE!, and <span class="file">_o01.bin</span> to <span class="file">_o10.bin</span> for ORIGINAL. States saved by a different version of batrider360 may not load.</p>
 
 <h1 id="replays" style="margin-top:7mm">Replays</h1>
-<p class="lead">Every credit is recorded from its start. Keep the good ones.</p>
-<p>When a credit is over the game asks <b>SAVE REPLAY?</b>, with the MODE, the stage reached, the score and the time the credit lasted. <span class="b a">A</span> keeps it, <span class="b bb">B</span> lets it go. A credit shorter than ten seconds is not offered, and neither is one that cannot make a replay (page <span class="pg" data-to="valid"></span>). Thirty replays are kept; when all thirty are used, a new one takes the place of the oldest.</p>
-<h2>Replay data</h2>
-<p>REPLAY DATA on the title menu lists the replays kept, the newest first, twelve at a time, with how many of the thirty are used at the top. Each row shows the MODE (CHA or ORG), the stage it reached, its score and its length; an invalid score’s row is red, with a *. <span class="b a">A</span> plays one; <span class="b x">X</span> deletes one, after asking.</p>
+<p class="lead">Every run is recorded from the start. Save the good ones.</p>
+<p>At the end of a run the game asks <b>SAVE REPLAY?</b> and shows the MODE, the stage reached, the score and how long the run lasted. Press <span class="b a">A</span> to save it or <span class="b bb">B</span> to discard it. Runs shorter than ten seconds are not offered, and neither are runs that cannot be saved as replays (page <span class="pg" data-to="valid"></span>). Up to thirty replays are kept; when all thirty slots are full, the oldest replay is replaced.</p>
+<h2>REPLAY DATA</h2>
+<p>REPLAY DATA on the title menu lists your replays, newest first, twelve per page, with the number of slots used at the top. Each row shows the MODE (CHA or ORG), the stage reached, the score and the length. Rows with an invalid score are red and marked with a *. Press <span class="b a">A</span> to watch a replay, or <span class="b x">X</span> to delete it (after confirmation).</p>
 <h2>Watching a replay</h2>
 <table class="plain">
 	<tbody>
-	<tr><td style="width:36%"><span class="b lb">LB</span> / <span class="b rb">RB</span></td><td>Slower / faster: 1/2, x1, x2, x3</td></tr>
-	<tr><td><span class="b bk">BACK</span> or <span class="b st">START</span></td><td>The replay’s pause: RESUME, RESTART REPLAY (from its start) or QUIT REPLAY. B, BACK or START resumes</td></tr>
+	<tr><td style="width:36%"><span class="b lb">LB</span> / <span class="b rb">RB</span></td><td>Slower / faster: 1/2, x1, x2, x3.</td></tr>
+	<tr><td><span class="b bk">BACK</span> or <span class="b st">START</span></td><td>Pause the replay: RESUME, RESTART REPLAY (from the beginning) or QUIT REPLAY. Press B, BACK or START to resume.</td></tr>
 	</tbody>
 </table>
-<p>A banner shows the speed, the time played and the replay’s whole length. At its end the replay goes back to the REPLAY DATA page.</p>
-<p>A replay keeps the settings it was played with — the buttons, the continues, the DIP switches, the secret commands — and its LANGUAGE, so it plays the same whatever is set now. The pages opened during the credit, such as OPTIONS or the pause menu’s pages, are not in it.</p>
-<p>The replays are files beside the .xex: <span class="file">batrider360_replay_01.bin</span> to <span class="file">_30.bin</span>.</p>
+<p>A banner shows the playback speed, the time played and the total length. When the replay ends, you return to the REPLAY DATA page.</p>
+<p>A replay remembers the settings it was recorded with (button layout, continues, DIP switches, secret commands and LANGUAGE), so it always plays back the same way, whatever your current settings are. Menus opened during the run, such as OPTIONS or the pause menu, are not recorded.</p>
+<p>Replays are stored as files next to the .xex: <span class="file">batrider360_replay_01.bin</span> to <span class="file">_30.bin</span>.</p>
 
-<h1 id="manualpage" style="margin-top:7mm">The manual on the screen</h1>
-<p>OPTIONS’ <b>MANUAL</b> shows this booklet in the language of LANGUAGE: two pages side by side with ROTATION OFF, one page across the turned television with LEFT or RIGHT.</p>
+<h1 id="manualpage" style="margin-top:7mm">Reading this manual on the screen</h1>
+<p>OPTIONS &gt; <b>MANUAL</b> shows this manual in the language set by LANGUAGE: two pages side by side with ROTATION OFF, or one page at a time on a rotated display (LEFT or RIGHT).</p>
 <table class="plain">
 	<tbody>
-	<tr><td style="width:36%"><span class="b dp">✚</span> right, <span class="b rb">RB</span> or <span class="b a">A</span></td><td>The next page</td></tr>
-	<tr><td><span class="b dp">✚</span> left or <span class="b lb">LB</span></td><td>Back a page</td></tr>
-	<tr><td><span class="b bb">B</span> or <span class="b bk">BACK</span></td><td>Back to OPTIONS (<span class="b st">START</span>: every page closed)</td></tr>
+	<tr><td style="width:36%"><span class="b dp">✚</span> right, <span class="b rb">RB</span> or <span class="b a">A</span></td><td>Next page</td></tr>
+	<tr><td><span class="b dp">✚</span> left or <span class="b lb">LB</span></td><td>Previous page</td></tr>
+	<tr><td><span class="b bb">B</span> or <span class="b bk">BACK</span></td><td>Back to OPTIONS (<span class="b st">START</span> closes all pages)</td></tr>
 	</tbody>
 </table>
-<p>The page reads the file <span class="file">batrider360_manual.bin</span>, which comes in the release beside <span class="file">batrider360.xex</span>. Without it the MANUAL row is grey and its help says NO BATRIDER360_MANUAL.BIN BESIDE THE XEX.</p>
+<p>The manual is read from <span class="file">batrider360_manual.bin</span>, which comes with the release and must be in the same folder as <span class="file">batrider360.xex</span>. If the file is missing, the MANUAL row is greyed out and the help line reads NO BATRIDER360_MANUAL.BIN BESIDE THE XEX.</p>
 </section>
 
 <!-- ============================================================ GADGETS -->
 <section class="s-host newpage tight" style="page:gad">
 <h1 id="gadgets" class="first">The gadgets</h1>
-<p class="lead">An upright game on a wide television leaves two wide strips beside it. The Xbox 360 version fills them with panels that read the game as it runs.</p>
-<p>The gadgets show what the arcade board keeps in its memory but never puts on the screen: the rank, the items still to come, the conditions for the secret bosses. They are a port of <b>Baffo’s Batrider layout for MAME</b> (version 0.4: design baf, Lua Olifante &amp; DUBS, rank start bar Miquel), with new panels for CHASE! drawn in the same style. OPTIONS’ <b>GADGETS</b> row turns them off; they also stay off on a 4:3 screen and with PICTURE SIZE CUSTOM.</p>
-<figure><div class="slot" data-file="work/gadgets_yoko_chase.png" data-ar="16/9" data-label="ROTATION OFF, CHASE!"></div><figcaption><b>ROTATION OFF, a CHASE! credit.</b> Left of the game: the rider panels, Status and Weapon, and the CHASE! panels at the bottom. Right: the rank, the items, the medal, the secret bosses, the boss and the stages.</figcaption></figure>
-<h2>Left of the game</h2>
+<p class="lead">A vertical game on a widescreen TV leaves empty space on both sides. This version fills that space with information panels that update as you play.</p>
+<p>The gadgets show information the arcade game tracks but never displays: the rank, the next items to drop, the conditions for the secret bosses, and more. They are based on <b>Baffo’s Batrider layout for MAME</b> (version 0.4: design by baf, Lua by Olifante &amp; DUBS, rank start bar by Miquel), with new panels for CHASE! drawn in the same style. Turn them off with OPTIONS &gt; <b>GADGETS</b>. They are also hidden on a 4:3 screen and when PICTURE SIZE is CUSTOM.</p>
+<figure><div class="slot" data-file="work/gadgets_yoko_chase.png" data-ar="16/9" data-label="ROTATION OFF, CHASE!"></div><figcaption><b>ROTATION OFF, a CHASE! run.</b> Left of the game: the rider panels, STATUS, WEAPON and the CHASE! panels at the bottom. Right: the rank, items, medals, secret bosses, boss information and stage scores.</figcaption></figure>
+<h2>Left side</h2>
 <table class="menu">
 	<tbody>
-	<tr><td>CURRENT PLAYER</td><td>The faces of the three riders — the one flying first, the next two after — and the team’s type, A to D. Beside it the <b>input display</b>, the stick and the buttons as you press them, and the shot charge.</td></tr>
-	<tr><td>STATUS</td><td>The stage, the time spent in it, and the enemies and the bullets on the screen.</td></tr>
-	<tr><td>WEAPON</td><td>Shot level, options, their formation (only the Battle Garegga guests have one: V, BACK, FRONT, CIRCLE, CONTROL, or SPECIAL for their special formations), the bombs in stock, and the Sp.Power and Sp.Option marks.</td></tr>
-	<tr><td>MUSIC</td><td>The tune playing, under the title the game’s own sound test gives it, and who wrote it.</td></tr>
+	<tr><td>CURRENT PLAYER</td><td>The faces of your three riders (the one flying first, then the next two) and the team’s type, A to D. Next to it, the <b>input display</b> shows the stick and buttons as you press them, along with the shot charge.</td></tr>
+	<tr><td>STATUS</td><td>The course, the stage, the time spent in it, and the number of enemies and bullets on the screen.</td></tr>
+	<tr><td>WEAPON</td><td>Shot level, number of options, their formation (Battle Garegga guest riders only: V, BACK, FRONT, CIRCLE, CONTROL, or SPECIAL for the secret formations), bombs in stock, and the Sp.Power and Sp.Option marks.</td></tr>
+	<tr><td>BGM</td><td>The tune now playing, with its title from the game’s sound test and its composer.</td></tr>
 	</tbody>
 </table>
-<h3 style="color:var(--red)">CHASE! panels, at the bottom</h3>
+<h3 style="color:var(--red)">CHASE! panels (bottom left)</h3>
 <table class="menu">
 	<tbody>
-	<tr><td>CHAIN</td><td>The chain timer as a bar, and the chain count under it (page <span class="pg" data-to="chain"></span>).</td></tr>
-	<tr><td>MULTIPLIER</td><td>x1 to x8, with the amber <b>C</b> when a Chase Break is ready, and the forward arrow: up in the upper half of the screen, down in the lower.</td></tr>
-	<tr><td>LIVES</td><td>Riders flying plus extends in the bank, five at most.</td></tr>
-	<tr><td>NEXT EXTEND</td><td>The points still to make for the next extend.</td></tr>
+	<tr><td>CHAIN</td><td>The chain timer as a bar, with the chain count below it (page <span class="pg" data-to="chain"></span>).</td></tr>
+	<tr><td>MULTIPLIER</td><td>x1 to x8, with the amber <b>C</b> when a Chase Break is ready, and an arrow showing your position: up in the upper half of the screen, down in the lower half.</td></tr>
+	<tr><td>LIVES</td><td>Riders flying plus banked extends, five at most.</td></tr>
+	<tr><td>NEXT EXTEND</td><td>The points needed for the next extend.</td></tr>
 	</tbody>
 </table>
-<h2>Right of the game</h2>
+<h2>Right side</h2>
 <table class="menu">
 	<tbody>
-	<tr><td>RANK BAR</td><td>The rank in per cent, and the rank start: where this credit’s rank began.</td></tr>
+	<tr><td>RANK BAR</td><td>The current rank as a percentage, and where the rank started in this run.</td></tr>
 	<tr><td>ITEM DROPS</td><td>The next six items in the drop order (page <span class="pg" data-to="fly"></span>).</td></tr>
-	<tr><td>ITEM COUNT</td><td>How many of each kind of item have dropped. A count turns red at its cap.</td></tr>
-	<tr><td>MEDAL</td><td>The medals dropped, and the next medal: its picture and its value.</td></tr>
-	<tr><td>SECRET BOSSES</td><td>The twelve conditions that call up the secret bosses: an empty box while one is still open, a check when it is met, a minus when it is lost.</td></tr>
-	<tr><td>BOSS INFO</td><td>The boss’s hit points, and its timer in seconds.</td></tr>
-	<tr><td>STAGES</td><td>The score made in each stage, in the order you play them, and the TOTAL. Red when the score is invalid (page <span class="pg" data-to="valid"></span>).</td></tr>
+	<tr><td>ITEM COUNT</td><td>How many of each item have dropped so far. A count turns red when it reaches its limit.</td></tr>
+	<tr><td>MEDAL</td><td>The number of medals dropped, and the next medal’s picture and value.</td></tr>
+	<tr><td>SECRET BOSSES</td><td>The twelve conditions for meeting the secret bosses: an empty box while a condition is still possible, a check mark when it has been met, and a minus when it can no longer be met.</td></tr>
+	<tr><td>BOSS INFO</td><td>The boss’s remaining hit points and time in seconds.</td></tr>
+	<tr><td>STAGES</td><td>Your score in each stage, in the order you played them, and the TOTAL. Shown in red when the score is invalid (page <span class="pg" data-to="valid"></span>).</td></tr>
 	</tbody>
 </table>
-<h2>The original game, and a turned display</h2>
-<p>An original-game credit has no chain: the CHASE! corner stays empty, and every other panel works as it does in CHASE!.</p>
+<h2>The original game, and rotated displays</h2>
+<p>The original game has no chain, so the CHASE! panels stay empty. All other panels work exactly as in CHASE!.</p>
 <div class="row" style="justify-content:center">
 	<figure style="flex:0 0 42%"><div class="slot" data-file="work/gadgets_yoko_original.png" data-ar="16/9" data-label="ROTATION OFF, ORIGINAL"></div><figcaption><b>ORIGINAL.</b></figcaption></figure>
-	<figure style="flex:0 0 13.3%"><div class="slot" data-file="work/gadgets_tate_chase.png" data-ar="9/16" data-label="ROTATION LEFT / RIGHT, CHASE!"></div><figcaption><b>Turned.</b></figcaption></figure>
+	<figure style="flex:0 0 13.3%"><div class="slot" data-file="work/gadgets_tate_chase.png" data-ar="9/16" data-label="ROTATION LEFT / RIGHT, CHASE!"></div><figcaption><b>Rotated.</b></figcaption></figure>
 </div>
-<p>Turned (ROTATION LEFT or RIGHT), the gadgets sit in strips above and below the game; Secret Bosses and Stages need an upright display.</p>
+<p>On a rotated display, the gadgets sit above and below the game, without SECRET BOSSES and STAGES.</p>
 </section>
 
 <!-- ============================================================ REFERENCE -->
 <section class="s-ref newpage">
-<h1 id="keeps" class="first">What the game keeps</h1>
-<p class="lead">The arcade board forgets everything when it is switched off. This version does not.</p>
-<p>Everything is kept in small files beside <span class="file">batrider360.xex</span>, their names beginning <span class="file">batrider360_</span>. There is nothing to do: the game writes what has changed in the background, without stopping the game.</p>
+<h1 id="keeps" class="first">Saved files</h1>
+<p class="lead">The arcade machine forgets everything when it is switched off. This version saves your settings and scores.</p>
+<p>Everything is saved in small files next to <span class="file">batrider360.xex</span>, all starting with <span class="file">batrider360_</span>. You don’t need to do anything: the game saves changes in the background without interrupting play.</p>
 <table>
-	<thead><tr><th style="width:62%">Kept</th><th>When</th></tr></thead>
+	<thead><tr><th style="width:62%">What is saved</th><th>When</th></tr></thead>
 	<tbody>
-	<tr><td style="font-weight:400">The screen and sound settings, GADGETS, LANGUAGE, HITBOX and MODE (<span class="file">batrider360_host.txt</span>)</td><td>When you leave the page, or the menu, with something changed</td></tr>
-	<tr><td style="font-weight:400">CONTINUES, CONTROLS, SECRET COMMANDS, the DIP switches and the sound tests’ numbers (<span class="file">batrider360_options.txt</span>)</td><td>The same</td></tr>
-	<tr><td style="font-weight:400">Each MODE’s rankings: the first five of every table (<span class="file">batrider360_rankings_chase.bin</span>, <span class="file">_original.bin</span>)</td><td>When they change</td></tr>
-	<tr><td style="font-weight:400">Save states (<span class="file">batrider360_state_c01</span> … <span class="file">_c10</span> and <span class="file">_o01</span> … <span class="file">_o10</span>): ten for each MODE</td><td>When you save or delete one (page <span class="pg" data-to="states"></span>)</td></tr>
-	<tr><td style="font-weight:400">Replays (<span class="file">batrider360_replay_01</span> … <span class="file">_30</span>): thirty at most</td><td>When you keep or delete one (page <span class="pg" data-to="replays"></span>)</td></tr>
-	<tr><td style="font-weight:400">The menu sounds (<span class="file">batrider360_menusnd.bin</span>), made from the ROM set</td><td>At the first start</td></tr>
+	<tr><td style="font-weight:400">Screen and sound settings, GADGETS, LANGUAGE, HITBOX and MODE (<span class="file">batrider360_host.txt</span>)</td><td>When you leave a page or menu after changing something</td></tr>
+	<tr><td style="font-weight:400">CONTINUES, CONTROLS, SECRET COMMANDS, DIP switches and the sound test numbers (<span class="file">batrider360_options.txt</span>)</td><td>Same as above</td></tr>
+	<tr><td style="font-weight:400">High score tables for each MODE, top five of each (<span class="file">batrider360_rankings_chase.bin</span>, <span class="file">_original.bin</span>)</td><td>When they change</td></tr>
+	<tr><td style="font-weight:400">Save states, ten for each MODE (<span class="file">batrider360_state_c01</span> … <span class="file">_c10</span> and <span class="file">_o01</span> … <span class="file">_o10</span>)</td><td>When you save or delete one (page <span class="pg" data-to="states"></span>)</td></tr>
+	<tr><td style="font-weight:400">Replays, thirty at most (<span class="file">batrider360_replay_01</span> … <span class="file">_30</span>)</td><td>When you save or delete one (page <span class="pg" data-to="replays"></span>)</td></tr>
+	<tr><td style="font-weight:400">Menu sounds, created from the ROM set (<span class="file">batrider360_menusnd.bin</span>)</td><td>The first time you start the game</td></tr>
 	</tbody>
 </table>
-<p>The TRAINING page’s settings are kept until the console is switched off (and in save states). The log <span class="file">batrider360.log</span> is written at every start.</p>
-<div class="note"><span class="lbl">NOTE</span><p>The files travel with the game: copy the folder as a whole and your scores and settings come along. Delete them and the game starts afresh. The folder must be on a drive the console can write to.</p></div>
-<p>One file beside the .xex is not written by the game: <span class="file">batrider360_manual.bin</span>, the booklet for the MANUAL page. It comes in the release next to <span class="file">batrider360.xex</span>; keep the two together.</p>
-<h2>When a score is saved</h2>
-<p>A score enters the kept ranking <b>when its name entry is over</b>, not while it is still climbing. Leaving the game or switching off during a name entry loses that credit’s score.</p>
-<p>Each MODE has its own rankings, with one table for each course: CHASE! scores and original-game scores are never mixed. Which credits enter them: page <span class="pg" data-to="valid"></span>.</p>
-<h2>Starting afresh</h2>
-<p>The DEBUG MENU’s <b>INITIALIZE RANKINGS</b> erases one mode’s rankings or both, and <b>DEFAULT SETTINGS</b> puts every option back, each after asking (page <span class="pg" data-to="debug"></span>).</p>
+<p>TRAINING and DEBUG MENU cheat settings are not saved: they last until you quit the game. A log file, <span class="file">batrider360.log</span>, is written each time the game starts.</p>
+<div class="note"><span class="lbl">NOTE</span><p>Your files stay with the game: copy the whole folder and your scores and settings come with it. Delete them and the game starts fresh. The folder must be on a drive the console can write to.</p></div>
+<p>One file is not created by the game: <span class="file">batrider360_manual.bin</span>, which contains the on-screen manual. It comes with the release; keep it in the same folder as <span class="file">batrider360.xex</span>.</p>
+<h2>When high scores are saved</h2>
+<p>A score is saved to the high score table <b>after you finish entering your name</b>, not while you are still playing. If you quit or switch off during name entry, that score is lost.</p>
+<p>Each MODE has its own high score tables, with one table per course: CHASE! scores and original scores are never mixed. See page <span class="pg" data-to="valid"></span> for which runs are entered.</p>
+<h2>Starting fresh</h2>
+<p>In the DEBUG MENU, <b>INITIALIZE RANKINGS</b> erases the high scores of one MODE or both, and <b>DEFAULT SETTINGS</b> resets all options. Both ask for confirmation first (page <span class="pg" data-to="debug"></span>).</p>
 </section>
 
 <section class="s-ref newpage">
-<h1 id="trouble" class="first">If something is not right</h1>
+<h1 id="trouble" class="first">Troubleshooting</h1>
 <table class="long">
-	<thead><tr><th style="width:44%">What you see</th><th>What to do</th></tr></thead>
+	<thead><tr><th style="width:44%">Problem</th><th>Solution</th></tr></thead>
 	<tbody>
-	<tr><td>The screen stays dark red after the start</td><td>The game did not find its ROM set. Put MAME’s merged <span class="file">batrider.zip</span> in the same folder as <span class="file">batrider360.xex</span>. <span class="file">batrider360.log</span> beside it says where it looked. BACK returns to the dashboard.</td></tr>
-	<tr><td>The game is lying on its side</td><td>GENERAL SCREEN’s ROTATION is LEFT or RIGHT, for a display on its side. For an upright television choose OFF (page <span class="pg" data-to="screen"></span>).</td></tr>
-	<tr><td>Panels fill the sides of the screen</td><td>Those are the gadgets (page <span class="pg" data-to="gadgets"></span>). OPTIONS’ GADGETS OFF leaves the game alone.</td></tr>
-	<tr><td>The gadgets do not show</td><td>They need GADGETS ON, a 16:9 screen (ASPECT RATIO) and PICTURE SIZE INTEGER or FULL. The OPTIONS page says which is missing.</td></tr>
-	<tr><td>The picture is too small, too large or off centre</td><td>GENERAL SCREEN: PICTURE SIZE FULL, or CUSTOM’s rows with <span class="b a">A</span> to put each back (page <span class="pg" data-to="genscreen"></span>).</td></tr>
-	<tr><td>Nothing is kept from one day to the next</td><td>The game writes its files beside the .xex: the folder must be on a drive the console can write to (page <span class="pg" data-to="keeps"></span>).</td></tr>
-	<tr><td>The score at the top or the TIME on the select screens is cut off</td><td>The television is cropping the edges of the picture (overscan); the game draws them whole. Set the television to show the whole picture — often called Just Scan, Full Pixel or Screen Fit.</td></tr>
-	<tr><td>The title screen has no INSERT COIN</td><td>It is not meant to: both games are in free play.</td></tr>
-	<tr><td>START does nothing on the title</td><td>Wait for the title to finish appearing; its menu takes input once it has.</td></tr>
-	<tr><td>The game started by itself</td><td>It did not: after half a minute on the title menu without input the title shows the game’s demonstration. Press START.</td></tr>
-	<tr><td>START in play does not pause</td><td>In play START is the arcade’s own button, for the secret commands. BACK pauses.</td></tr>
-	<tr><td>The bullets have other colours, or numbers run down the left of the screen</td><td>The secret commands: hold START and press a direction or a button in play, or set them back to GAME and OFF in OPTIONS (page <span class="pg" data-to="commands"></span>).</td></tr>
-	<tr><td>SPECIAL did not make a Chase Break</td><td>It needs x4 or better (the amber C), and something on the screen to take: bullets or small enemies. Five seconds must have passed since the last one.</td></tr>
-	<tr><td>A button does nothing in play</td><td>CONTROLS sets it OFF, or to another job. DEFAULTS puts them back (page <span class="pg" data-to="ctlpage"></span>).</td></tr>
-	<tr><td>My score is red</td><td>The credit used a continue, a state, a restart, INVULNERABLE or changed DIP switches (page <span class="pg" data-to="valid"></span>).</td></tr>
-	<tr><td>My score was not entered: no name entry</td><td>INVULNERABLE was turned on, or the player continued, or it was a training run (page <span class="pg" data-to="valid"></span>).</td></tr>
-	<tr><td>START RUN plays the other game</td><td>It plays the game of PLAY’s MODE: CHASE! or ORIGINAL (page <span class="pg" data-to="mode"></span>).</td></tr>
-	<tr><td>My scores are gone</td><td>Each MODE has its own rankings. Check that MODE is the one you played in.</td></tr>
-	<tr><td>The select screens are in Japanese</td><td>OPTIONS’ LANGUAGE is JAPANESE. Set it to ENGLISH outside a credit.</td></tr>
-	<tr><td>LANGUAGE, SHOT RATE or the sound tests cannot be changed</td><td>They are for outside a credit: change them from the title menu’s OPTIONS.</td></tr>
-	<tr><td>There is no DEBUG MENU</td><td>It is in the title menu’s OPTIONS only, not in the pause menu’s.</td></tr>
-	<tr><td>My chain broke and I was still shooting</td><td>Something has to die. The timer is refilled by kills (and by hits on a boss), not by shots.</td></tr>
-	<tr><td>MANUAL is grey</td><td>Put <span class="file">batrider360_manual.bin</span> from the release in the same folder as <span class="file">batrider360.xex</span>.</td></tr>
-	<tr><td>A loaded game does not move</td><td>It waits in the pause menu. Choose RESUME (page <span class="pg" data-to="states"></span>).</td></tr>
-	<tr><td>A state or a replay is refused</td><td>It was saved by another version of batrider360.</td></tr>
-	<tr><td>The game did not ask SAVE REPLAY?</td><td>Credits under ten seconds are not offered, nor credits that loaded a state, restarted past stage 1, quit, or had INVULNERABLE on (page <span class="pg" data-to="valid"></span>).</td></tr>
-	<tr><td>An old replay is gone</td><td>Thirty are kept; when they are full, the oldest gives way to the new one.</td></tr>
-	<tr><td>The picture is blurred, too dark or too bright</td><td>Check SMOOTHING (OFF) and BRIGHTNESS (100% is the board’s own picture) in GENERAL SCREEN.</td></tr>
-	<tr><td>How do I get back to the dashboard?</td><td>EXIT, the last row of the title menu.</td></tr>
+	<tr><td>The screen stays dark red after starting</td><td>The ROM set was not found. Put MAME’s merged <span class="file">batrider.zip</span> in the same folder as <span class="file">batrider360.xex</span>. The log file <span class="file">batrider360.log</span> shows where the game looked. Press BACK to return to the dashboard.</td></tr>
+	<tr><td>The game is lying on its side</td><td>ROTATION in GENERAL SCREEN is set to LEFT or RIGHT, which is for a display turned on its side. For a normal TV, set it to OFF (page <span class="pg" data-to="screen"></span>).</td></tr>
+	<tr><td>There are panels on both sides of the game</td><td>Those are the gadgets (page <span class="pg" data-to="gadgets"></span>). Set OPTIONS &gt; GADGETS to OFF to hide them.</td></tr>
+	<tr><td>The gadgets don’t appear</td><td>They need GADGETS ON, a 16:9 screen (ASPECT RATIO) and PICTURE SIZE set to INTEGER or FULL. The OPTIONS page tells you what is missing.</td></tr>
+	<tr><td>The picture is too small, too large or off-centre</td><td>In GENERAL SCREEN, set PICTURE SIZE to FULL, or press <span class="b a">A</span> on each CUSTOM row to reset it (page <span class="pg" data-to="genscreen"></span>).</td></tr>
+	<tr><td>Settings or scores are not saved</td><td>The game saves its files next to the .xex, so the folder must be on a drive the console can write to (page <span class="pg" data-to="keeps"></span>).</td></tr>
+	<tr><td>The score at the top or the TIME on the selection screens is cut off</td><td>Your TV is cropping the edges of the picture (overscan). Set the TV to show the whole picture; this setting is often called Just Scan, Full Pixel or Screen Fit.</td></tr>
+	<tr><td>There is no INSERT COIN on the title screen</td><td>That is normal: both games are set to free play.</td></tr>
+	<tr><td>START does nothing on the title screen</td><td>Wait until the title has finished appearing; the menu responds once it is fully shown.</td></tr>
+	<tr><td>The game started playing by itself</td><td>That is the demo, which starts after about 30 seconds on the title menu without input. Press START.</td></tr>
+	<tr><td>START doesn’t pause the game</td><td>During play, START is the arcade game’s own button, used for the secret commands. Press BACK to pause.</td></tr>
+	<tr><td>The bullets are a different colour, or numbers scroll down the left of the screen</td><td>A secret command is on. Hold START and press the same direction or button during play, or set it back to DEFAULT / OFF in OPTIONS (page <span class="pg" data-to="commands"></span>).</td></tr>
+	<tr><td>SPECIAL didn’t set off a Chase Break</td><td>You need x4 or higher (the amber C) and something on screen to convert: bullets or small enemies. It also can’t be used during the five seconds after the previous one.</td></tr>
+	<tr><td>A button does nothing during play</td><td>It is set to OFF or to another job in CONTROLS. Choose DEFAULTS to restore the original layout (page <span class="pg" data-to="ctlpage"></span>).</td></tr>
+	<tr><td>My score is red</td><td>The run used a continue, a save state, a restart, INVULNERABLE, a DEBUG MENU cheat, or changed DIP switches (page <span class="pg" data-to="valid"></span>).</td></tr>
+	<tr><td>I couldn’t enter my name</td><td>INVULNERABLE or a DEBUG MENU cheat was on, you continued, or it was a training run (page <span class="pg" data-to="valid"></span>).</td></tr>
+	<tr><td>START RUN plays the other game</td><td>START RUN plays the game set by MODE on the PLAY page: CHASE! or ORIGINAL (page <span class="pg" data-to="mode"></span>).</td></tr>
+	<tr><td>My high scores are gone</td><td>Each MODE has its own high score tables. Check that MODE is set to the game you played.</td></tr>
+	<tr><td>The selection screens are in Japanese</td><td>OPTIONS &gt; LANGUAGE is set to JAPANESE. Change it to ENGLISH outside a run.</td></tr>
+	<tr><td>LANGUAGE, SHOT RATE or the sound tests can’t be changed</td><td>They can only be changed outside a run. Use OPTIONS from the title menu.</td></tr>
+	<tr><td>There is no DEBUG MENU</td><td>It is only available in OPTIONS from the title menu, not from the pause menu.</td></tr>
+	<tr><td>My chain broke even though I was shooting</td><td>Only kills (and hits on a boss) refill the timer. Shots that hit nothing don’t count.</td></tr>
+	<tr><td>MANUAL is greyed out</td><td>Put <span class="file">batrider360_manual.bin</span> from the release in the same folder as <span class="file">batrider360.xex</span>.</td></tr>
+	<tr><td>The game doesn’t move after loading a state</td><td>It is waiting in the pause menu. Choose RESUME (page <span class="pg" data-to="states"></span>).</td></tr>
+	<tr><td>A save state or replay won’t load</td><td>It was made with a different version of batrider360.</td></tr>
+	<tr><td>The game didn’t ask SAVE REPLAY?</td><td>Runs under ten seconds are not offered, and neither are runs that loaded a state, restarted after stage 1, were quit, or had INVULNERABLE or a cheat on (page <span class="pg" data-to="valid"></span>).</td></tr>
+	<tr><td>An old replay has disappeared</td><td>Thirty replays are kept; when they are full, the oldest is replaced by the newest.</td></tr>
+	<tr><td>The picture is blurry, too dark or too bright</td><td>In GENERAL SCREEN, check SMOOTHING (OFF for sharp pixels) and BRIGHTNESS (100% is the original).</td></tr>
+	<tr><td>How do I get back to the dashboard?</td><td>Choose EXIT, the last row of the title menu.</td></tr>
 	</tbody>
 </table>
 
 <div class="creditblock">
 <h1 id="credits" style="margin-top:7mm">Credits</h1>
 <div class="credits">
-	<div><div class="k">The original game</div><div class="v">ARMED POLICE BATRIDER<br>© 1998 RAIZING / 8ing CO., LTD.</div></div>
+	<div><div class="k">Original game</div><div class="v">ARMED POLICE BATRIDER<br>© 1998 RAIZING / 8ing CO., LTD.</div></div>
 	<div><div class="k">CHASE! arrangement</div><div class="v">COIN-OP GAME STUDIO</div></div>
-	<div><div class="k">Xbox 360 version 0.14</div><div class="v">Unofficial; made with Claude for its user’s own console</div></div>
-	<div><div class="k">Gadgets</div><div class="v">After Baffo’s Batrider layout for MAME, v0.4: design baf, Lua Olifante &amp; DUBS, rank start bar Miquel</div></div>
+	<div><div class="k">Xbox 360 version 0.19</div><div class="v">Unofficial; made with Claude for personal use</div></div>
+	<div><div class="k">Gadgets</div><div class="v">Based on Baffo’s Batrider layout for MAME, v0.4: design by baf, Lua by Olifante &amp; DUBS, rank start bar by Miquel</div></div>
 	<div><div class="k">68000 emulation</div><div class="v">Musashi by Karl Stenerud (MIT license)</div></div>
 	<div><div class="k">Z80 emulation</div><div class="v">superzazu/z80 (MIT license)</div></div>
 	<div><div class="k">YM2151 sound</div><div class="v">ymfm by Aaron Giles (BSD 3-Clause license)</div></div>
 	<div><div class="k">Libraries</div><div class="v">zlib; xsdk (MIT license)</div></div>
 </div>
 <div class="logostrip"><img class="coin" src="art/coinop.png" alt=""><img class="rz" src="art/raizing_8ing.png" alt=""></div>
-<p class="legal-s">This is an unofficial, non-commercial version made by enthusiasts. It is not licensed, sponsored or endorsed by the game’s owners or by the maker of any system it runs on. ARMED POLICE BATRIDER, its characters and its artwork belong to their owners. Xbox 360 is a trademark of Microsoft. All other names are the property of their owners.</p>
+<p class="legal-s">This is an unofficial, non-commercial version made by fans. It is not licensed, sponsored or endorsed by the owners of the game or by the maker of any system it runs on. ARMED POLICE BATRIDER, its characters and its artwork belong to their respective owners. Xbox 360 is a trademark of Microsoft. All other names are the property of their respective owners.</p>
 </div>
 </section>
 
@@ -814,8 +840,8 @@
 	<div class="rule"></div>
 	<div class="txt">
 		<h2>Chase the chain.</h2>
-		<p>Sixteen kills a step, eight steps, a second and a half to find the next one. Fly forward and the timer is yours; hang back and it is not. Medals come to you. And when the screen fills with bullets, one button turns every one of them to gold.</p>
-		<p>CHASE! and the original 1998 arcade game, each with its own rankings — a training mode for every stage and boss, save states and replays — and beside the game, the gadgets: everything the board knows.</p>
+		<p>Every 16 kills raise your multiplier, up to x8, and you have a second and a half to find the next target. Fly forward and the timer is on your side; hang back and it isn’t. Medals fly to you, and when the screen fills with bullets, one button turns them all into gold.</p>
+		<p>CHASE! and the original 1998 arcade game, each with its own high scores. A training mode for every stage and boss, save states and replays, and the gadgets beside the game showing everything the arcade machine knows.</p>
 		<div class="row c r3 sm">
 			<figure><img class="shot" src="art/back1.jpg" alt=""></figure>
 			<figure><img class="shot" src="art/back2.jpg" alt=""></figure>
@@ -823,7 +849,7 @@
 		</div>
 	</div>
 	<div class="logos"><img class="coin" src="art/coinop.png" alt=""><img class="rz" src="art/raizing_8ing.png" alt=""></div>
-	<div class="legal">ARMED POLICE BATRIDER © 1998 RAIZING / 8ing CO., LTD.  CHASE! arranged by COIN-OP GAME STUDIO.  Xbox 360 version 0.14.  Unofficial and non-commercial; not licensed or endorsed by the owners of the game or of the system. Xbox 360 is a trademark of Microsoft. All trademarks are the property of their owners.</div>
+	<div class="legal">ARMED POLICE BATRIDER © 1998 RAIZING / 8ing CO., LTD.  CHASE! arranged by COIN-OP GAME STUDIO.  Xbox 360 version 0.19.  Unofficial and non-commercial; not licensed or endorsed by the owners of the game or of the system. Xbox 360 is a trademark of Microsoft. All trademarks are the property of their respective owners.</div>
 </div>
 
 </body>

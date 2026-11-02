@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 #include "board.h"
 #include "vdp.h"
@@ -554,6 +555,12 @@ static int fe_run(BrRoms *r, const char *od, long nframes, const char *script)
 				}
 				if (pf)
 					fclose(pf);
+			} else if (!strcmp(cmd[i].op, "text")) {
+				/* test 17: the board's text layer cells that are not blank: col line word */
+				const Vdp *tv = br_vdp_snapshot();
+				for (int k = 0; k < 0x1000; k++)
+					if ((tv->txram[k] & 0x3ff) != 0x20 && (tv->txram[k] & 0x3ff))
+						printf("%6ld text %d %d %04X\n", fe_fr, k / 64, k % 64, tv->txram[k]);
 			} else if (!strcmp(cmd[i].op, "mark"))
 				printf("%6ld ---- %s\n", fe_fr, cmd[i].text);
 			/* test 8: ssave / sload (one state in memory), hash, recstart / recstop / play (a replay in memory) */
@@ -639,6 +646,16 @@ static int fe_run(BrRoms *r, const char *od, long nframes, const char *script)
 			}
 		} else {
 			memset(aud, 0, sizeof aud);
+		}
+		/* BR_LEVEL (test 17): the board's output level (RMS) and its tune every 30 frames: music left playing */
+		if (getenv("BR_LEVEL")) {
+			static double lv;
+			for (int k = 0; k < BR_AUDIO_PER_FRAME; k++)
+				lv += (double)aud[k] * aud[k];
+			if (fe_fr % 30 == 29) {
+				printf("%6ld level %.0f tune %d\n", fe_fr, sqrt(lv / (30.0 * BR_AUDIO_PER_FRAME)), br_music());
+				lv = 0;
+			}
 		}
 		/* BR_RECAUTO: main.c's rule, a replay from each credit's start to its end, played back and compared at once */
 		if (t8_rec && out.rec)
