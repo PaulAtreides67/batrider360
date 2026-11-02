@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Armed Police Batrider CHASE! — 取扱説明書（Xbox 360版）</title>
+<meta name="author" content="batrider360">
+<link rel="stylesheet" href="manual.css">
+</head>
+<body class="ja">
+
+<!-- ============================================================ 表紙 -->
+<div class="cover">
+	<img class="art" src="art/cover_keyart.jpg" alt="">
+	<img class="logo" src="art/logo.png" alt="BATRIDER CHASE!">
+	<div class="bar">取扱説明書</div>
+	<div class="foot">
+		<img class="coin" src="art/coinop.png" alt="COIN-OP GAME STUDIO">
+		<div><img class="rz" src="art/raizing_8ing.png" alt="RAIZING / 8ing">
+		<div class="copy">© 1998 RAIZING / 8ing CO., LTD.<br>CHASE! アレンジ：COIN-OP GAME STUDIO</div></div>
+	</div>
+	<div class="badge"><span class="xb">XBOX</span><span class="n">360</span><span class="hb">HOMEBREW</span></div>
+</div>
+
+<!-- ============================================================ もくじ -->
+<section class="s-gs">
+<h1 class="first">もくじ</h1>
+<div class="toc">
+	<div class="h"><span>はじめに</span><span class="pg" data-to="start"></span></div>
+	<div class="s"><span>操作方法</span><span class="pg" data-to="controls"></span></div>
+	<div class="s"><span>タイトルメニューと PLAY</span><span class="pg" data-to="starting"></span></div>
+	<div class="h"><span>基本のあそびかた</span><span class="pg" data-to="fly"></span></div>
+	<div class="h"><span>CHASE! モード</span><span class="pg" data-to="chase"></span></div>
+	<div class="s"><span>CHASE! のルール</span><span class="pg" data-to="rules"></span></div>
+	<div class="s"><span>チェーンと倍率</span><span class="pg" data-to="chain"></span></div>
+	<div class="s"><span>勲章とマグネット</span><span class="pg" data-to="medals"></span></div>
+	<div class="s"><span>チェイスブレイク</span><span class="pg" data-to="break"></span></div>
+	<div class="s"><span>残機・エクステンド・コンティニュー</span><span class="pg" data-to="lives"></span></div>
+	<div class="h"><span>オリジナルゲーム</span><span class="pg" data-to="original"></span></div>
+	<div class="s"><span>トレーニング</span><span class="pg" data-to="training"></span></div>
+	<div class="s"><span>オプション</span><span class="pg" data-to="options"></span></div>
+	<div class="s"><span>ポーズとゲームの終わり</span><span class="pg" data-to="pause"></span></div>
+	<div class="s"><span>有効なスコアと無効なスコア</span><span class="pg" data-to="valid"></span></div>
+	<div class="h"><span>ステートセーブ</span><span class="pg" data-to="states"></span></div>
+	<div class="s"><span>リプレイ</span><span class="pg" data-to="replays"></span></div>
+	<div class="s"><span>画面で見る説明書</span><span class="pg" data-to="manualpage"></span></div>
+	<div class="h"><span>ガジェット</span><span class="pg" data-to="gadgets"></span></div>
+	<div class="s"><span>セーブについて</span><span class="pg" data-to="keeps"></span></div>
+	<div class="h"><span>こまったときは</span><span class="pg" data-to="trouble"></span></div>
+	<div class="s"><span>クレジット</span><span class="pg" data-to="credits"></span></div>
+</div>
+</section>
+
+<!-- ============================================================ はじめに -->
+<section class="s-gs newpage">
+<div class="kicker">A.D. 2014 — N.Y. Manhattan</div>
+<h1 id="start">はじめに</h1>
+<p class="lead">3機のバトライダーで、1回のプレイ。ゲームを ROM セットと同じ場所に置き、画面の置きかたを知らせて、STARTボタンを押しましょう。</p>
+<p>ARMED POLICE BATRIDER（アームドポリス バトライダー）は、RAIZING（ライジング）による 1998 年のアーケード用シューティングゲームです。<b style="color:var(--navy)">CHASE!</b> は COIN-OP GAME STUDIO によるアレンジモードで、オリジナルゲームと同じタイトル画面に並んでいます。つなげて伸ばすチェーン、自機に飛んでくる勲章、そして手の届く範囲にとどまるランクが特徴です。この取扱説明書は <b>Xbox 360版 バージョン 0.14</b> のものです。両方のゲーム、トレーニング、ステートセーブとリプレイ、そして基板の中身を見せるガジェットを収めています。</p>
+
+<h2>用意するもの</h2>
+<ul>
+	<li>Aurora などのダッシュボードから<b>自作の .xex ファイルを起動できる Xbox 360 本体</b>。</li>
+	<li>お手持ちの <b>MAME 用 ROM セット batrider.zip</b>（日本版基板 batriderj を含むマージ形式）。CHASE! は読み込むときにここから作られます。</li>
+	<li>コントローラ1台（1人用。最初に接続されているもの）。</li>
+</ul>
+<p><span class="file">batrider360.xex</span>、<span class="file">batrider360_manual.bin</span>、<span class="file">batrider.zip</span> を、本体が書き込めるドライブ（ハードディスクか USB ドライブ）の同じフォルダに入れ、ダッシュボードから <span class="file">batrider360.xex</span> を起動します。</p>
+
+<h2>電源を入れる</h2>
+<p>本体のロゴ、ROM セットを読み込む間の <b>NOW LOADING</b>（最初の1回だけ、メニューの効果音を作って <span class="file">batrider360_menusnd.bin</span> にセーブします）、アーケード基板の WARNING 画面、COIN-OP GAME STUDIO のロゴ、オープニングの順に進み、<span class="b st">START</span> でタイトル画面へ。画面が暗い赤のままなら <span class="pg" data-to="trouble"></span>ページへ。</p>
+
+<h2 id="screen">画面の置きかた：ふつうの向きか、縦置きか</h2>
+<p>BATRIDER は縦画面のゲームです。OPTIONS の GENERAL SCREEN にある <b>ROTATION</b>（<span class="pg" data-to="genscreen"></span>ページ）で、画面の置きかたをゲームに知らせます。</p>
+<table>
+	<thead><tr><th style="width:15%">ROTATION</th><th style="width:35%">画面の置きかた</th><th>表示</th></tr></thead>
+	<tbody>
+	<tr><td class="k">OFF</td><td>ふつうの向き</td><td>中央に表示し、左右に<b>ガジェット</b>（<span class="pg" data-to="gadgets"></span>ページ）。最初の設定です。</td></tr>
+	<tr><td class="k">LEFT</td><td>縦置き。画面の上端が<b>左</b>にくる</td><td>回して長い辺いっぱいに表示し、上下にガジェット。</td></tr>
+	<tr><td class="k">RIGHT</td><td>縦置き。画面の上端が<b>右</b>にくる</td><td>逆向きに回します。</td></tr>
+	</tbody>
+</table>
+<div class="row" style="justify-content:center">
+	<figure style="flex:0 0 42%"><div class="slot" data-file="work/gadgets_yoko_chase.png" data-ar="16/9" data-label="ROTATION OFF, CHASE!"></div><figcaption><b>ROTATION OFF</b></figcaption></figure>
+	<figure style="flex:0 0 13.4%"><div class="slot" data-file="work/gadgets_tate_chase.png" data-ar="9/16" data-label="ROTATION LEFT / RIGHT"></div><figcaption><b>LEFT / RIGHT</b>（正しい向きで掲載）</figcaption></figure>
+</div>
+<div class="caution"><span class="lbl">注意</span><p>すべてのテレビが、縦置きできるように作られているわけではありません。回転に対応した画面やスタンドを使い、通気口は絶対にふさがないでください。また、電源を入れたまま回さないでください。</p></div>
+
+<h1 id="controls" class="newpage first">操作方法</h1>
+<table>
+	<thead><tr><th style="width:30%">操作</th><th>はたらき</th></tr></thead>
+	<tbody>
+	<tr><td>左スティックまたは <span class="b dp">✚</span> 方向パッド</td><td>自機の移動。メニューでは項目の移動</td></tr>
+	<tr><td><span class="b a">A</span></td><td><b>SHOT</b>（ショット）― 押し続けて発射。メニューでは決定、または次の値</td></tr>
+	<tr><td><span class="b bb">B</span></td><td><b>BOMB</b>（ボム）。メニューでは戻る</td></tr>
+	<tr><td><span class="b x">X</span></td><td><b>SPECIAL</b>：フォーメーション切り替え（ガレッガのゲスト機）、CHASE! ではチェイスブレイク。ステートとリプレイのページでは消去</td></tr>
+	<tr><td>RT</td><td><b>AUTO SHOT</b>（連射）― 押している間、1秒に30回自動で撃ちます</td></tr>
+	<tr><td><span class="b bk">BACK</span></td><td>ステージ中は<b>ポーズメニュー</b>。メニューでは戻る。リプレイ中はリプレイのポーズ</td></tr>
+	<tr><td><span class="b st">START</span></td><td>起動時：タイトルへ。タイトルのページ：決定、PLAY と TRAINING ではプレイ開始。ステージ中：アーケード本来の START（隠しコマンド、<span class="pg" data-to="commands"></span>ページ）。OPTIONS：すべて閉じる</td></tr>
+	<tr><td><span class="b lb">LB</span> / <span class="b rb">RB</span></td><td>リプレイ中：遅く / 速く。TRAINING の RANK：10% ずつ。説明書：前 / 次のページ</td></tr>
+	</tbody>
+</table>
+<p>OPTIONS の <b>CONTROLS</b> で、A、B、X、Y、LB、RB、LT、RT に SHOT、BOMB、SPECIAL、AUTO SHOT を割り当てられます（<span class="pg" data-to="ctlpage"></span>ページ。上の表は最初の設定）。メニューはつねに A、B、X、START、BACK で操作します。</p>
+<div class="note"><span class="lbl">メモ</span><p>タイトルメニューの最後の項目 <b>EXIT</b> で、ダッシュボードに戻ります。セーブは変わるたびに書き込まれるので、何も失われません。</p></div>
+</section>
+
+<section class="s-gs newpage">
+<h1 id="starting" class="first">タイトルメニューと PLAY</h1>
+<figure class="fl w40"><img class="shot" src="art/title.png" alt=""><figcaption>タイトルメニュー。</figcaption></figure>
+<p>タイトル画面には6つの項目のメニューがあります。上下で選び、<span class="b a">A</span> または <span class="b st">START</span> で開きます。メニューの下の行に、その項目の説明が出ます。</p>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:40%">PLAY</td><td>ゲームをプレイします（下記参照）</td></tr>
+	<tr><td>TRAINING</td><td>ステージやボスを、好きな設定で（<span class="pg" data-to="training"></span>ページ）</td></tr>
+	<tr><td>LOAD STATE</td><td>セーブした場面へ戻ります（<span class="pg" data-to="states"></span>ページ）</td></tr>
+	<tr><td>REPLAY DATA</td><td>残したリプレイ（<span class="pg" data-to="replays"></span>ページ）</td></tr>
+	<tr><td>OPTIONS</td><td>画面、ガジェット、操作、サウンド、説明書（<span class="pg" data-to="options"></span>ページ）</td></tr>
+	<tr><td>EXIT</td><td>ダッシュボードに戻ります</td></tr>
+	</tbody>
+</table>
+<p>コインは必要ありません。どちらのゲームもフリープレイです。タイトルメニューで30秒間何も操作しないと、ゲームのデモ画面に切り替わります。START を押すと、タイトル画面に戻ります。</p>
+<div class="clear"></div>
+<h2>PLAY</h2>
+<figure class="fr w48"><img class="shot" src="art/play.png" alt=""><figcaption>PLAY のページ。</figcaption></figure>
+<p>PLAY を選ぶと、4つの項目のページが開きます。左右（または <span class="b a">A</span>）で値を変え、<span class="b st">START</span> でどの項目からでもプレイを始めます。<span class="b bb">B</span> か <span class="b bk">BACK</span> でタイトルメニューに戻ります。</p>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:40%">START RUN</td><td>下の MODE のゲームをプレイ</td></tr>
+	<tr><td>MODE</td><td>CHASE! か ORIGINAL（下記参照）</td></tr>
+	<tr><td>CONTINUES</td><td>GAME OVER 後のコンティニュー回数：3、5、7。両方のゲームに共通</td></tr>
+	<tr><td>DIP SWITCHES</td><td>オリジナルゲームの設定（<span class="pg" data-to="settings"></span>ページ）。CHASE! では灰色。工場出荷時と違うときは赤く CHANGED</td></tr>
+	</tbody>
+</table>
+<div class="clear"></div>
+<h2 id="mode">MODE：CHASE! かオリジナルゲームか</h2>
+<table>
+	<thead><tr><th style="width:20%">MODE</th><th>START RUN であそぶゲーム</th></tr></thead>
+	<tbody>
+	<tr><td class="k">CHASE!</td><td>アレンジモードをプレイします。チェーン、マグネット、チェイスブレイクがあり、ランクは 50% から 75% の間で動きます。最初はこの MODE になっています。</td></tr>
+	<tr><td class="k">ORIGINAL</td><td>オリジナルゲームをプレイします。アーケード基板の内容そのままです（<span class="pg" data-to="original"></span>ページ）。</td></tr>
+	</tbody>
+</table>
+<p>MODE ごとに<b>別々のランキング</b>がセーブされ、CHASE! のスコアとオリジナルゲームのスコアが同じテーブルに混ざることはありません。変更はすぐに反映され、メニューの見出しにもゲーム名（BATRIDER CHASE! または BATRIDER）が出ます。TRAINING にも同じ項目があります。</p>
+
+<h2>出撃前の3つの選択</h2>
+<p>プレイは3つの画面から始まります。どの画面にも制限時間があり、時間切れになると、そのとき選ばれている項目に決まります。</p>
+<div class="row c r3 sm">
+	<figure><img class="shot" src="art/course_select.png" alt=""><figcaption>SELECT COURSE</figcaption></figure>
+	<figure><img class="shot" src="art/type_select.png" alt=""><figcaption>SELECT TYPE</figcaption></figure>
+	<figure><img class="shot" src="art/team_select.png" alt=""><figcaption>SELECT TEAM</figcaption></figure>
+</div>
+<p><b>SELECT COURSE</b> では、カーソルのあるコースの説明が画面の下に表示されます。</p>
+<table>
+	<thead><tr><th style="width:18%">コース</th><th style="width:13%">ステージ数</th><th>内容</th></tr></thead>
+	<tbody>
+	<tr><td class="k">TRAINING</td><td>3</td><td>AUTO BOMBER：ボムのストックがあるときに被弾すると、ボムが自動で発動します。オリジナルゲームだけで、CHASE! にはオートボムはありません</td></tr>
+	<tr><td class="k">NORMAL</td><td>5</td><td>NORMAL BOMBER：中級者向けのコース</td></tr>
+	<tr><td class="k">ADVANCE</td><td>7</td><td>NORMAL BOMBER：上級者向けのコース</td></tr>
+	<tr><td class="k">SPECIAL</td><td>ボスのみ</td><td>ONLY BOSS、FULL POWER UP：ボスとだけ次々に戦います。自機は最初からフルパワーです</td></tr>
+	</tbody>
+</table>
+<p>（アーケードの TRAINING は、ゲームのコースのひとつです。タイトルメニューの TRAINING は、この Xbox 360版の練習モードです：<span class="pg" data-to="training"></span>ページ）</p>
+<figure class="fr w40"><img class="shot" src="art/team_edit.jpg" alt=""><figcaption><b>TEAM EDIT：</b>ゲスト機体</figcaption></figure>
+<p><b>SELECT TYPE</b> では、出撃する機体の決めかたを選びます。</p>
+<h3>SELECT TEAM</h3><p>下の3つの既成チームから1つを選びます。</p>
+<h3>TEAM EDIT</h3><p>自分だけのチームを組みます。好きな3機を、1機ずつ選びます。画面には、それぞれの MACHINE（マシン）、WEAPON（武器）、BOMBER（ボム）が表示されます。</p>
+<h3>RANDOM EDIT</h3><p>3機をおまかせ（ランダム）で決めます。</p>
+<h3>SELECT PLAYER</h3><p>好きな1機を選びます。その1機が、プレイの3機分をすべて飛びます。</p>
+<h2>機体</h2>
+<p>TEAM EDIT と SELECT PLAYER では、すべての機体が2段に並んで表示されます。上の段はバトライダーの9機、下の段は RAIZING の過去のシューティングゲームから参戦した9機の<b>ゲスト機体</b>です。左右で同じ段の中を移動し、上下で段を切り替えます。</p>
+<div class="clear"></div>
+<h2>チーム</h2>
+<p>チームは3機で1組です。出撃するのは1機ずつ、順番どおりです。1機が撃墜されると次の機体に交代し、3機目が撃墜されるとプレイは終わります（オリジナルゲームでは、DIP スイッチで1機から4機に変えられます。<span class="pg" data-to="settings"></span>ページ）。</p>
+<div class="row c r3 sm">
+	<figure><img class="shot" src="art/team_police.jpg" alt=""><figcaption><b>POLICE TEAM</b><br>D.D, Shorty, Jyuji</figcaption></figure>
+	<figure><img class="shot" src="art/team_psychic.jpg" alt=""><figcaption><b>PSYCHIC TEAM</b><br>Maria, Golden, Strawman</figcaption></figure>
+	<figure><img class="shot" src="art/team_criminal.jpg" alt=""><figcaption><b>CRIMINAL TEAM</b><br>Birthday, Tag-T, Adam</figcaption></figure>
+</div>
+</section>
+
+<!-- ============================================================ あそびかた -->
+<section class="s-play newpage">
+<h1 id="fly" class="first">基本のあそびかた</h1>
+<p class="lead">ステージは画面の上へ向かって進みます。現れる敵を撃ち、敵が落としたものを拾い、機体を残してボスにたどり着きましょう。</p>
+<table>
+	<thead><tr><th style="width:20%"></th><th style="width:12%">初期設定</th><th></th></tr></thead>
+	<tbody>
+	<tr><td class="k">SHOT</td><td><span class="b a">A</span></td><td>押し続けて発射します。ボタンを離している間は、ショットのチャージがたまります。</td></tr>
+	<tr><td class="k">AUTO SHOT</td><td>RT</td><td>押している間、自動で連射します。</td></tr>
+	<tr><td class="k">BOMB</td><td><span class="b bb">B</span></td><td>機体ごとのボムです。ボムのストックは、画面の下端に並んでいます。</td></tr>
+	<tr><td class="k">SPECIAL</td><td><span class="b x">X</span></td><td>バトルガレッガのゲスト機4機では、自機と一緒に飛ぶオプションのフォーメーションを順に切り替えます（V、BACK、FRONT、CIRCLE、CONTROL）。CHASE! では、チェイスブレイクにも使います。</td></tr>
+	</tbody>
+</table>
+<figure class="fr w36"><img class="shot" src="art/fly.png" alt=""></figure>
+<p>画面の下にいるのが自機です。チームの機体は交代で出撃します。画面左上のチームのアイコンで、出撃中の機体と待機中の機体がわかります。</p>
+<p>ザコ敵は数発で倒せます。大型の敵や、建物の間にある地上の目標は、より多く撃ち込む必要がありますが、そのぶん多くのものを落とします。</p>
+<div class="clear"></div>
+<h2>敵が落とすアイテム</h2>
+<p>アイテムは、決まった順番のくり返しで出てきます。勲章、パワーアップ、勲章、パワーアップ、オプションの順で5周し、その最後の1個は大きいパワーアップになります。</p>
+<table>
+	<thead><tr><th style="width:30%">アイテム</th><th></th></tr></thead>
+	<tbody>
+	<tr><td class="k">POWER / BIG P</td><td>ショットのパワーアップ（小と大）</td></tr>
+	<tr><td class="k">OPTION</td><td>自機と一緒に飛ぶオプション（ガンポッド）</td></tr>
+	<tr><td class="k">BOMB / BIG B</td><td>ボムのストック（小と大）</td></tr>
+	<tr><td class="k">MEDAL</td><td>得点（下の「勲章」を参照）</td></tr>
+	<tr><td class="k">1UP</td><td>撃墜された機体が1機復帰します</td></tr>
+	</tbody>
+</table>
+<h2>勲章</h2>
+<p>勲章は、取るたびに次の勲章の得点が上がります。段階は全部で19あります。</p>
+<p class="small">100 · 200 · 300 · 400 · 500 · 600 · 700 · 800 · 900 · 1,000 · 2,000 · 3,000 · 4,000 · 5,000 · 6,000 · 7,000 · 8,000 · 9,000 · 10,000</p>
+<p>勲章を1つでも画面の下に落としてしまうと、段階は 100 からやり直しです。</p>
+<h2>ランク</h2>
+<p>ショットを撃つ、アイテムを取る、生き残り続けるといったことで<b>ランク</b>が上がり、ランクが高いほどゲームは難しくなります。機体を失うと、ランクは下がります。オリジナルゲームでは、ランクに制限はありません。CHASE! では、ランクは 50% から始まり、75% を超えることはありません。</p>
+<h2>ボス</h2>
+<p>どのステージも最後にボスが待っていて、どのボスにも制限時間があります。CHASE! では、その残り時間を画面の上部に秒単位で表示します。時間切れになると、ボスを倒していてもいなくても、戦いは終わります。</p>
+</section>
+
+<!-- ============================================================ CHASE! モード -->
+<section class="s-chase newpage">
+<div class="kicker">CHASE! モード</div>
+<h1 id="chase">CHASE! の画面</h1>
+<p class="lead">CHASE! のプレイでは、画面上部の表示が描き直され、左端に沿って「レール」が加わります。この2か所を見れば、ゲームのすべてがわかります。</p>
+<div class="callfig" style="margin:6mm 0 6mm">
+	<img class="shot" src="art/hud_top.png" alt="" style="display:block;width:100%">
+	<div class="lead-v" style="left:24%;top:-3mm;height:3mm"></div><div class="dot" style="left:24%;top:-3.2mm">1</div>
+	<div class="lead-v" style="left:53%;top:-3mm;height:3mm"></div><div class="dot" style="left:53%;top:-3.2mm">2</div>
+	<div class="lead-v" style="left:83%;top:-3mm;height:3mm"></div><div class="dot" style="left:83%;top:-3.2mm">3</div>
+	<div class="lead-v" style="left:9.4%;bottom:-3mm;height:5mm"></div><div class="dot" style="left:9.4%;top:calc(100% + 3.2mm)">4</div>
+	<div class="lead-v" style="left:22%;bottom:-3mm;height:5mm"></div><div class="dot" style="left:22%;top:calc(100% + 3.2mm)">5</div>
+	<div class="lead-v" style="left:36%;bottom:-3mm;height:5mm"></div><div class="dot" style="left:36%;top:calc(100% + 3.2mm)">6</div>
+	<div class="lead-v" style="left:46%;bottom:-3mm;height:5mm"></div><div class="dot" style="left:46%;top:calc(100% + 3.2mm)">7</div>
+	<div class="lead-v" style="left:60%;bottom:-3mm;height:5mm"></div><div class="dot" style="left:60%;top:calc(100% + 3.2mm)">8</div>
+	<div class="lead-v" style="left:91.6%;bottom:-3mm;height:5mm"></div><div class="dot" style="left:91.6%;top:calc(100% + 3.2mm)">9</div>
+</div>
+<ol class="calls cols2">
+	<li><span class="dot">1</span><span><b>スコア</b></span></li>
+	<li><span class="dot">2</span><span><b>ハイスコア</b>（オレンジ色）</span></li>
+	<li><span class="dot">3</span><span><b>ボスの残り時間</b>（秒）</span></li>
+	<li><span class="dot">4</span><span><b>チーム。</b>撃墜された機体は暗く表示されます</span></li>
+	<li><span class="dot">5</span><span><b>残機</b>：残っている機体と、ストック中のエクステンドの合計。残り1で赤くなります</span></li>
+	<li><span class="dot">6</span><span><b>ステージ表示の行。</b>EXTEND、MAX LIVES、CASH IN（チェイスブレイク）は、ここに点滅表示されます</span></li>
+	<li><span class="dot">7</span><span><b>ボスの耐久力。</b>オレンジ色で、残り4分の1になると赤くなります</span></li>
+	<li><span class="dot">8</span><span><b>ボスの名前</b></span></li>
+	<li><span class="dot">9</span><span><b>CHASE タグ</b>：このプレイが CHASE! のルールであることを示します</span></li>
+</ol>
+<div style="display:flex;gap:4mm;margin-top:4mm;break-inside:avoid">
+	<div class="callfig" style="flex:0 0 14%;margin-left:4mm">
+		<img class="shot" src="art/hud_rail.png" alt="" style="display:block;width:100%">
+		<div class="lead-h" style="top:6%;left:-3mm;width:3mm"></div><div class="dot" style="left:-3.4mm;top:6%">10</div>
+		<div class="lead-h" style="top:6%;left:55%;width:calc(45% + 3mm)"></div><div class="dot" style="left:calc(100% + 3.4mm);top:6%">11</div>
+		<div class="lead-h" style="top:16%;left:70%;width:calc(30% + 3mm)"></div><div class="dot" style="left:calc(100% + 3.4mm);top:16%">12</div>
+		<div class="lead-h" style="top:36%;left:10%;width:calc(90% + 3mm)"></div><div class="dot" style="left:calc(100% + 3.4mm);top:36%">13</div>
+		<div class="lead-h" style="top:70%;left:10%;width:calc(90% + 3mm)"></div><div class="dot" style="left:calc(100% + 3.4mm);top:70%">14</div>
+	</div>
+	<ol class="calls" style="flex:1;margin-left:4mm">
+		<li><span class="dot">10</span><span><b>倍率</b>（x1 から x8 まで）。x8 でオレンジ色になります</span></li>
+		<li><span class="dot">11</span><span><b>C</b>：チェイスブレイクが使えます（x4 以上）</span></li>
+		<li><span class="dot">12</span><span><b>チェーン</b>：最後に途切れてからの撃破数</span></li>
+		<li><span class="dot">13</span><span><b>前方マーク。</b>自機が画面の上半分にいる間はオレンジ色の ^、下半分にいる間は青い v</span></li>
+		<li><span class="dot">14</span><span><b>チェーンのタイマー。</b>画面の下へ向かって減っていきます。ふだんは青、残りわずかになると<b>赤</b>、チェイスブレイクのクールダウン中は<b>白</b></span></li>
+	</ol>
+</div>
+
+<h2 id="hitbox" class="newpage" style="margin-top:6mm">当たり判定</h2>
+<figure class="fr w40"><img class="shot" src="art/hitbox.png" alt=""></figure>
+<p>赤い輪に囲まれた白い円が、自機のなかで敵弾に当たる唯一の部分です。自機のそれ以外の部分は、敵弾と重なってもかまいません。当たり判定は自機と同じ高さに描かれるため、ゲームが自機の上に描くものには、一緒に隠れます。</p>
+<p>当たり判定は、どちらのゲームのすべてのプレイで表示されます。TRAINING のページと、OPTIONS の DEBUG MENU にある <b>HITBOX</b> で、表示を <b>OFF</b>、<b>PLAYER</b>（自機の円。最初の設定）、<b>ALL</b> から選べます。</p>
+<div class="clear"></div>
+<figure class="fl w40"><img class="shot" src="art/hitbox_all.png" alt=""><figcaption>HITBOX ALL。</figcaption></figure>
+<p><b>ALL</b> にすると、アーケード基板自身が判定に使っている枠を、そのとおりに表示します。</p>
+<ul>
+	<li><b style="color:#c9102e">赤</b>：触れるとミスになる敵</li>
+	<li><b style="color:#1f6fd0">青</b>：地上物など、撃つことしかできない目標</li>
+	<li><b style="color:#b0179a">マゼンタ</b>：敵弾</li>
+	<li>そして PLAYER と同じ、自機の白い円</li>
+</ul>
+<div class="clear"></div>
+</section>
+
+<section class="s-chase newpage">
+<div class="kicker">CHASE! モード</div>
+<h1 id="rules">CHASE! のルール</h1>
+<p class="lead">CHASE! で変わることのすべてを、1ページにまとめました。このあとのページで、1つずつくわしく説明します。</p>
+<div class="grid2">
+	<div><h3>ランク</h3><p>50% から始まり、最大でも 75% までしか上がりません。機体を失うと下がりますが、50% より下にはなりません。倍率が高いほど、速く上がります。</p></div>
+	<div><h3>チェーン</h3><p>敵を1体倒すごとに1増えます。16体倒すごとに倍率が1段階上がり、x8 まで上がります。倒した敵の得点には、倍率が掛かります。</p></div>
+	<div><h3>タイマー</h3><p>1.5秒。敵を倒すたびに回復します。画面の上半分にいる間は満タンまで、下半分では1秒まで回復します。</p></div>
+	<div><h3>タイマー切れ</h3><p>x1 より上のとき：倍率が2段階下がります。x1 のとき：チェーンブレイク（チェーンが途切れます）。</p></div>
+	<div><h3>撃墜される（ミス）</h3><p>倍率と勲章の段階が半分になり、タイマーは3秒間止まります。</p></div>
+	<div><h3>ボム</h3><p>ボムの発動中と、その後1秒間、タイマーが止まります。</p></div>
+	<div><h3>勲章</h3><p>近くにあると、自機に引き寄せられます。SHOT を押している間は、どこにあっても引き寄せられます。10段階目以上で勲章を落とすと、チェーンが途切れます。</p></div>
+	<div><h3>チェイスブレイク</h3><p>x4 以上で SPECIAL：敵弾とザコ敵がすべて勲章に変わります。倍率は x1 に戻り、5秒間クールダウンします。</p></div>
+	<div><h3>エクステンド</h3><p>1,000,000点ごとに、撃墜された機体が1機復帰します。残機は最大5です。</p></div>
+	<div><h3>敵の狙い</h3><p>撃ってくる敵の近くを飛んでいると、自機を狙う弾の狙いが甘くなります。</p></div>
+</div>
+<h2>ランクは 50% から 75% の間</h2>
+<p>CHASE! の新しいプレイは、ランク 50% から始まります。そこからは、ゲームがいつもどおりにランクを上げていきます。毎フレーム少しずつ上がり、ショット、アイテム、エクステンドでさらに上がります。CHASE! ではそれに加えて、x1 より上に保っている倍率の1段階ごとに、独自の上乗せがあります。75% に達すると、そこで止まります。CHASE! のプレイが、それ以上難しくなる瞬間はありません。</p>
+<p>機体を失うと、ランクは 50% に向かって下がりますが、50% より下にはなりません。コンティニューすると、ちょうど 50% に戻ります。</p>
+<h2>CHASE! の基板設定</h2>
+<p>CHASE! はつねに、基板の難易度 HARD、機体3機の設定を使い、オリジナルゲームのボーナス機体の代わりに独自のエクステンドを使います。DIP スイッチの影響は受けず、TRAINING コースのオートボムもありません。1人用のゲームです。</p>
+
+<div class="kicker" style="margin-top:7mm">CHASE! モード</div>
+<h1 id="chain">チェーンと倍率</h1>
+<p class="lead">倒して、倒し続けましょう。チェーンは敵を倒した数、倍率はその価値です。</p>
+<div class="row r3">
+	<figure><img class="shot" src="art/chain_x2.jpg" alt=""><figcaption><b>x2</b> ― 16体撃破</figcaption></figure>
+	<figure><img class="shot" src="art/chain_x4.jpg" alt=""><figcaption><b>x4</b> ― 48体撃破</figcaption></figure>
+	<figure><img class="shot" src="art/chain_x8.jpg" alt=""><figcaption><b>x8</b> ― 112体以上撃破</figcaption></figure>
+</div>
+<p>敵を1体倒すごとに、チェーンが1増えます。16体ごとに倍率が1段階上がり、x1 から x8 まで上がります。倒したものの得点はすべて、本来の得点に倍率を掛けた値になります。チェーンは x8 を超えても数え続けられますが、倍率は x8 で止まります。</p>
+<h2>タイマー</h2>
+<p>敵を倒すと、チェーンのタイマー（左のレールにあるゲージ）も回復します。</p>
+<table>
+	<thead><tr><th style="width:55%">自機の位置</th><th>敵を倒したときのタイマー</th></tr></thead>
+	<tbody>
+	<tr><td><b>前方（FORWARD）</b>― 画面の上半分</td><td>1.5秒（満タン）まで回復</td></tr>
+	<tr><td><b>後方（BACK）</b>― 画面の下半分</td><td>1秒まで回復</td></tr>
+	</tbody>
+</table>
+<p>どちらにいるかは、レールの前方マークでわかります。画面の上へ出ていけば、チェーンは保ちやすくなります。後ろに下がっていると、敵と敵の間に空けられる時間が、毎回0.5秒短くなります。</p>
+<div class="tip"><span class="lbl">ヒント</span><p>ボス戦では、ボスへの命中もチェーンに数えられ、ボスの攻撃の合間もタイマーを保ってくれます。ボス戦は、倍率を上げる絶好の場面です。</p></div>
+<h2>タイマーが切れると</h2>
+<figure class="fl w28"><img class="shot" src="art/timer_out.jpg" alt=""><figcaption>チェーンブレイクのあと。x1 に戻り、カウントは最初からです。</figcaption></figure>
+<p>x1 より上のときは、<b>倍率が2段階下がり</b>、タイマーは1秒にセットされます。その1秒の間に何も倒せないと、さらに2段階下がります。</p>
+<p><b>x1 のときは、チェーンが途切れ</b>（チェーンブレイク）、カウントは0に戻ります。</p>
+<p>x8 から1体も倒さなかった場合、満タンのタイマーからチェーンブレイクまでは 4.5 秒です。</p>
+<div class="clear"></div>
+<h2>そのほかチェーンに影響するもの</h2>
+<table>
+	<tbody>
+	<tr><td style="width:26%">撃墜される（ミス）</td><td>倍率が<b>半分</b>になり（x8 は x4 に）、勲章の段階も一緒に半分になります。次の機体が登場するまでの3秒間、タイマーは止まります。</td></tr>
+	<tr><td>ボム</td><td>ボムの発動中と、その後1秒間、タイマーが止まります。その間に倒した敵も、チェーンに数えられます。</td></tr>
+	<tr><td>勲章を落とす</td><td>勲章の段階が10段階目（1,000）以上のときに勲章を画面の外へ落とすと、<b>チェーンが途切れます</b>。</td></tr>
+	<tr><td>チェイスブレイク</td><td>自分で倍率を使い、x1 に戻ります（<span class="pg" data-to="break"></span>ページ）。</td></tr>
+	<tr><td>コンティニュー</td><td>チェーン、倍率、勲章の段階が最初からになります。</td></tr>
+	</tbody>
+</table>
+<div class="row r3">
+	<figure><img class="shot" src="art/bomb_wait.jpg" alt=""><figcaption>ボムの発動中。タイマーは止まっています。</figcaption></figure>
+	<figure><img class="shot" src="art/timer_red.jpg" alt=""><figcaption>タイマーが残りわずか。ゲージが赤くなります。</figcaption></figure>
+	<figure><img class="shot" src="art/boss_red.jpg" alt=""><figcaption>ボスの耐久力が残り4分の1。バーが赤くなります。</figcaption></figure>
+</div>
+</section>
+
+<section class="s-chase newpage">
+<div class="kicker">CHASE! モード</div>
+<h1 id="medals">勲章とマグネット</h1>
+<p class="lead">勲章の段階は、オリジナルゲームのものです。CHASE! が加えるのは、マグネットです。</p>
+<figure class="fl w44"><img class="shot" src="art/magnet.jpg" alt=""><figcaption>自機に次々と流れ込む勲章。</figcaption></figure>
+<p>自機からおよそ100ピクセル（画面の幅の約5分の2）以内に入った勲章は、<b>自機へまっすぐ引き寄せられます</b>。</p>
+<p><b>SHOT を押し続ける</b>と、マグネットは画面全体に届き、画面上のすべての勲章が自機に飛んできます。</p>
+<p>地上で止まっている勲章（ボムで建物から飛び出すもの）は、ボタンを押していてもいなくても、どこからでも引き寄せられます。</p>
+<p>マグネットが働くのは、自機が飛んでいる間です。1機が撃墜されてから次の機体が登場するまでの間は、勲章はこれまでどおりに落ちていきます。</p>
+<div class="clear"></div>
+<div class="tip"><span class="lbl">ヒント</span><p>マグネットのおかげで、勲章の段階はずっと安全に上げられます。そして、段階には二重に守る価値があります。10段階目以上で勲章を落とすと、勲章の段階とチェーンの両方を失うからです。</p></div>
+</section>
+
+<section class="s-chase newpage">
+<div class="kicker">CHASE! モード</div>
+<h1 id="break">チェイスブレイク</h1>
+<p class="lead">倍率と引き換えに、画面いっぱいの勲章を手に入れましょう。</p>
+<div class="row r3">
+	<figure><img class="shot" src="art/break1.jpg" alt=""><figcaption><b>1.</b> x4 以上になると、倍率の横にオレンジ色の C が点灯します。</figcaption></figure>
+	<figure><img class="shot" src="art/break2.jpg" alt=""><figcaption><b>2.</b> SPECIAL を押すと、敵弾とザコ敵が勲章に変わります。</figcaption></figure>
+	<figure><img class="shot" src="art/break3.jpg" alt=""><figcaption><b>3.</b> 白いゲージが減っていく間、倍率は x1 のままです。</figcaption></figure>
+</div>
+<p>倍率が <b>x4 以上</b>のときに SPECIAL（<span class="b x">X</span>）を押すと、<b>チェイスブレイク</b>が発動します。倍率と引き換えに、次のことが起こります。</p>
+<ul>
+	<li>画面上の敵弾がすべて消え、ザコ敵がすべて破壊されます。それぞれの得点も入ります。</li>
+	<li>そのひとつひとつが、<b>現在の段階と同じ得点の勲章</b>を残し、マグネットがそれを自機まで運びます。画面にそれ以上勲章を出せないときは、残りの分が同じ得点でスコアに直接加算されます。</li>
+	<li>倍率は x1 に、チェーンは0に戻ります。</li>
+</ul>
+<p>その後、倍率は<b>5秒間クールダウン</b>します（倍率は x1 のまま）。その間も敵を倒せば得点は入りますが、チェーンは増えません。レールのゲージには、クールダウンの残りが白で表示されます。倍率をもう一度 x4 まで上げるまで、次のチェイスブレイクはできません。</p>
+<p>画面では短い名前で表示されます。発動すると、ステージ表示の行に <b>CASH IN</b> と点滅します。</p>
+<p>ボスはザコ敵ではありません。ボスだけがいて敵弾もないときなど、画面に勲章へ変えられるものが何もない場合は、ボタンを押しても何も起こらず、倍率はそのままです。</p>
+<div class="tip"><span class="lbl">ヒント</span><p>チェイスブレイクで出た勲章はボーナスであって、リスクではありません。取り逃がしてしまっても、勲章の段階はリセットされません。</p></div>
+<div class="note"><span class="lbl">メモ</span><p>SPECIAL は、オプションのフォーメーションを切り替えるボタンでもあります。ほとんどの機体では、この2つがぶつかることはありません。一部のゲスト機体は、SPECIAL でフォーメーションが切り替わります。これらの機体では、<b>短く押す</b>（0.5秒以内に離す）と、離したときにフォーメーションが切り替わり、<b>長く押す</b>（0.5秒間押し続ける）とチェイスブレイクになって、フォーメーションは変わりません。</p></div>
+
+<div class="kicker" style="margin-top:6mm">CHASE! モード</div>
+<h1 id="lives" style="font-size:14.5pt">残機・エクステンド・コンティニュー</h1>
+<figure class="fl w44"><img class="shot" src="art/extend.jpg" alt=""><figcaption>ボスを倒し、スコアが100万点を突破。残機は x4 に。</figcaption></figure>
+<h3 style="color:var(--red)">エクステンド</h3>
+<p><b>1,000,000点</b>ごとにエクステンドを獲得し、ステージ表示の行に EXTEND が点滅表示されます。</p>
+<p>エクステンドすると、撃墜された機体が1機復帰し、チームの最後尾に加わります。撃墜された機体がないときは、エクステンドは<b>ストック</b>され、次に機体が撃墜されたときにすぐ使われます。</p>
+<p>残機は、残っている機体とストック中のエクステンドを合わせて、<b>最大5</b>までです。残機が5のときに獲得したエクステンドは、代わりに <b>100,000点</b>になり、行には MAX LIVES が点滅表示されます。</p>
+<p>チームのアイコンの横の数字が、残機の数です。残り1になると赤くなります。</p>
+<div class="clear"></div>
+<figure class="fr w44"><img class="shot" src="art/continue.jpg" alt=""><figcaption>CONTINUE? ― カウントが0になる前に START を押します。</figcaption></figure>
+<h3 style="color:var(--red)">コンティニュー</h3>
+<p>最後の機体が撃墜されると、CONTINUE? と表示され、カウントダウンが始まります。<span class="b st">START</span> を押すと、同じチームでプレイを続けられます。</p>
+<p>コンティニューは、PLAY の CONTINUES で5回または7回に設定していないかぎり、1回のプレイにつき<b>3回</b>です。コンティニューすると、チェーン、倍率、勲章の段階が最初からになり、ランクは 50% に戻ります。</p>
+<p>コンティニューすると、そのプレイのスコアは<b>無効</b>になります（<span class="pg" data-to="valid"></span>ページ）。TRAINING にはコンティニューがなく、GAME OVER になると TRAINING のページに戻ります。</p>
+<div class="clear"></div>
+</section>
+
+<!-- ============================================================ モードとメニュー -->
+<section class="s-menus newpage tight">
+<h1 id="original" class="first">オリジナルゲーム</h1>
+<p class="lead">PLAY の MODE を ORIGINAL にすると、START RUN は、アーケード基板そのままの ARMED POLICE BATRIDER になります。</p>
+<p>CHASE! のルールは、いっさい適用されません。チェーンも、マグネットも、チェイスブレイクもなく、ランクにも制限はありません。アーケード基板の工場出荷時の設定（難易度 NORMAL、機体3機、1,500,000点ごとにエクステンドのアイテム）でプレイしますが、<b>DIP スイッチ</b>で変えることもできます（<span class="pg" data-to="settings"></span>ページ）。フリープレイで、画面もゲーム本来のものです。CHASE タグはありませんが、当たり判定は表示されます。横に並ぶガジェットは、どちらのゲームでも働きます（<span class="pg" data-to="gadgets"></span>ページ）。</p>
+<p>2つのゲームに共通しているのは、プレイのまわりにあるものすべてです。メニュー、ポーズメニュー、PLAY で設定するコンティニュー回数、TRAINING、ステートセーブとリプレイ、1人用であることです。ランキングは、それぞれ別々です。</p>
+
+<h1 id="training" style="margin-top:6mm">トレーニング</h1>
+<figure class="fr w48"><img class="shot" src="art/training.png" alt=""><figcaption>TRAINING のページ：HIGH WAY の ENVY、ランクは 61% に固定。</figcaption></figure>
+<p>タイトルメニューの TRAINING では、練習用のプレイを1ページで組み立てます。どちらのゲームのステージでもボスでも、残機、ボム、パワー、ランクを自由に設定できます。上下で項目、左右（または <span class="b a">A</span>）で値、<span class="b st">START</span> でどこからでも開始。<span class="b bb">B</span> か <span class="b bk">BACK</span> でタイトルメニューへ。</p>
+<p>設定は電源を切るまで残り、ステートセーブにも記録されます。HITBOX、MODE、DIP スイッチはほかの場所と共通です。</p>
+<div class="clear"></div>
+<table class="menu long">
+	<tbody>
+	<tr><td>START RUN</td><td>下の設定でプレイを始めます。</td></tr>
+	<tr><td>MODE<small>CHASE! / ORIGINAL</small></td><td>どちらのゲームのルールでプレイするか。PLAY と共通の設定です。</td></tr>
+	<tr><td>TEAM<small>CHOOSE / SAME</small></td><td>CHOOSE：ゲーム本来の選択画面で選びます。SAME：最後に出撃したチームで、すぐにステージへ。まだチームが出撃していないときは灰色です。</td></tr>
+	<tr><td>STAGE</td><td>M.CITY、AIRPORT、SKY HIGH、S.SYSTEM、HIGH WAY、Z.CITY、BUILDING、EXTRA BOSSES。</td></tr>
+	<tr><td>START AT BOSS</td><td>OFF：ステージの最初から。それ以外は、そのステージのボス（隠しボスを含む、下の表）といきなり戦います。EXTRA BOSSES には OFF がありません。</td></tr>
+	<tr><td>LIVES<small>1 – 9 · ORIGINAL 1 – 4</small></td><td>開始時の残機（最初は 3）。CHASE! では、4を超える分はエクステンドのストックに入ります。</td></tr>
+	<tr><td>BOMBS<small>0 – 4</small></td><td>開始時と、各機体の登場時のボム（最初は 1）。</td></tr>
+	<tr><td>SHOT POWER<small>1 – 4</small></td><td>開始時と、各機体の登場時のショットパワー（最初は 4、フルパワー）。</td></tr>
+	<tr><td>RANK<small>DEFAULT · 0 – 100%</small></td><td>DEFAULT：ランクはいつもどおりに動きます。％を選ぶと、プレイの間ずっとその値に固定されます。<span class="b lb">LB</span> / <span class="b rb">RB</span> で 10% ずつ。CHASE! ではこのモード本来の範囲、51% から 76% の間です。</td></tr>
+	<tr><td>INVINCIBLE<small>OFF / ON</small></td><td>自機がダメージを受けません。</td></tr>
+	<tr><td>INFINITE BOMBS<small>OFF / ON</small></td><td>ボムのストックが減りません。</td></tr>
+	<tr><td>GAME SPEED<small>100% / 75% / 50%</small></td><td>ゲームを遅くします。音楽の速さは変わりません。</td></tr>
+	<tr><td>HITBOX<small>OFF / PLAYER / ALL</small></td><td>表示する当たり判定（<span class="pg" data-to="hitbox"></span>ページ）。</td></tr>
+	<tr><td>DIP SWITCHES</td><td>オリジナルゲームの設定（<span class="pg" data-to="settings"></span>ページ）。CHASE! では灰色です。</td></tr>
+	</tbody>
+</table>
+<table>
+	<thead><tr><th style="width:24%">ステージ</th><th>START AT BOSS</th></tr></thead>
+	<tbody>
+	<tr><td class="k">M.CITY</td><td>CONFRICT</td></tr>
+	<tr><td class="k">AIRPORT</td><td>BAZZCOK · GOB-ROBO</td></tr>
+	<tr><td class="k">SKY HIGH</td><td>BOREDOM · BASHINET</td></tr>
+	<tr><td class="k">S.SYSTEM</td><td>DEVIATE · BLACK HEART</td></tr>
+	<tr><td class="k">HIGH WAY</td><td>ENVY · SOBUT · BLUNT · TSUMUJIMARU · HAYATEMARU</td></tr>
+	<tr><td class="k">Z.CITY</td><td>GRUBBY</td></tr>
+	<tr><td class="k">BUILDING</td><td>DISCHARGE</td></tr>
+	<tr><td class="k">EXTRA BOSSES</td><td>BASHINET 2 · BASHINET R · B.HEART 2 · GLOW SQUID</td></tr>
+	</tbody>
+</table>
+<h2>プレイの流れ</h2>
+<p>TEAM が CHOOSE なら選択画面から、SAME ならすぐにステージが始まります。ステージかボスをクリアするか、<b>GAME OVER</b> で終わり（コンティニューはありません）、START RUN を選んだ TRAINING のページに戻ります。START 1回で同じ内容をもう一度。ランキングには登録されず、スコアは無効、リプレイも残りません（<span class="pg" data-to="valid"></span>ページ）。</p>
+<h2>トレーニングのポーズ</h2>
+<figure class="fl w48"><img class="shot" src="art/training_pause.png" alt=""><figcaption>TRAINING PAUSE メニュー。</figcaption></figure>
+<p><span class="b bk">BACK</span> で TRAINING PAUSE が開きます。<span class="b a">A</span> で決定、<span class="b bb">B</span> か <span class="b bk">BACK</span> で再開。</p>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:44%">RESUME</td><td>プレイを再開</td></tr>
+	<tr><td>RESTART</td><td>同じチームで、ステージの最初から</td></tr>
+	<tr><td>SAVE STATE<br>LOAD STATE</td><td>ステートセーブのページ（<span class="pg" data-to="states"></span>ページ）</td></tr>
+	<tr><td>OPTIONS</td><td>プレイの上に OPTIONS（<span class="pg" data-to="options"></span>ページ）</td></tr>
+	<tr><td>QUIT TO TRAINING</td><td>TRAINING のページに戻る</td></tr>
+	<tr><td>QUIT TO TITLE</td><td>タイトルメニューに戻る</td></tr>
+	</tbody>
+</table>
+<p>RESTART と QUIT は確認があり、もう一度 <span class="b a">A</span> で YES、<span class="b bb">B</span> で NO です。</p>
+<div class="clear"></div>
+<div class="tip"><span class="lbl">ヒント</span><p>ボスを覚えるなら START AT BOSS、TEAM SAME、INVINCIBLE。START のたびにすぐボス戦です。GAME SPEED 50% でパターンを読み、HITBOX ALL で敵弾の当たる場所を確かめましょう。</p></div>
+</section>
+
+<section class="s-menus newpage">
+<h1 id="options" class="first">オプション</h1>
+<figure class="fl w48"><img class="shot" src="art/options.png" alt=""><figcaption>タイトルメニューから開いた OPTIONS。</figcaption></figure>
+<p>OPTIONS は、タイトルメニューとポーズメニューから開けます。上下で項目を選び、<span class="b a">A</span> でページを開きます。GADGETS と LANGUAGE は左右で切り替えます。<span class="b bb">B</span> か <span class="b bk">BACK</span> で1つ前のページに、<span class="b st">START</span> ですべてのページを閉じます。変更した内容はセーブされます（<span class="pg" data-to="keeps"></span>ページ）。</p>
+<p>どのページも、上にページ名、項目の並び、選んでいる項目の説明、使えるボタンの順で表示されます。</p>
+<div class="clear"></div>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:34%">GENERAL SCREEN</td><td>画面の大きさ、位置、回転、スキャンライン、明るさ、縦横比（<span class="pg" data-to="genscreen"></span>ページ）</td></tr>
+	<tr><td>GADGETS<small>ON / OFF</small></td><td>ゲーム画面の横のパネル（<span class="pg" data-to="gadgets"></span>ページ）。16:9 の画面と、PICTURE SIZE が INTEGER か FULL のときに表示されます。表示できないときは、その理由がメニューの下に出ます</td></tr>
+	<tr><td>CONTROLS</td><td>ボタンの割り当て（<span class="pg" data-to="ctlpage"></span>ページ）</td></tr>
+	<tr><td>SECRET COMMANDS</td><td>アーケード本来の START コマンド（<span class="pg" data-to="commands"></span>ページ）</td></tr>
+	<tr><td>SOUND</td><td>音量とサウンドテスト（<span class="pg" data-to="sound"></span>ページ）</td></tr>
+	<tr><td>MANUAL</td><td>この取扱説明書を画面で（<span class="pg" data-to="manualpage"></span>ページ）</td></tr>
+	<tr><td>DEBUG MENU</td><td>当たり判定、ランキング、初期設定。タイトルメニューからだけ（<span class="pg" data-to="debug"></span>ページ）</td></tr>
+	<tr><td>LANGUAGE<small>ENGLISH / JAPANESE</small></td><td>プレイ中でないときだけ（<span class="pg" data-to="language"></span>ページ）</td></tr>
+	</tbody>
+</table>
+
+<div class="kicker" style="margin-top:5mm">オプション</div>
+<h2 id="genscreen" style="margin-top:0">GENERAL SCREEN</h2>
+<figure class="fr w48"><img class="shot" src="art/screen.png" alt=""><figcaption>GENERAL SCREEN。</figcaption></figure>
+<p>左右で値を変えます。押し続けるとくり返します。変更はすぐに画面に反映されます。</p>
+<p>CUSTOM の項目を1つでも動かすと、PICTURE SIZE は自動で CUSTOM になります。CUSTOM の値は画面の形（16:9 か 4:3、ふつうの向きか縦置きか）ごとに記録され、INTEGER や FULL の間は灰色で表示されます。</p>
+<div class="clear"></div>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:34%">PICTURE SIZE</td><td><b>INTEGER</b>：くっきり見える整数倍の最大サイズ。<b>FULL</b>（最初の設定）：画面の高さいっぱい。<b>CUSTOM</b>：下の5項目で調整</td></tr>
+	<tr><td>SIZE<br>X SIZE、Y SIZE</td><td>CUSTOM の大きさ、幅、高さ。<span class="b a">A</span> で 100% に戻す</td></tr>
+	<tr><td>X / Y POSITION</td><td>CUSTOM の位置。<span class="b a">A</span> で中央に戻す</td></tr>
+	<tr><td>ROTATION</td><td>OFF、LEFT、RIGHT：画面の置きかた（<span class="pg" data-to="screen"></span>ページ）</td></tr>
+	<tr><td>SCANLINES</td><td>OFF / ON：アーケードのモニターのように、走査線の間に暗い線を入れます</td></tr>
+	<tr><td>SCAN STRENGTH</td><td>線の濃さ：5% から 100%（最初は 35%）</td></tr>
+	<tr><td>BRIGHTNESS</td><td>50% から 150% まで 5% ずつ。100% が基板そのままの明るさ。<span class="b a">A</span> で 100% に戻す</td></tr>
+	<tr><td>SMOOTHING</td><td>OFF はドットをそのまま映し、ON はなめらかにぼかします</td></tr>
+	<tr><td>ASPECT RATIO</td><td>AUTO（本体の設定どおり）、16:9、4:3</td></tr>
+	</tbody>
+</table>
+</section>
+
+<section class="s-menus newpage">
+<div class="kicker">オプション</div>
+<h2 id="ctlpage" style="margin-top:0">CONTROLS</h2>
+<figure class="fl w48"><img class="shot" src="art/controls.png" alt=""><figcaption>最初の設定の CONTROLS。</figcaption></figure>
+<p><b>A、B、X、Y、LB、RB、LT、RT</b> のそれぞれに1行ずつあり、左右でゲーム中の役割を選びます。</p>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:44%">OFF</td><td>ゲーム中は何もしない</td></tr>
+	<tr><td>SHOT · BOMB · SPECIAL</td><td>アーケードの3つのボタン</td></tr>
+	<tr><td>AUTO SHOT</td><td>押している間、AUTOFIRE の速さでショットを連射</td></tr>
+	</tbody>
+</table>
+<p>2つのボタンに同じ役割を割り当ててもかまいません。<b>AUTOFIRE</b> は AUTO SHOT の速さで、1秒に 30、20、15、12、10 発から選びます。<b>DEFAULTS</b> でボタンを最初の割り当て（A が SHOT、B が BOMB、X が SPECIAL、RT が AUTO SHOT、ほかは OFF）に戻します。START と BACK はこのページにはありません。BACK はポーズ、START はゲーム本来のボタンです。</p>
+<div class="clear"></div>
+
+<h2 id="commands">SECRET COMMANDS</h2>
+<figure class="fr w48"><img class="shot" src="art/commands.png" alt=""><figcaption>SECRET COMMANDS。</figcaption></figure>
+<p>アーケード基板には、独自の隠しコマンドがあります。プレイ中に <span class="b st">START</span> を押したまま、方向かボタンを押します。このページではそれをすべてのプレイに設定でき、プレイ中もアーケードと同じようにコマンドが使えます。</p>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:36%">NORMAL BULLETS</td><td>通常弾の色。GAME はゲーム本来の青。プレイ中は START + 右</td></tr>
+	<tr><td>BALL BULLETS</td><td>丸弾。GAME はオレンジ。START + 左</td></tr>
+	<tr><td>MISSILES</td><td>ミサイル。GAME はピンク。START + 下</td></tr>
+	<tr><td>SHOT RATE</td><td>自機そのものの連射速度：GAME、または1秒に 60 から 7 発。START + SHOT で速く、START + SPECIAL で遅く。プレイ中でないときに設定します</td></tr>
+	<tr><td>SCORE BREAKDOWN</td><td>OFF / ON：入った得点を1つずつ、画面の左に並べて表示。START + BOMB</td></tr>
+	</tbody>
+</table>
+<div class="clear"></div>
+<figure class="fl w36"><img class="shot" src="art/breakdown.png" alt=""><figcaption>SCORE BREAKDOWN を ON、通常弾を RED にしたところ。</figcaption></figure>
+<p>色は YELLOW、BLUE、GREEN、PURPLE、PINK、RED、ORANGE から選べます。</p>
+<p>どのコマンドも、スコア、ランク、ランキングには影響しません。アーケードのゲームにもともとある機能です。</p>
+<div class="clear"></div>
+</section>
+
+<section class="s-menus newpage">
+<div class="kicker">オプション</div>
+<h2 id="sound" style="margin-top:0">SOUND</h2>
+<figure class="fl w48"><img class="shot" src="art/sound.png" alt=""><figcaption>SOUND。</figcaption></figure>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:38%">MUSIC</td><td>音楽の音量。0% から 100% まで 10% ずつ</td></tr>
+	<tr><td>SFX</td><td>効果音と声の音量。0% から 100%</td></tr>
+	<tr><td>ATTRACT</td><td>タイトル画面とデモ画面の音量。上の2つに対する割合です</td></tr>
+	<tr><td>MUTE</td><td>すべての音を消します</td></tr>
+	<tr><td>MUSIC TEST</td><td>00 – 19。曲名つき。<span class="b a">A</span> で再生</td></tr>
+	<tr><td>SFX TEST</td><td>20 – D7。<span class="b a">A</span> で再生</td></tr>
+	</tbody>
+</table>
+<p>2つのテストは、プレイ中でないときだけ使えます。プレイ中に変えた音量は、ゲームを再開したときに反映されます。</p>
+<div class="clear"></div>
+<h2 id="debug">DEBUG MENU</h2>
+<figure class="fr w48"><img class="shot" src="art/debug.png" alt=""><figcaption>DEBUG MENU。</figcaption></figure>
+<p>タイトルメニューの OPTIONS からだけ開けます。</p>
+<h3>HITBOX <span class="val">OFF / PLAYER / ALL</span></h3><p>すべてのプレイで表示する当たり判定（<span class="pg" data-to="hitbox"></span>ページ）。TRAINING と共通の設定です。</p>
+<h3>INITIALIZE RANKINGS <span class="val">THIS MODE / BOTH MODES</span></h3><p>左右でどちらかを選びます。<span class="b a">A</span> を押すと赤く CONFIRM? と確認され、もう一度 <span class="b a">A</span> でそのランキングを消去します。<span class="b bb">B</span> で取り消します。</p>
+<h3>DEFAULT SETTINGS</h3><p>同じように確認したあと、すべてのオプション、DIP スイッチ、ボタンを最初の状態に戻します。MODE、ランキング、ステートセーブ、リプレイはそのままです。</p>
+<div class="clear"></div>
+<h2 id="language">LANGUAGE</h2>
+<div class="row c r3 sm2" style="float:right;margin:0 0 1mm 3mm;width:46%">
+	<figure style="flex:1"><img class="shot" src="art/lang_en.png" alt=""><figcaption>ENGLISH</figcaption></figure>
+	<figure style="flex:1"><img class="shot" src="art/lang_ja.png" alt=""><figcaption>JAPANESE</figcaption></figure>
+</div>
+<p>ENGLISH か JAPANESE：アーケード基板の COURSE と TYPE の選択画面の文字（英語か、基板本来の日本語）と、MANUAL の言語を選びます。メニューは英語のままです。変えられるのはプレイ中でないときだけで、リプレイは記録したときの言語で再生されます。</p>
+<div class="clear"></div>
+</section>
+
+<section class="s-menus newpage">
+<div class="kicker">オプション</div>
+<h2 id="settings" style="margin-top:0">DIP スイッチ</h2>
+<figure class="fl w48"><img class="shot" src="art/game_settings.png" alt=""><figcaption>DIFFICULTY を HARD、LIVES を 4 にしたところ。工場出荷時と違う値は赤。</figcaption></figure>
+<p><b>オリジナルゲーム</b>のための、アーケード基板本来の設定です。MODE が ORIGINAL のとき、PLAY か TRAINING から開きます。左右（または <span class="b a">A</span>）で値を変え、工場出荷時と違う値は赤く表示されます。<b>DEFAULT</b> で4つとも元に戻します。</p>
+<p>ページにも表示されるとおり、<b>工場出荷時の設定でないと、スコアは無効になります</b>（<span class="pg" data-to="valid"></span>ページ）。CHASE! は影響を受けず、つねに独自の固定の設定でプレイします。</p>
+<div class="clear"></div>
+<table>
+	<thead><tr><th colspan="2">選択肢（太字は工場出荷時の設定）</th></tr></thead>
+	<tbody>
+	<tr><td class="k" style="width:30%">DIFFICULTY</td><td>EASY · <b>NORMAL</b> · HARD · VERY HARD</td></tr>
+	<tr><td class="k">TIMER</td><td>HIGHEST · HIGH · <b>NORMAL</b> · LOW：ボス戦の制限時間</td></tr>
+	<tr><td class="k">LIVES</td><td>1 · 2 · <b>3</b> · 4：チームの機体数</td></tr>
+	<tr><td class="k">BONUS LIFE</td><td>NONE · 2000000 · <b>1500000</b> · 1000000：何点ごとにエクステンドのアイテムが出るか</td></tr>
+	</tbody>
+</table>
+<p>SELECT PLAYER は機体3機のときだけ使えます。LIVES をほかの数にすると、オリジナルゲームの SELECT TYPE には SELECT PLAYER が出なくなります。</p>
+</section>
+
+<section class="s-menus newpage">
+<h1 id="pause" class="first">ポーズ</h1>
+<figure class="fr w48"><img class="shot" src="art/pause.png" alt=""><figcaption>ポーズメニュー。</figcaption></figure>
+<p>ステージ中に <span class="b bk">BACK</span> を押すと、ゲームがその場で止まり、ポーズメニューが開きます。音楽も一緒に止まります。上下で項目を選び、<span class="b a">A</span> で決定します。<span class="b bb">B</span> か <span class="b bk">BACK</span> で再開します。（トレーニング中は TRAINING PAUSE です：<span class="pg" data-to="training"></span>ページ）</p>
+<div class="clear"></div>
+<table class="menu long">
+	<tbody>
+	<tr><td>RESUME</td><td>ゲームを再開します。</td></tr>
+	<tr><td>RESTART STAGE<small>&lt; STAGE / STATE &gt;</small></td><td>STAGE：いまのステージの最初に戻ります。STATE：このプレイで最後にセーブまたは読み込んだステートに戻ります。両方あるときは左右で選びます。確認のあと、すぐにステージが続きます。</td></tr>
+	<tr><td>FULL RESTART</td><td>同じチームで、ステージ1からやり直します。選択画面は出ません。確認があります。</td></tr>
+	<tr><td>SAVE STATE · LOAD STATE</td><td>ステートセーブのページ（<span class="pg" data-to="states"></span>ページ）。</td></tr>
+	<tr><td>OPTIONS</td><td>ゲームの上に OPTIONS。DEBUG MENU はありません（<span class="pg" data-to="options"></span>ページ）。</td></tr>
+	<tr><td>INVULNERABLE<small>OFF / ON</small></td><td>ON の間、自機は撃墜されません。左右か A で切り替えます。</td></tr>
+	<tr><td>QUIT TO TITLE</td><td>確認のあと、プレイを終えます。スコアが十分に高ければ、ネームエントリーに進みます。</td></tr>
+	</tbody>
+</table>
+</section>
+
+<section class="s-menus newpage">
+<p style="margin-top:2mm">確認には <span class="b a">A</span>（YES）か <span class="b bb">B</span>（NO）で答えます。ステージ1での RESTART STAGE はスコアをそのままにして新しいリプレイを記録し、ステージ2以降や STATE ではスコアが無効になります（<span class="pg" data-to="valid"></span>ページ）。</p>
+<div class="row" style="margin-top:2mm;align-items:center">
+	<figure style="flex:0 0 46%"><img class="shot" src="art/pause_invuln.png" alt=""><figcaption>INVULNERABLE を ON にしたところ。</figcaption></figure>
+	<div class="caution" style="flex:1"><span class="lbl">注意</span><p>INVULNERABLE はプレイ開始時は OFF です。<b>ON にした時点で、スコアは無効になります。</b>OFF に戻しても元には戻らず、ネームエントリーなしで終わり、ランキングは元のまま、リプレイも残りません。</p></div>
+</div>
+<h2 id="endcredit">ゲームの終わり</h2>
+<div class="row" style="margin-top:2mm;justify-content:center">
+	<figure style="flex:0 0 31%"><img class="shot" src="art/name_entry.png" alt=""><figcaption><b>ネームエントリー。</b>そのコースの上位5位に入るスコアなら、カウントダウンの間にイニシャル3文字を入力します。</figcaption></figure>
+	<figure style="flex:0 0 31%"><img class="shot" src="art/ranking.png" alt=""><figcaption><b>ランキング。</b>コースごとにテーブルが1つあり、次に起動したときにも残っています。</figcaption></figure>
+</div>
+<p>コースをクリアするとエンディングとスタッフロール（アーケードの TRAINING コースはなし）。そのあと <b>SAVE REPLAY?</b> で、プレイ全体をリプレイに残せます（<span class="pg" data-to="replays"></span>ページ）。</p>
+</section>
+
+<section class="s-menus newpage">
+<h1 id="valid" class="first">有効なスコアと無効なスコア</h1>
+<p class="lead">本来の形でプレイしたスコアは有効です。プレイを助けるものを使うと無効になります。隠しコマンド、CONTROLS、画面とサウンドの設定は影響しません。</p>
+<p>無効なスコアは赤く表示されます：ガジェットの TOTAL とそのステージの STAGES の行（<span class="pg" data-to="gadgets"></span>ページ）、SAVE REPLAY? のスコア（<b>*</b> と「* = INVALID SCORE」つき）、REPLAY DATA の行（* つき）。一度無効になると、無効のままです。</p>
+<table class="long">
+	<thead><tr><th style="width:34%">できごと</th><th style="width:20%">スコア</th><th>ランキングとリプレイ</th></tr></thead>
+	<tbody>
+	<tr><td>コンティニュー</td><td>無効</td><td>ゲーム本来のルールで、コンティニューしたプレイヤーは登録されません。SAVE REPLAY? は出ます</td></tr>
+	<tr><td>DIP スイッチが工場出荷時と違う</td><td>無効</td><td>ネームエントリーはいつもどおり。SAVE REPLAY? は出ます</td></tr>
+	<tr><td>プレイ中の LOAD STATE</td><td>無効</td><td>リプレイなし</td></tr>
+	<tr><td>RESTART STAGE（ステージ2以降、STATE）</td><td>無効</td><td>リプレイなし</td></tr>
+	<tr><td>INVULNERABLE を ON</td><td>無効</td><td>ネームエントリーなし、ランキングは元のまま。リプレイなし</td></tr>
+	<tr><td>TRAINING</td><td>無効</td><td>登録されません。リプレイなし</td></tr>
+	<tr><td>ステージ1での RESTART STAGE</td><td>そのまま</td><td>ステージの最初から新しいリプレイ</td></tr>
+	<tr><td>FULL RESTART</td><td>新しいプレイ</td><td>ふたたび有効（INVULNERABLE が ON なら無効）。新しいリプレイ</td></tr>
+	<tr><td>QUIT TO TITLE</td><td>そのまま</td><td>スコアが十分ならネームエントリー。リプレイなし</td></tr>
+	</tbody>
+</table>
+</section>
+
+<!-- ============================================================ ステートとリプレイ -->
+<section class="s-host newpage tight">
+<h1 id="states" class="first">ステートセーブ</h1>
+<p class="lead">いまのゲームの状態をそのまま残して、好きなときにその場面へ戻れます。</p>
+<figure class="fl w48"><img class="shot" src="art/save_state.png" alt=""><figcaption>SAVE STATE：スロット01にセーブしたところ。</figcaption></figure>
+<p>SAVE STATE（ポーズメニュー）と LOAD STATE（ポーズメニューとタイトルメニュー）を選ぶと、スロットのページが開きます。スロットは <b>MODE ごとに10個</b>（CHASE! と ORIGINAL）あり、それぞれにセーブしたときのステージとスコアが、選んでいるスロットにはそのときのゲーム画面の小さな写真が表示されます。</p>
+<h3>SAVE STATE</h3><p>プレイ中に使えます。スロットを選んで <span class="b a">A</span> を押すと、そこにセーブされます。使用中のスロットは、確認のあと上書きされます。</p>
+<h3>LOAD STATE</h3><p>左右で、もう一方の MODE のスロットに切り替わります。<span class="b a">A</span> で確認のあと読み込みます。もう一方の MODE のステートを読み込むと、ゲームもその MODE に切り替わります。<span class="b x">X</span> でステートを消去します（確認があります）。</p>
+<p>読み込んだあと、ゲームはポーズメニューで待っています。RESUME を選ぶと再開します。読み込むと、そのプレイのスコアは無効になり、リプレイの記録も終わります（<span class="pg" data-to="valid"></span>ページ）。</p>
+<div class="clear"></div>
+<div class="note"><span class="lbl">メモ</span><p>ランキングは、つねにいまセーブされている内容のままです。古いステートを読み込んでも、古いランキングが戻ってくることはありません。</p></div>
+<p>ステートは、.xex と同じ場所のファイルにセーブされます。CHASE! は <span class="file">batrider360_state_c01.bin</span>～<span class="file">_c10.bin</span>、ORIGINAL は <span class="file">_o01.bin</span>～<span class="file">_o10.bin</span> です。batrider360 のほかのバージョンでセーブしたステートは、読み込めないことがあります。</p>
+
+<h1 id="replays" style="margin-top:7mm">リプレイ</h1>
+<p class="lead">プレイはすべて、最初から記録されています。よいプレイは残しておきましょう。</p>
+<p>プレイが終わると <b>SAVE REPLAY?</b> と表示され、MODE、到達したステージ、スコア、プレイ時間が出ます。<span class="b a">A</span> で残し、<span class="b bb">B</span> で残しません。10秒に満たないプレイと、リプレイを残せないプレイ（<span class="pg" data-to="valid"></span>ページ）では表示されません。リプレイは30個まで残せ、いっぱいのときは、いちばん古いものと置き換わります。</p>
+<h2>REPLAY DATA</h2>
+<p>タイトルメニューの REPLAY DATA を選ぶと、残したリプレイが新しい順に12個ずつ並び、上に30個のうちいくつ使っているかが出ます。それぞれに MODE（CHA か ORG）、到達したステージ、スコア、長さが表示され、無効なスコアの行は赤く * がつきます。<span class="b a">A</span> で再生、<span class="b x">X</span> で消去します（確認があります）。</p>
+<h2>リプレイを見る</h2>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:36%"><span class="b lb">LB</span> / <span class="b rb">RB</span></td><td>遅く / 速く（1/2、x1、x2、x3）</td></tr>
+	<tr><td><span class="b bk">BACK</span> または <span class="b st">START</span></td><td>リプレイのポーズ：RESUME、RESTART REPLAY（最初から）、QUIT REPLAY。B、BACK、START で再開</td></tr>
+	</tbody>
+</table>
+<p>画面には、速さ、再生した時間、リプレイ全体の長さが表示されます。最後まで再生すると、REPLAY DATA のページに戻ります。</p>
+<p>リプレイには、プレイしたときの設定（ボタンの割り当て、コンティニュー回数、DIP スイッチ、隠しコマンド）と LANGUAGE も記録されるので、いまの設定にかかわらず同じように再生されます。OPTIONS やポーズメニューのページなど、プレイ中に開いたページは記録されません。</p>
+<p>リプレイは、.xex と同じ場所のファイル <span class="file">batrider360_replay_01.bin</span>～<span class="file">_30.bin</span> にセーブされます。</p>
+
+<h1 id="manualpage" style="margin-top:7mm">画面で見る説明書</h1>
+<p>OPTIONS の <b>MANUAL</b> で、LANGUAGE で選んだ言語のこの取扱説明書を、ROTATION OFF では見開きの2ページで、LEFT と RIGHT では縦置きのテレビいっぱいに1ページずつ表示します。</p>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:36%"><span class="b dp">✚</span> の右、<span class="b rb">RB</span>、<span class="b a">A</span></td><td>次のページへ</td></tr>
+	<tr><td><span class="b dp">✚</span> の左、<span class="b lb">LB</span></td><td>前のページへ</td></tr>
+	<tr><td><span class="b bb">B</span>、<span class="b bk">BACK</span></td><td>OPTIONS に戻る（<span class="b st">START</span> ですべて閉じる）</td></tr>
+	</tbody>
+</table>
+<p>このページは、配布ファイルで <span class="file">batrider360.xex</span> の横にある <span class="file">batrider360_manual.bin</span> を読みます。ないときは MANUAL の項目が灰色になり、NO BATRIDER360_MANUAL.BIN BESIDE THE XEX と表示されます。</p>
+</section>
+
+<!-- ============================================================ ガジェット -->
+<section class="s-host newpage tight" style="page:gad">
+<h1 id="gadgets" class="first">ガジェット</h1>
+<p class="lead">縦画面のゲームをワイドテレビに映すと、左右に広い余白ができます。Xbox 360版はそこを、動いているゲームを読み取るパネルで埋めます。</p>
+<p>ガジェットは、アーケード基板がメモリーに持っていながら画面には出さないもの――ランク、これから出るアイテム、隠しボスの条件など――を見せてくれます。<b>Baffo 氏による MAME 用 Batrider レイアウト</b>（バージョン 0.4：デザイン baf、Lua Olifante &amp; DUBS、ランク開始バー Miquel）を移植したもので、CHASE! 用の新しいパネルを同じスタイルで加えています。OPTIONS の <b>GADGETS</b> でオフにできます。4:3 の画面と、PICTURE SIZE が CUSTOM のときも表示されません。</p>
+<figure><div class="slot" data-file="work/gadgets_yoko_chase.png" data-ar="16/9" data-label="ROTATION OFF, CHASE!"></div><figcaption><b>ROTATION OFF、CHASE! のプレイ。</b>ゲームの左に機体のパネル、Status と Weapon、下に CHASE! のパネル。右にランク、アイテム、勲章、隠しボス、ボス、ステージ。</figcaption></figure>
+<h2>ゲームの左側</h2>
+<table class="menu">
+	<tbody>
+	<tr><td>CURRENT PLAYER</td><td>3機の顔（先頭が出撃中、続く2機が待機中）と、チームのタイプ（A～D）。横に<b>入力表示</b>（押しているスティックとボタン）と、ショットのチャージ。</td></tr>
+	<tr><td>STATUS</td><td>ステージ、そのステージの経過時間、画面上の敵の数と敵弾の数。</td></tr>
+	<tr><td>WEAPON</td><td>ショットのレベル、オプションの数、そのフォーメーション（フォーメーションがあるのはバトルガレッガのゲスト機だけ：V、BACK、FRONT、CIRCLE、CONTROL、特殊フォーメーションは SPECIAL）、ボムのストック、Sp.Power と Sp.Option のマーク。</td></tr>
+	<tr><td>MUSIC</td><td>いま流れている曲。ゲーム自身のサウンドテストの曲名と、その作曲者。</td></tr>
+	</tbody>
+</table>
+<h3 style="color:var(--red)">CHASE! のパネル（下側）</h3>
+<table class="menu">
+	<tbody>
+	<tr><td>CHAIN</td><td>チェーンのタイマーのバーと、その下にチェーンの数（<span class="pg" data-to="chain"></span>ページ）。</td></tr>
+	<tr><td>MULTIPLIER</td><td>倍率 x1～x8。チェイスブレイクが使えるときはオレンジ色の <b>C</b>、そして前方の矢印（画面の上半分では上向き、下半分では下向き）。</td></tr>
+	<tr><td>LIVES</td><td>残っている機体とストック中のエクステンド。最大5。</td></tr>
+	<tr><td>NEXT EXTEND</td><td>次のエクステンドまでの残りの点数。</td></tr>
+	</tbody>
+</table>
+<h2>ゲームの右側</h2>
+<table class="menu">
+	<tbody>
+	<tr><td>RANK BAR</td><td>ランク（％）と、ランク開始値（このプレイのランクがどこから始まったか）。</td></tr>
+	<tr><td>ITEM DROPS</td><td>アイテムの出る順番の、次の6個（<span class="pg" data-to="fly"></span>ページ）。</td></tr>
+	<tr><td>ITEM COUNT</td><td>種類ごとに、これまで出たアイテムの数。上限に達すると赤くなります。</td></tr>
+	<tr><td>MEDAL</td><td>これまで出た勲章の数と、次の勲章（その絵と得点）。</td></tr>
+	<tr><td>SECRET BOSSES</td><td>隠しボスを呼び出す12の条件。まだ可能性があるものは空欄、満たしたものはチェック、失ったものはマイナスで示します。</td></tr>
+	<tr><td>BOSS INFO</td><td>ボスの耐久力と、タイマー（秒）。</td></tr>
+	<tr><td>STAGES</td><td>ステージごとに、プレイした順に稼いだ点数と、その合計（TOTAL）。スコアが無効なときは赤くなります（<span class="pg" data-to="valid"></span>ページ）。</td></tr>
+	</tbody>
+</table>
+<h2>オリジナルゲームと縦置き</h2>
+<p>オリジナルゲームのプレイにはチェーンがないので、CHASE! のパネルの場所は空いたままです。ほかのパネルは、CHASE! と同じように働きます。</p>
+<div class="row" style="justify-content:center">
+	<figure style="flex:0 0 42%"><div class="slot" data-file="work/gadgets_yoko_original.png" data-ar="16/9" data-label="ROTATION OFF, ORIGINAL"></div><figcaption><b>ORIGINAL。</b></figcaption></figure>
+	<figure style="flex:0 0 13.3%"><div class="slot" data-file="work/gadgets_tate_chase.png" data-ar="9/16" data-label="ROTATION LEFT / RIGHT, CHASE!"></div><figcaption><b>縦置き。</b></figcaption></figure>
+</div>
+<p>縦置き（ROTATION LEFT か RIGHT）では、ガジェットはゲームの上下の帯に並びます。Secret Bosses と Stages は、ふつうの向きの画面だけで表示されます。</p>
+</section>
+
+<!-- ============================================================ 資料 -->
+<section class="s-ref newpage">
+<h1 id="keeps" class="first">セーブについて</h1>
+<p class="lead">アーケード基板は、電源を切るとすべてを忘れてしまいます。このバージョンは忘れません。</p>
+<p>すべて、<span class="file">batrider360.xex</span> と同じ場所にある、名前が <span class="file">batrider360_</span> で始まる小さなファイルにセーブされます。操作は何もいりません。変更のあった部分を、ゲームを止めることなく、裏で書き込みます。</p>
+<table>
+	<thead><tr><th style="width:62%">セーブされる内容</th><th>タイミング</th></tr></thead>
+	<tbody>
+	<tr><td style="font-weight:400">画面とサウンドの設定、GADGETS、LANGUAGE、HITBOX、MODE（<span class="file">batrider360_host.txt</span>）</td><td>何かを変更してページやメニューを閉じたとき</td></tr>
+	<tr><td style="font-weight:400">CONTINUES、CONTROLS、SECRET COMMANDS、DIP スイッチ、サウンドテストの番号（<span class="file">batrider360_options.txt</span>）</td><td>同上</td></tr>
+	<tr><td style="font-weight:400">MODE ごとのランキング：各テーブルの上位5位まで（<span class="file">batrider360_rankings_chase.bin</span>、<span class="file">_original.bin</span>）</td><td>内容が変わったとき</td></tr>
+	<tr><td style="font-weight:400">ステートセーブ（<span class="file">batrider360_state_c01</span>～<span class="file">_c10</span>、<span class="file">_o01</span>～<span class="file">_o10</span>）：MODE ごとに10個</td><td>セーブしたとき、消去したとき（<span class="pg" data-to="states"></span>ページ）</td></tr>
+	<tr><td style="font-weight:400">リプレイ（<span class="file">batrider360_replay_01</span>～<span class="file">_30</span>）：最大30個</td><td>残したとき、消去したとき（<span class="pg" data-to="replays"></span>ページ）</td></tr>
+	<tr><td style="font-weight:400">メニューの効果音（<span class="file">batrider360_menusnd.bin</span>）。ROM セットから作ります</td><td>最初の起動時</td></tr>
+	</tbody>
+</table>
+<p>TRAINING のページの設定は、本体の電源を切るまで（とステートセーブの中に）残ります。ログ <span class="file">batrider360.log</span> は、起動するたびに書き込まれます。</p>
+<div class="note"><span class="lbl">メモ</span><p>ファイルはゲームと一緒に持ち運べます。フォルダごとコピーすれば、スコアと設定もついてきます。ファイルを消すと、最初の状態から始まります。フォルダは、本体が書き込めるドライブに置いてください。</p></div>
+<p>.xex の横には、ゲームが書き込むのではないファイルが1つあります。MANUAL のページで読む取扱説明書、<span class="file">batrider360_manual.bin</span> です。配布ファイルの中で <span class="file">batrider360.xex</span> と並んでいるので、2つは一緒に置いておいてください。</p>
+<h2>スコアがセーブされるタイミング</h2>
+<p>スコアがセーブ対象のランキングに入るのは、<b>ネームエントリーが終わったとき</b>です。スコアが伸びている途中では入りません。ネームエントリーの途中でゲームを終えたり電源を切ったりすると、そのプレイのスコアは失われます。</p>
+<p>ランキングは MODE ごとに別々で、コースごとにテーブルが1つあります。CHASE! のスコアとオリジナルゲームのスコアが混ざることはありません。どのプレイが登録されるかは、<span class="pg" data-to="valid"></span>ページを見てください。</p>
+<h2>最初からやり直すには</h2>
+<p>DEBUG MENU の <b>INITIALIZE RANKINGS</b> で1つまたは両方の MODE のランキングを、<b>DEFAULT SETTINGS</b> ですべてのオプションを、それぞれ確認のあと元に戻します（<span class="pg" data-to="debug"></span>ページ）。</p>
+</section>
+
+<section class="s-ref newpage">
+<h1 id="trouble" class="first">こまったときは</h1>
+<table class="long">
+	<thead><tr><th style="width:42%">こんなとき</th><th>対処のしかた</th></tr></thead>
+	<tbody>
+	<tr><td>起動しても画面が暗い赤のまま</td><td>ROM セットが見つかっていません。MAME 用のマージ形式の <span class="file">batrider.zip</span> を、<span class="file">batrider360.xex</span> と同じフォルダに入れてください。同じ場所の <span class="file">batrider360.log</span> に、どこを探したかが書かれています。BACK でダッシュボードに戻ります。</td></tr>
+	<tr><td>ゲーム画面が横倒しになっている</td><td>GENERAL SCREEN の ROTATION が、縦置きの画面用の LEFT か RIGHT になっています。ふつうの向きのテレビでは OFF を選んでください（<span class="pg" data-to="screen"></span>ページ）。</td></tr>
+	<tr><td>画面の左右にパネルが並んでいる</td><td>ガジェットです（<span class="pg" data-to="gadgets"></span>ページ）。OPTIONS の GADGETS を OFF にすると、ゲームだけになります。</td></tr>
+	<tr><td>ガジェットが表示されない</td><td>GADGETS が ON で、16:9 の画面（ASPECT RATIO）、PICTURE SIZE が INTEGER か FULL のときに表示されます。足りないものは OPTIONS のページに表示されます。</td></tr>
+	<tr><td>画面が小さすぎる、大きすぎる、ずれている</td><td>GENERAL SCREEN の PICTURE SIZE を FULL にするか、CUSTOM の各項目で <span class="b a">A</span> を押して元に戻してください（<span class="pg" data-to="genscreen"></span>ページ）。</td></tr>
+	<tr><td>次の日になると何もセーブされていない</td><td>ゲームは .xex と同じ場所にファイルを書き込みます。フォルダは、本体が書き込めるドライブに置いてください（<span class="pg" data-to="keeps"></span>ページ）。</td></tr>
+	<tr><td>上のスコアや、選択画面の TIME が切れて見える</td><td>テレビが、画面の端を切り取っています（オーバースキャン）。ゲームは端まで正しく描いています。テレビを、画面全体を表示する設定（「ジャストスキャン」「フルピクセル」「画面サイズ：フル」など）にしてください。</td></tr>
+	<tr><td>タイトル画面に INSERT COIN が出ない</td><td>それで正常です。どちらのゲームもフリープレイです。</td></tr>
+	<tr><td>タイトル画面で START が効かない</td><td>タイトルが表示され終わるまでお待ちください。表示が終わると、メニューが入力を受け付けます。</td></tr>
+	<tr><td>ゲームが勝手に始まった</td><td>始まったわけではありません。タイトルメニューで30秒間何も入力しないと、ゲームのデモ画面に切り替わります。START を押してください。</td></tr>
+	<tr><td>プレイ中に START でポーズできない</td><td>プレイ中の START はアーケード本来のボタンで、隠しコマンドに使います。ポーズは BACK です。</td></tr>
+	<tr><td>敵弾の色が違う、画面の左に数字が並ぶ</td><td>隠しコマンドです。プレイ中に START を押したまま方向かボタンを押すか、OPTIONS で GAME と OFF に戻してください（<span class="pg" data-to="commands"></span>ページ）。</td></tr>
+	<tr><td>SPECIAL を押してもチェイスブレイクできなかった</td><td>倍率が x4 以上（オレンジ色の C が点灯）で、画面内にチェイスブレイクの対象（敵弾かザコ敵）がある必要があります。また、前回のチェイスブレイクから5秒たっていなければなりません。</td></tr>
+	<tr><td>プレイ中にボタンが効かない</td><td>CONTROLS で OFF か、別の役割になっています。DEFAULTS で元に戻ります（<span class="pg" data-to="ctlpage"></span>ページ）。</td></tr>
+	<tr><td>スコアが赤い</td><td>コンティニュー、ステート、リスタート、INVULNERABLE、DIP スイッチの変更のどれかを使ったプレイです（<span class="pg" data-to="valid"></span>ページ）。</td></tr>
+	<tr><td>スコアが登録されない（ネームエントリーが出ない）</td><td>INVULNERABLE を ON にしたか、コンティニューしたか、トレーニングのプレイです（<span class="pg" data-to="valid"></span>ページ）。</td></tr>
+	<tr><td>START RUN で、もう一方のゲームが始まる</td><td>PLAY の MODE（CHASE! または ORIGINAL）で選んでいるゲームが始まります（<span class="pg" data-to="mode"></span>ページ）。</td></tr>
+	<tr><td>スコアが消えた</td><td>ランキングは MODE ごとに別々です。スコアを出したときの MODE になっているか確認してください。</td></tr>
+	<tr><td>選択画面が日本語になっている</td><td>OPTIONS の LANGUAGE が JAPANESE になっています。プレイ中でないときに ENGLISH にしてください。</td></tr>
+	<tr><td>LANGUAGE、SHOT RATE、サウンドテストが変えられない</td><td>プレイ中でないときに使う項目です。タイトルメニューの OPTIONS から変えてください。</td></tr>
+	<tr><td>DEBUG MENU がない</td><td>タイトルメニューの OPTIONS にだけあり、ポーズメニューの OPTIONS にはありません。</td></tr>
+	<tr><td>撃ち続けていたのにチェーンが切れた</td><td>敵を倒さなければなりません。タイマーは、ショットを撃つことではなく、敵を倒すこと（とボスに当てること）で回復します。</td></tr>
+	<tr><td>MANUAL が灰色になっている</td><td>配布された <span class="file">batrider360_manual.bin</span> を、<span class="file">batrider360.xex</span> と同じフォルダに入れてください。</td></tr>
+	<tr><td>ステートを読み込んだのにゲームが動かない</td><td>ポーズメニューで待っています。RESUME を選んでください（<span class="pg" data-to="states"></span>ページ）。</td></tr>
+	<tr><td>ステートやリプレイを読み込めない</td><td>batrider360 のほかのバージョンでセーブしたものです。</td></tr>
+	<tr><td>SAVE REPLAY? が出なかった</td><td>10秒に満たないプレイと、ステートを読み込んだ、ステージ2以降でリスタートした、QUIT した、INVULNERABLE を ON にしたプレイでは出ません（<span class="pg" data-to="valid"></span>ページ）。</td></tr>
+	<tr><td>古いリプレイがなくなった</td><td>リプレイは30個までです。いっぱいになると、いちばん古いものが新しいものに置き換わります。</td></tr>
+	<tr><td>画面がぼやける、暗すぎる、明るすぎる</td><td>GENERAL SCREEN の SMOOTHING（OFF）と BRIGHTNESS（100% が基板そのままの明るさ）を確かめてください。</td></tr>
+	<tr><td>ダッシュボードに戻るには</td><td>タイトルメニューの最後の項目、EXIT を選んでください。</td></tr>
+	</tbody>
+</table>
+
+<div class="creditblock" style="padding-top:2mm">
+<h1 id="credits" style="margin-top:7mm">クレジット</h1>
+<div class="credits">
+	<div><div class="k">オリジナルゲーム</div><div class="v">ARMED POLICE BATRIDER<br>© 1998 RAIZING / 8ing CO., LTD.</div></div>
+	<div><div class="k">CHASE! アレンジ</div><div class="v">COIN-OP GAME STUDIO</div></div>
+	<div><div class="k">Xbox 360版 バージョン 0.14</div><div class="v">非公式。Claude とともに、ユーザー本人の本体のために制作</div></div>
+	<div><div class="k">ガジェット</div><div class="v">Baffo 氏による MAME 用 Batrider レイアウト v0.4 にもとづく：デザイン baf、Lua Olifante &amp; DUBS、ランク開始バー Miquel</div></div>
+	<div><div class="k">68000 エミュレーション</div><div class="v">Musashi（Karl Stenerud 作、MIT ライセンス）</div></div>
+	<div><div class="k">Z80 エミュレーション</div><div class="v">superzazu/z80（MIT ライセンス）</div></div>
+	<div><div class="k">YM2151 サウンド</div><div class="v">ymfm（Aaron Giles 作、BSD 3-Clause ライセンス）</div></div>
+	<div><div class="k">ライブラリ</div><div class="v">zlib、xsdk（MIT ライセンス）</div></div>
+</div>
+<div class="logostrip"><img class="coin" src="art/coinop.png" alt=""><img class="rz" src="art/raizing_8ing.png" alt=""></div>
+<p class="legal-s">本作は、愛好家が制作した非公式・非営利の作品です。ゲームの権利者、および本作が動作する各システムのメーカーから、ライセンス、後援、承認のいずれも受けていません。ARMED POLICE BATRIDER、そのキャラクターおよびアートワークは、それぞれの権利者に帰属します。Xbox 360 は Microsoft の商標です。その他の名称はすべて、それぞれの所有者に帰属します。</p>
+</div>
+</section>
+
+<section class="s-ref newpage notes">
+<h1 class="first">メモ</h1>
+<div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+<div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+<div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+</section>
+
+<!-- ============================================================ 裏表紙 -->
+<!--PAD-->
+<div class="back newpage">
+	<img class="art" src="art/back_art.jpg" alt="">
+	<div class="rule"></div>
+	<div class="txt">
+		<h2>チェーンを追え。</h2>
+		<p>敵を16体倒すごとに1段階、全8段階。次の敵を見つけるまでの猶予は1.5秒。前に出ればタイマーは味方。下がれば、そうはいかない。勲章は向こうから飛んでくる。そして画面が敵弾で埋めつくされたら、ボタンひとつで、その1発1発がすべて黄金に変わる。</p>
+		<p>CHASE! と、1998年のオリジナルアーケードゲーム。ランキングは、それぞれ別々に。すべてのステージとボスを練習できるトレーニング、ステートセーブとリプレイ。そしてゲームの横には、基板のすべてを映すガジェット。</p>
+		<div class="row c r3 sm">
+			<figure><img class="shot" src="art/back1.jpg" alt=""></figure>
+			<figure><img class="shot" src="art/back2.jpg" alt=""></figure>
+			<figure><img class="shot" src="art/back3.jpg" alt=""></figure>
+		</div>
+	</div>
+	<div class="logos"><img class="coin" src="art/coinop.png" alt=""><img class="rz" src="art/raizing_8ing.png" alt=""></div>
+	<div class="legal">ARMED POLICE BATRIDER © 1998 RAIZING / 8ing CO., LTD.　CHASE! アレンジ：COIN-OP GAME STUDIO　Xbox 360版 バージョン 0.14　本作は非公式・非営利の作品であり、ゲームおよびシステムの権利者からライセンスや承認を受けたものではありません。Xbox 360 は Microsoft の商標です。すべての商標は、それぞれの所有者に帰属します。</div>
+</div>
+
+</body>
+</html>

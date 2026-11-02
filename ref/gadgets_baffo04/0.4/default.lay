@@ -1,0 +1,1282 @@
+<!--
+    Armed Police Batrider (Japan, B version) Mame Layout file
+
+             Original art by Eighting Co., Ltd.
+                       Design by baf
+                  Coding by Olifante & DUBS
+      Rank_start visualization modification by Miquel
+      @de__baf @reolifante @BadDubsgames  @miquel2588
+
+                       Version 0.4
+
+    See the included README.txt file for installation instructions.
+-->
+
+
+<mamelayout version="2">
+	<element name="digit">
+		<image state="0" file="0.png" />
+		<image state="1" file="1.png" />
+		<image state="2" file="2.png" />
+		<image state="3" file="3.png" />
+		<image state="4" file="4.png" />
+		<image state="5" file="5.png" />
+		<image state="6" file="6.png" />
+		<image state="7" file="7.png" />
+		<image state="8" file="8.png" />
+		<image state="9" file="9.png" />
+		<image state="10" file="a.png" />
+		<image state="11" file="b.png" />
+		<image state="12" file="c.png" />
+		<image state="13" file="d.png" />
+		<image state="14" file="e.png" />
+		<image state="15" file="f.png" />
+		<image state="255" file="minus.png" />
+	</element>
+	<element name="stick">
+		<image state="0"  file="stick_c.png" />
+		<image state="1"  file="stick_n.png" />
+		<image state="2"  file="stick_s.png" />
+		<image state="4"  file="stick_w.png" />
+		<image state="8"  file="stick_e.png" />
+		<image state="5"  file="stick_nw.png" />
+		<image state="6"  file="stick_sw.png" />
+		<image state="10" file="stick_se.png" />
+		<image state="9"  file="stick_ne.png" />
+	</element>
+	<element name="button">
+		<image state="1"  file="square.png" />
+	</element>
+	<element name="checkbox">
+        <image state="1"  file="checked.png" />
+        <image state="2"  file="minus.png" />
+	</element>
+	<element name="player_portrait">
+        <image state="0"  file="b1.png" />
+        <image state="1"  file="b2.png" />
+        <image state="2"  file="b3.png" />
+        <image state="3"  file="b4.png" />
+        <image state="4"  file="b5.png" />
+        <image state="5"  file="b6.png" />
+        <image state="6"  file="b7.png" />
+        <image state="7"  file="b8.png" />
+        <image state="8"  file="b9.png" />
+        <image state="9"  file="b10.png" />
+        <image state="10"  file="b11.png" />
+        <image state="11"  file="b10.png" />
+        <image state="12"  file="b11.png" />
+        <image state="13"  file="b12.png" />
+        <image state="14"  file="b13.png" />
+        <image state="15"  file="b14.png" />
+        <image state="16"  file="b15.png" />
+        <image state="17"  file="b16.png" />
+	</element>
+	<element name="drop_viewer">
+        <image state="1"  file="item_medal.jpg" />
+        <image state="2"  file="item_small_shot.jpg" />
+        <image state="3"  file="item_medal.jpg" />
+        <image state="4"  file="item_small_shot.jpg" />
+        <image state="5"  file="item_option.jpg" />
+        <image state="6"  file="item_medal.jpg" />
+        <image state="7"  file="item_small_shot.jpg" />
+        <image state="8"  file="item_medal.jpg" />
+        <image state="9"  file="item_small_shot.jpg" />
+        <image state="10" file="item_option.jpg" />
+        <image state="11" file="item_medal.jpg" />
+        <image state="12" file="item_small_shot.jpg" />
+        <image state="13" file="item_medal.jpg" />
+        <image state="14" file="item_small_shot.jpg" />
+        <image state="15" file="item_option.jpg" />
+        <image state="16" file="item_medal.jpg" />
+        <image state="17" file="item_small_shot.jpg" />
+        <image state="18" file="item_medal.jpg" />
+        <image state="19" file="item_small_shot.jpg" />
+        <image state="20" file="item_option.jpg" />
+        <image state="21" file="item_medal.jpg" />
+        <image state="22" file="item_small_shot.jpg" />
+        <image state="23" file="item_medal.jpg" />
+        <image state="24" file="item_small_shot.jpg" />
+        <image state="25" file="item_large_shot.jpg" />
+	</element>
+	<element name="medal_display">
+		<image state="0"  file="Item_100.png" />
+		<image state="2"  file="Item_200.png" />
+		<image state="4"  file="Item_300.png" />
+		<image state="6"  file="Item_400.png" />
+		<image state="8"  file="Item_500.png" />
+		<image state="10"  file="Item_600.png" />
+		<image state="12"  file="Item_700.png" />
+		<image state="14"  file="Item_800.png" />
+		<image state="16"  file="Item_900.png" />
+		<image state="18"  file="Item_1000.png" />
+		<image state="20" file="Item_2000.png" />
+		<image state="22" file="Item_3000.png" />
+		<image state="24" file="Item_4000.png" />
+		<image state="26" file="Item_5000.png" />
+		<image state="28" file="Item_6000.png" />
+		<image state="30" file="Item_7000.png" />
+		<image state="32" file="Item_8000.png" />
+		<image state="34" file="Item_9000.png" />
+		<image state="36" file="Item_10000.png" />
+	</element>
+	<element name="background_yoko">
+		<image file="background_yoko.png" />
+	</element>
+	<element name="background_tate">
+		<image file="background_tate.png" />
+	</element>
+	<element name="input_gadget">
+		<image state="0" file="input_display.png" />
+	</element>
+	<element name="profile_gadget">
+		<image state="0" file="profile.png" />
+	</element>
+	<element name="powerup_drops_gadget">
+		<image state="0" file="powerup_drops.png" />
+	</element>
+	<element name="big_powerup_drops_gadget">
+		<image state="0" file="big_powerup_drops.png" />
+	</element>
+	<element name="bomb_drops_gadget">
+		<image state="0" file="bomb_drops.png" />
+	</element>
+	<element name="big_bomb_drops_gadget">
+		<image state="0" file="big_bomb_drops.png" />
+	</element>
+	<element name="1up_drops_gadget">
+		<image state="0" file="1up_drops.png" />
+	</element>
+	<element name="option_drops_gadget">
+		<image state="0" file="option_drops.png" />
+	</element>
+	<element name="medal_drops_gadget">
+		<image state="0" file="medal_drops.png" />
+	</element>
+	<element name="rank_bar_gadget">
+		<image state="0" file="rank_bar.png" />
+	</element>
+	<element name="next_medal_gadget">
+		<image state="0" file="next_medal.png" />
+	</element>
+	<element name="shot_charge_gadget">
+		<image state="0" file="shot_charge.png" />
+	</element>
+	<element name="next_drop_gadget">
+		<image state="0" file="next_drop.png" />
+	</element>
+	<element name="boss_time_gadget">
+		<image state="0" file="boss_time.png" />
+	</element>
+	<element name="boss_info_gadget">
+		<image state="0" file="boss_info.png" />
+	</element>
+	<element name="secret_conditions_gadget">
+		<image state="0"  file="secret_conditions.png" />
+	</element>
+    <element name="warning" defstate="1">
+        <text state="1" string="This view requires the layout plugin." />
+    </element>
+    <element name="rank_bar">
+        <rect><bounds x="0.00" y="0.00" width="1.00" height="1.00" /></rect>
+    </element>
+
+    -- Miquel: Added new element rank_start_bar
+    <element name="rank_start_bar">
+        <rect><bounds x="0.00" y="0.00" width="1.00" height="1.00" /></rect>
+    </element>
+    
+    <group name="rank_panel">
+		<element id="rank_bar_gadget" ref="rank_bar_gadget">
+            <bounds x="1386" y="0" width="524" height="177" />
+		</element>
+		<element id="rank_bar" ref="rank_bar">
+			<bounds x="1403" y="104" width="490" height="30" />
+            <color red="1" green="0" blue="0" alpha="1" />
+		</element>
+
+            -- Miquel: Added new element rank_start_bar in the same position as the original rank bar, but with another color
+		<element id="rank_start_bar" ref="rank_start_bar">
+			<bounds x="1403" y="104" width="490" height="30" />
+            <color red="0.5" green="0" blue="0" alpha="1" />
+		</element>
+
+		<element id="rank_digit_0" ref="digit">
+			<bounds x="1575" y="145" width="28.6" height="24" />
+		</element>
+		<element id="rank_digit_1" ref="digit">
+			<bounds x="1602" y="145" width="28.6" height="24" />
+		</element>
+		<element id="rank_digit_2" ref="digit">
+			<bounds x="1636" y="145" width="28.6" height="24" />
+		</element>
+		<element id="rank_digit_3" ref="digit">
+			<bounds x="1658" y="145" width="28.6" height="24" />
+		</element>
+		<element id="rank_digit_4" ref="digit">
+			<bounds x="1682" y="145" width="28.6" height="24" />
+		</element>
+		<element id="rank_digit_5" ref="digit">
+			<bounds x="1706" y="145" width="28.6" height="24" />
+		</element>
+    </group>
+    
+    <group name="shot_charge_panel">
+		<element id="shot_charge_gadget" ref="shot_charge_gadget">
+			<bounds x="0" y="0" width="27" height="446" />
+		</element>
+		<element id="shot_charge_bar" ref="rank_bar">
+			<bounds x="7" y="16" width="13" height="414" />
+            <color red="1" green="0" blue="0" alpha="1" />
+		</element>
+    </group>
+    
+    <group name="boss_info_panel">
+		<element id="boss_info_gadget" ref="boss_info_gadget">
+			<bounds x="0" y="0" width="228" height="447" />
+		</element>
+		<element id="hp_digit_0" ref="digit">
+			<bounds x="46" y="210" width="38" height="32" />
+		</element>
+		<element id="hp_digit_1" ref="digit">
+			<bounds x="84" y="210" width="38" height="32" />
+		</element>
+		<element id="hp_digit_2" ref="digit">
+			<bounds x="122" y="210" width="38" height="32" />
+		</element>
+		<element id="timer_digit_0" ref="digit">
+			<bounds x="46" y="349" width="38" height="32" />
+		</element>
+		<element id="timer_digit_1" ref="digit">
+			<bounds x="84" y="349" width="38" height="32" />
+		</element>
+		<element id="timer_digit_2" ref="digit">
+			<bounds x="122" y="349" width="38" height="32" />
+		</element>
+    </group>
+    
+    <group name="next_drop_panel">
+		<element id="next_drop_gadget" ref="next_drop_gadget">
+			<bounds x="1384" y="144" width="520" height="221" />
+		</element>
+		<element id="drop_viewer_0" ref="drop_viewer">
+			<bounds x="1417" y="275" width="49" height="49" />
+		</element>
+		<element id="drop_viewer_1" ref="drop_viewer">
+			<bounds x="1498" y="275" width="49" height="49" />
+		</element>
+		<element id="drop_viewer_2" ref="drop_viewer">
+			<bounds x="1579" y="275" width="49" height="49" />
+		</element>
+		<element id="drop_viewer_3" ref="drop_viewer">
+			<bounds x="1660" y="275" width="49" height="49" />
+		</element>
+		<element id="drop_viewer_4" ref="drop_viewer">
+			<bounds x="1741" y="275" width="49" height="49" />
+		</element>
+		<element id="drop_viewer_5" ref="drop_viewer">
+			<bounds x="1822" y="275" width="49" height="49" />
+		</element>
+    </group>
+    
+    <group name="next_medal_panel">
+		<element id="next_medal_gadget" ref="next_medal_gadget">
+			<bounds x="1412" y="840" width="199" height="216" />
+		</element>
+		<element id="medal_display" ref="medal_display">
+			<bounds x="1479" y="930" width="73" height="73" />
+		</element>
+    </group>
+    
+    <group name="secret_conditions_panel">
+		<element id="secret_conditions_gadget" ref="secret_conditions_gadget">
+            <bounds x="0" y="0" width="246" height="613" />
+		</element>
+        <repeat count="12">
+            <param name="i" start="0" increment="1" />
+            <param name="y" start="123" increment="39" />
+            <element id="condition_checkbox_~i~" ref="checkbox">
+                <bounds x="197" y="~y~" width="23" height="23" />
+            </element>
+        </repeat>
+    </group>
+    
+    <group name="option_drops_panel">
+		<element id="option_drops_gadget" ref="option_drops_gadget">
+			<bounds x="0" y="0" width="226" height="134" />
+		</element>
+		<element id="option_drops_digit" ref="digit">
+			<bounds x="138" y="41" width="50" height="42" />
+		</element>
+    </group>
+    
+    <group name="medal_drops_panel">
+		<element id="medal_drops_gadget" ref="medal_drops_gadget">
+			<bounds x="0" y="0" width="226" height="134" />
+		</element>
+		<element id="medal_drops_digit" ref="digit">
+            <bounds x="138" y="41" width="50" height="42" />
+		</element>
+    </group>
+    
+    <group name="powerup_drops_panel">
+		<element id="powerup_drops_gadget" ref="powerup_drops_gadget">
+            <bounds x="0" y="0" width="226" height="134" />
+		</element>
+		<element id="powerup_drops_digit" ref="digit">
+            <bounds x="138" y="41" width="50" height="42" />
+		</element>
+    </group>
+    
+    <group name="big_powerup_drops_panel">
+		<element id="big_powerup_drops_gadget" ref="big_powerup_drops_gadget">
+            <bounds x="0" y="0" width="226" height="134" />
+		</element>
+		<element id="big_powerup_drops_digit" ref="digit">
+            <bounds x="138" y="41" width="50" height="42" />
+		</element>
+    </group>
+    
+    <group name="big_bomb_drops_panel">
+		<element id="big_bomb_drops_gadget" ref="big_bomb_drops_gadget">
+            <bounds x="0" y="0" width="226" height="134" />
+		</element>
+		<element id="big_bomb_drops_digit" ref="digit">
+            <bounds x="138" y="41" width="50" height="42" />
+		</element>
+    </group>
+    
+    <group name="bomb_drops_panel">
+		<element id="bomb_drops_gadget" ref="bomb_drops_gadget">
+            <bounds x="0" y="0" width="226" height="134" />
+		</element>
+		<element id="bomb_drops_digit" ref="digit">
+            <bounds x="138" y="41" width="50" height="42" />
+		</element>
+    </group>
+    
+    <group name="1up_drops_panel">
+		<element id="1up_drops_gadget" ref="1up_drops_gadget">
+            <bounds x="0" y="0" width="226" height="134" />
+		</element>
+		<element id="1up_drops_digit" ref="digit">
+            <bounds x="138" y="41" width="50" height="42" />
+		</element>
+    </group>
+    
+    <group name="profile_panel">
+		<element id="profile_gadget" ref="profile_gadget">
+			<bounds x="0" y="0" width="482" height="364" />
+		</element>
+        <element id="player_portrait_1" ref="player_portrait">
+            <bounds x="38" y="121" width="164" height="191" />
+        </element>
+        <element id="player_portrait_2" ref="player_portrait">
+            <bounds x="38" y="121" width="164" height="191" />
+        </element>
+        <element id="player_next_1" ref="player_portrait">
+            <bounds x="214" y="121" width="109" height="127" />
+        </element>
+        <element id="player_next_2" ref="player_portrait">
+            <bounds x="214" y="121" width="109" height="127" />
+        </element>
+        <element id="player_third_1" ref="player_portrait">
+            <bounds x="332" y="121" width="109" height="127" />
+        </element>
+        <element id="player_third_2" ref="player_portrait">
+            <bounds x="332" y="121" width="109" height="127" />
+        </element>
+        <element id="player_variant_1" ref="digit">
+            <bounds x="400" y="265" width="50" height="42" />
+        </element>
+        <element id="player_variant_2" ref="digit">
+            <bounds x="400" y="265" width="50" height="42" />
+        </element>
+    </group>
+    
+    <group name="p1_input_panel">
+        <element id="p1_input_gadget" ref="input_gadget">
+            <bounds x="0" y="0" width="278" height="160" />
+        </element>
+        <element id="p1_stick" ref="stick">
+            <bounds x="22" y="43" width="71" height="71" />
+        </element>
+        <element id="p1_button_a" ref="button">
+            <bounds x="125" y="34" width="36" height="36" />
+        </element>
+        <element id="p1_button_b" ref="button">
+            <bounds x="203" y="34" width="36" height="36" />
+        </element>
+        <element id="p1_button_c" ref="button">
+            <bounds x="125" y="93" width="36" height="36" />
+        </element>
+        <element id="p1_button_d" ref="button">
+            <bounds x="203" y="93" width="36" height="36" />
+        </element>
+    </group>
+    
+    <group name="p2_input_panel">
+        <element id="p2_input_gadget" ref="input_gadget">
+            <bounds x="0" y="0" width="278" height="160" />
+        </element>
+        <element id="p2_stick" ref="stick">
+            <bounds x="22" y="43" width="71" height="71" />
+        </element>
+        <element id="p2_button_a" ref="button">
+            <bounds x="125" y="34" width="36" height="36" />
+        </element>
+        <element id="p2_button_b" ref="button">
+            <bounds x="203" y="34" width="36" height="36" />
+        </element>
+        <element id="p2_button_c" ref="button">
+            <bounds x="125" y="93" width="36" height="36" />
+        </element>
+        <element id="p2_button_d" ref="button">
+            <bounds x="203" y="93" width="36" height="36" />
+        </element>
+    </group>
+    
+	<view name="GadgetsYOKO">
+		<element id="wallpaper" ref="background_yoko">
+			<bounds x="0" y="0" width="1920" height="1080" />
+		</element>
+
+        <group ref="rank_panel">
+            <bounds x="1386" y="0" width="524" height="177" />
+        </group>
+
+        <group ref="next_drop_panel">
+            <bounds x="1384" y="144" width="520" height="221" />
+        </group>
+
+        <group ref="boss_info_panel">
+            <bounds x="266" y="593" width="228" height="447" />
+        </group>
+
+        <group ref="next_medal_panel">
+			<bounds x="1412" y="840" width="199" height="216" />
+        </group>
+
+        <group ref="secret_conditions_panel">
+			<bounds x="15" y="427" width="246" height="613" />
+        </group>
+
+        <group ref="medal_drops_panel">
+            <bounds x="1395" y="385" width="226" height="134" />
+        </group>
+
+        <group ref="big_powerup_drops_panel">
+            <bounds x="1395" y="535" width="226" height="134" />
+        </group>
+
+        <group ref="big_bomb_drops_panel">
+            <bounds x="1395" y="682" width="226" height="134" />
+        </group>
+
+        <group ref="option_drops_panel">
+            <bounds x="1664" y="385" width="226" height="134" />
+        </group>
+
+        <group ref="powerup_drops_panel">
+            <bounds x="1664" y="535" width="226" height="134" />
+        </group>
+
+        <group ref="bomb_drops_panel">
+            <bounds x="1664" y="682" width="226" height="134" />
+        </group>
+
+        <group ref="1up_drops_panel">
+            <bounds x="1664" y="832" width="226" height="134" />
+        </group>
+
+        <group ref="profile_panel">
+            <bounds x="32" y="48" width="482" height="364" />
+        </group>
+
+        <group ref="p2_input_panel">
+            <bounds x="266" y="427" width="278" height="160" />
+        </group>
+
+        <group ref="p1_input_panel">
+            <bounds x="266" y="427" width="278" height="160" />
+        </group>
+
+        <group ref="shot_charge_panel">
+            <bounds x="510" y="594" width="27" height="446" />
+        </group>
+		
+        <!-- Remove this from code, to ensure the layout is loaded properly -->
+		<element id="warning" ref="warning">
+			<bounds x="1500" y="900" width="400" height="30" />
+            <color red="1" green="0" blue="0" alpha="1" />
+		</element>
+		
+        <!-- The game itself -->
+		<screen index="0">
+			<bounds x="555" y="0" width="810" height="1080" />
+		</screen>
+	</view>	
+    
+	<view name="GadgetsTATE">
+        <!-- The game itself -->
+        <screen index="0">
+            <bounds x="240" y="0" height="1080" width="1440" />
+            <orientation rotate="90" />
+        </screen>
+        
+		<element id="wallpaper" ref="background_tate">
+			<bounds x="0" y="0" height="1080" width="1920" />
+            <orientation rotate="90" />
+		</element>
+
+        <group ref="rank_panel">
+            <bounds x="1805" y="11" height="341" width="115" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="next_drop_panel">
+            <bounds x="1682" y="10" height="338" width="144" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="boss_info_panel">
+            <bounds x="0" y="550" height="114" width="224" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="next_medal_panel">
+            <bounds x="1760" y="750" height="150" width="162" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="secret_conditions_panel">
+			<bounds x="0" y="427" height="93.5" width="233" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="medal_drops_panel">
+            <bounds x="1700" y="385" height="90" width="53.6" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="option_drops_panel">
+            <bounds x="1700" y="480" height="90" width="53.6" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="powerup_drops_panel">
+            <bounds x="1700" y="575" height="90" width="53.6" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="big_powerup_drops_panel">
+            <bounds x="1700" y="670" height="90" width="53.6" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="bomb_drops_panel">
+            <bounds x="1700" y="765" height="90" width="53.6" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="big_bomb_drops_panel">
+            <bounds x="1700" y="860" height="90" width="53.6" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="1up_drops_panel">
+            <bounds x="1700" y="955" height="90" width="53.6" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="profile_panel">
+            <bounds x="1770" y="500" height="185" width="140" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="p1_input_panel">
+            <bounds x="70" y="40" height="304" width="164" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="p2_input_panel">
+            <bounds x="70" y="750" height="304" width="164" />
+            <orientation rotate="90" />
+        </group>
+
+        <group ref="shot_charge_panel">
+            <bounds x="0" y="0" height="400" width="25" />
+        </group>
+		
+        <!-- Remove this from code, to ensure the layout is loaded properly -->
+		<element id="warning" ref="warning">
+			<bounds x="1500" y="400" height="400" width="30" />
+            <color red="1" green="0" blue="0" alpha="1" />
+            <orientation rotate="90" />
+		</element>
+	</view>
+
+    <script><![CDATA[
+
+local P1_ADDR = 0x204062;
+local P2_ADDR = 0x2041d4;
+local P1_SHOT_CHARGE_ADDR = 0x204179;
+local P2_SHOT_CHARGE_ADDR = 0x2042eb;
+local POWERUP_DROP_ADDR = 0x20e45a;
+local BOMB_DROP_ADDR = 0x20e45b;
+local MEDAL_DROP_ADDR = 0x20e45c;
+local BIG_POWERUP_DROP_ADDR = 0x20e45d;
+local BIG_BOMB_DROP_ADDR = 0x20e45e;
+local OPTION_DROP_ADDR = 0x20e45f;
+local LIFE_DROP_ADDR = 0x20e460;
+local RANK_ADDR = 0x20f9d0;
+local RANK_START_ADDR = 0x20f9d8;
+local MEDAL_ADDR = 0x20e459;
+local NEXT_DROP_ADDR = 0x20e457;
+local ENEMIES_ADDR = 0x20869a;
+local P1_SHIP_ADDR = 0x204074;
+local P2_SHIP_ADDR = 0x2041e6;
+local P1_SHIPS_ADDR = 0x20407c;
+local P2_SHIPS_ADDR = 0x2041ee;
+local CONDITION_ENVY_BLUNT_SOBUT_ADDR = 0x20e463;
+local CONDITION_GSQUID_ADDR = 0x20e6b2;
+local CONDITION_BASHIR_ADDR = 0x20e6b3;
+local CONDITION_BASHIMK2_ADDR = 0x20e6b4;
+local CONDITION_GOBROBO_ADDR = 0x20e6b5;
+local CONDITION_BASHI_ADDR = 0x20e6b6;
+local CONDITION_BHEART_ADDR = 0x20e6b7;
+local STAGE_ORDER_ADDR = 0x20f9e0;
+local ENEMIES_COUNT = 96;
+local ENEMY_SIZE = 114;
+
+local SHIP_ORIGINS = {[0] = 0,0,0,0,0,0,0,0,0, 1,1,1,1, 2,2,2,2,2};
+local SHIP_POWERS  = {[0] = 0,2,3,3,0,3,2,1,1, 0,1,0,1, 1,0,2,0,2};
+local SHIP_SHOTS   = {[0] = 1,2,0,1,0,2,0,2,1, 3,3,3,3, 0,1,1,2,0};
+
+local RANK_PERCENT = true;
+local RANK_RELATIVE = false;
+
+local DEBUG = false;
+
+local BOSSES = (function()
+    local bosses = {};
+    local e;
+    local define_enemy = function(name, fn, phase_parts, timer_details)
+        if not bosses[fn] then
+            bosses[fn] = {
+                ['name'] = name,
+                ['time'] = {},
+                ['hp'] = {},
+            };
+        end
+        for i=1,#phase_parts do
+            bosses[fn]['hp'][phase_parts[i]] = {
+                ['mask'] = 0xf001, ['value'] = 0x8000
+            };
+        end
+        for k, v in pairs(timer_details) do
+            bosses[fn]['time'][k] = {
+                ['src'] = v[1],
+            };
+        end
+        return bosses[fn];
+    end
+    e = define_enemy("CONFRICT" , 0x0531b4, {0, 118}           , { [0] = {2}                                                            });
+    bosses[0x0531b4]['hp'][0] = {['mask'] = 0xf201, ['value'] = 0x8200};
+    e = define_enemy("BAZZCOK"  , 0x054e38, {0}                , { [0] = {4}, [6] = {4}, [48] = {4}, [50] = {4}, [52] = {4}, [54] = {4} });
+    e = define_enemy("BOREDOM"  , 0x0566e2, {0}                , { [0] = {5}                                                            });
+    e = define_enemy("DEVIATE"  , 0x0581c8, {0, 4, 6}          , { [100] = {4}                                                          });
+    e = define_enemy("DEVIATE"  , 0x0585b8, {}                 , { [100] = {4}                                                          });
+    e = define_enemy("GRUBBY"   , 0x060cc4, {0, 2}             , { [0] = {1}                                                            });
+    e = define_enemy("DISCHARGE", 0x063ab2, {0, 2}             , { [0] = {-1}, [2] = {-1}                                               });
+    e = define_enemy("DISCHARGE", 0x06563a, {0}                , { [0] = {2}                                                            });
+    e = define_enemy("DISCHARGE", 0x065bfc, {2}                , { [2] = {2}                                                            });
+    e = define_enemy("DISCHARGE", 0x065d5a, {2}                , { [2] = {2}                                                            });
+    e = define_enemy("DISCHARGE", 0x065e82, {2}                , { [2] = {2}                                                            });
+
+    e = define_enemy("AIRPORT"  , 0x075ae2, {0}                , { [0] = {-1}                                                           });
+    e = define_enemy("Z.CITY"   , 0x07b282, {0, 2}             , { [0] = {-1}, [2] = {-1}                                               });
+    e = define_enemy("Z.CITY"   , 0x07bb96, {0}                , { [0] = {-1}                                                           });
+    e = define_enemy("Z.CITY"   , 0x07d424, {0}                , { [0] = {-1}                                                           });
+    e = define_enemy("BUILDING" , 0x07a37c, {18}               , { [18] = {-1}                                                          });
+    e = define_enemy("BUILDING" , 0x079b0c, {0}                , { [0] = {-1}                                                           });
+    e = define_enemy("BUILDING" , 0x0799be, {28}               , { [28] = {-1}                                                          });
+
+    e = define_enemy("BASHINET" , 0x04de40, {0, 2}             , { [2] = {2}                                                            });
+    e = define_enemy("BASHImk2" , 0x0516d0, {0}                , { [2] = {2}                                                            });
+    e = define_enemy("BASHI-R"  , 0x049960, {2}                , { [2] = {2}                                                            });
+    e = define_enemy("GOB-ROBO" , 0x04c7f4, {0}                , { [42] = {2}                                                           });
+    e = define_enemy("B.HEART"  , 0x067caa, {0}                , { [0] = {3}                                                            });
+    e = define_enemy("B.H.mk2"  , 0x069456, {0}                , { [0] = {3}                                                            });
+    e = define_enemy("G.SQUID"  , 0x06ad02, {0}                , { [0] = {2}                                                            });
+    e = define_enemy("G.SQUID"  , 0x06ae04, {116}              , { [116] = {6}                                                          });
+    e = define_enemy("TSUMUJI"  , 0x06d604, {2, 10}            , { ['*'] = {7}                                                          });
+    e = define_enemy("HAJATE"   , 0x06e6c2, {0, 2, 4, 6, 8, 10}, { ['*'] = {7}                                                          });
+    e = define_enemy("ENVY"     , 0x05a348, {0}                , { [0] = {2}                                                            });
+    e = define_enemy("BLUNT"    , 0x05ed6a, {0}                , { [0] = {2}                                                            });
+    e = define_enemy("SOBUT"    , 0x05c73e, {0}                , { [0] = {2}                                                            });
+    return bosses;
+end)();
+
+local SAW_ENEMIES = {
+
+};
+
+local dprint = function(s)
+    if DEBUG then
+        print(s);
+    end
+end
+
+local get_digits = function (v)
+    local result = {};
+    local minus = v < 0;
+    if minus then
+        v = -v;
+    end
+    local i = 0;
+    local r = v % 1;
+    v = v - r;
+    while v > 0 do
+        r = v % 10;
+        result[i] = r;
+        i = i + 1;
+        v = (v - r) / 10;
+    end
+    return result;
+end
+
+local slope = function(t)
+    return (t <= 0) and 0 or (
+        (t >= 1) and 1 or (t)
+    )
+end
+
+local fetch_repeatables = function(view, fmt, start)
+    local l = {};
+    local i = start;
+    while 1 do
+        l[i] = view.items[string.format(fmt, i)];
+        if not l[i] then
+            break;
+        end;
+        i = i + 1;
+        end
+    return l;
+end
+
+file:set_resolve_tags_callback(function()
+    local p = machine.devices[':maincpu'].spaces['program'];
+    local input = file.device:ioport(":IN");
+    local sysdsw = file.device:ioport(":SYS-DSW");
+
+    local current_player = 1;
+    
+    local p1_last_input = 0xff;
+    local p2_last_input = 0xff;
+
+    local rank = 0;
+
+    -- Miquel: Added new local variable
+    local rank_start = 0;
+
+    local next_drop = -1;
+    local next_medal = 0;
+    local active_counter = 0;
+    local dropped_powerups = 0;
+    local dropped_bombs = 0;
+    local dropped_medals = 0;
+    local dropped_big_powerups = 0;
+    local dropped_big_bombs = 0;
+    local dropped_options = 0;
+    local dropped_1ups = 0;
+    local count = 0;
+    
+    local p1_ship = -1;
+    local p2_ship = -1;
+    local p1_ships = -1;
+    local p2_ships = -1;
+    local p1_status = 0;
+    local p2_status = 0;
+    local p1_shot_charge = -1;
+    local p2_shot_charge = -1;
+    
+    local boss_timer = false;
+    local boss_hp = false;
+    local render_count = 0;
+    local boss_part_hp_override = false;
+
+    local in1_val = 0;
+    local in2_val = 0;
+
+    local condition_envy = 0;
+    local condition_sobut = 0;
+    local condition_blunt = 0;
+    local condition_gsquid = 0;
+    local condition_bashir = 0;
+    local condition_bashimk2 = 0;
+    local condition_gobrobo = 0;
+    local condition_bashi = 0;
+    local condition_bheart = 0;
+    local condition_hayate = 0;
+    local condition_tsumiji = 0;
+    local condition_bheartmk2 = 0;
+
+    -- Debug variables, can be removed later probably
+    local previous_hp = {};
+    local previous_timeout = {{}, {}, {}, {}, {}, {}, {}};
+    local global_timeout = 0;
+    local active_timeouts = {};
+    
+    local fetch_values = function()
+        local input_val = input:read();
+        local sysdsw_val = sysdsw:read();
+        in1_val = (input_val & 0x7f) | ((sysdsw_val & 32) << 2);
+        in2_val = ((input_val >> 8) & 0x7f) | ((sysdsw_val & 64) << 1);
+    
+        next_medal = p:read_u8(MEDAL_ADDR);
+        rank = p:read_u32(RANK_ADDR);
+
+        -- Miquel: Added rank_start read from its memory address
+	rank_start = p:read_u32(RANK_START_ADDR);
+
+        next_drop = p:read_u8(NEXT_DROP_ADDR);
+        dropped_powerups = p:read_u8(POWERUP_DROP_ADDR);
+        dropped_bombs = p:read_u8(BOMB_DROP_ADDR);
+        dropped_medals = p:read_u8(MEDAL_DROP_ADDR);
+        dropped_big_powerups = p:read_u8(BIG_POWERUP_DROP_ADDR);
+        dropped_big_bombs = p:read_u8(BIG_BOMB_DROP_ADDR);
+        dropped_options = p:read_u8(OPTION_DROP_ADDR);
+        dropped_1ups = p:read_u8(LIFE_DROP_ADDR);
+        p1_ship = p:read_u16(P1_SHIP_ADDR);
+        p2_ship = p:read_u16(P2_SHIP_ADDR);
+        p1_ships = { p:read_u16(P1_SHIPS_ADDR), p:read_u16(P1_SHIPS_ADDR+2), p:read_u16(P1_SHIPS_ADDR+4) };
+        p2_ships = { p:read_u16(P2_SHIPS_ADDR), p:read_u16(P2_SHIPS_ADDR+2), p:read_u16(P2_SHIPS_ADDR+4) };
+        p1_status = p:read_u16(P1_ADDR);
+        p2_status = p:read_u16(P2_ADDR);
+        p1_shot_charge = p:read_u8(P1_SHOT_CHARGE_ADDR);
+        p2_shot_charge = p:read_u8(P2_SHOT_CHARGE_ADDR);
+        
+        if p1_last_input ~= in1_val then
+            p1_last_input = in1_val;
+            current_player = 1;
+        end
+
+        if p2_last_input ~= in2_val then
+            p2_last_input = in2_val;
+            current_player = 2;
+        end
+
+        local ships = {};
+        if (p1_status & 0x8000) ~= 0 then
+            for i, s in pairs(p1_ships) do
+                table.insert(ships, s);
+            end
+        end
+        if (p2_status & 0x8000) ~= 0 then
+            for i, s in pairs(p2_ships) do
+                table.insert(ships, s);
+            end
+        end
+        local types_mask = 0;
+        local origins_mask = 0;
+        local powers_mask = 0;
+        local shots_mask = 0;
+        for i, s in pairs(ships) do
+            local idx = (s >> 4) & 31;
+            types_mask   = types_mask   | (1 << ((s >> 2) & 3));
+            origins_mask = origins_mask | (1<<SHIP_ORIGINS[idx]);
+            powers_mask  = powers_mask  | (1<< SHIP_POWERS[idx]);
+            shots_mask   = shots_mask   | (1 << SHIP_SHOTS[idx]);
+        end
+        local different_types = 0;
+        local different_powers = 0;
+        local different_shots = 0;
+        for i=0,4 do
+            different_types   = different_types   + ((types_mask   >> i) & 1);
+            different_powers  = different_powers  + ((powers_mask  >> i) & 1);
+            different_shots   = different_shots   + ((shots_mask   >> i) & 1);
+        end
+
+        local second_stage = p:read_u8(STAGE_ORDER_ADDR);
+        local third_stage = p:read_u8(STAGE_ORDER_ADDR+1);
+        local fourth_stage = p:read_u8(STAGE_ORDER_ADDR+2);
+        local got_special_power_up = p:read_u8(CONDITION_ENVY_BLUNT_SOBUT_ADDR) ~= 0;
+        local got_special_option = p:read_u8(CONDITION_ENVY_BLUNT_SOBUT_ADDR+1) ~= 0;
+
+        -- Conditions table:  <---- precondition that forces the encounter ----->          <--- team condition --->      <------------------------------ in-game event condition ------------------------------>
+        condition_envy      = (second_stage == 1                                ) and 1 or ((origins_mask & 1) ~= 0 and ((third_stage == 1 and got_special_power_up or fourth_stage == 1 and got_special_option) and 1 or 0) or 2);
+        condition_blunt     = (second_stage == 2                                ) and 1 or ((origins_mask & 1) ~= 0 and ((third_stage == 2 and got_special_power_up or fourth_stage == 2 and got_special_option) and 1 or 0) or 2);
+        condition_sobut     = (second_stage == 3                                ) and 1 or ((origins_mask & 1) ~= 0 and ((third_stage == 3 and got_special_power_up or fourth_stage == 3 and got_special_option) and 1 or 0) or 2);
+        condition_gsquid    =                                                              ((origins_mask & 2) ~= 0 and (p:read_u8(CONDITION_GSQUID_ADDR  ) == 4                                                 and 1 or 0) or 2);
+        condition_bashir    =                                                              ((origins_mask & 4) ~= 0 and (p:read_u8(CONDITION_BASHIR_ADDR  ) == 3                                                 and 1 or 0) or 2);
+        condition_bashimk2  =                                                              ((origins_mask & 4) ~= 0 and (p:read_u8(CONDITION_BASHIMK2_ADDR) == 2                                                 and 1 or 0) or 2);
+        condition_gobrobo   =                                                              ((origins_mask & 4) ~= 0 and (p:read_u8(CONDITION_GOBROBO_ADDR ) == 2                                                 and 1 or 0) or 2);
+        condition_bashi     =                                                              ((origins_mask & 4) ~= 0 and (p:read_u8(CONDITION_BASHI_ADDR   ) == 0                                                 and 1 or 0) or 2);
+        condition_bheart    =                                                              ((origins_mask & 2) ~= 0 and (p:read_u8(CONDITION_BHEART_ADDR  ) == 5                                                 and 1 or 0) or 2);
+        condition_hayate    = (different_powers >= 3 and (origins_mask & 4) ~= 0) and 1 or (                                                                                                                                    2);
+        condition_tsumiji   = (different_shots >= 3  and (origins_mask & 4) ~= 0) and 1 or (                                                                                                                                    2);
+        condition_bheartmk2 = (different_types >= 2  and (origins_mask & 2) ~= 0) and 1 or (                                                                                                                                    2);
+        
+        boss_timer = false;
+        boss_hp = false;
+
+        if DEBUG then
+            local tmp = p:read_u16(0x20e9b8);
+            if tmp ~= global_timeout then
+                if global_timeout == tmp + 1 then
+                    dprint(string.format("Global timeout is %3d", tmp));
+                    table.insert(active_timeouts, {['time'] = tmp, ['enemy'] = false});
+                end
+                global_timeout = tmp;
+            end
+        end
+
+        for enemy_idx=0,ENEMIES_COUNT-1 do
+            local enemy_ptr = ENEMIES_ADDR + (enemy_idx * ENEMY_SIZE);
+            local enemy_status = p:read_u16(enemy_ptr);
+            local enemy_type = p:read_u32(enemy_ptr + 2);
+            local enemy_part_id = p:read_u16(enemy_ptr + 32);
+            local enemy_hitpoints = p:read_u16(enemy_ptr + 80);
+            local enemy_hittable = (enemy_status & 0x1100 == 0);
+            
+            local TIMEOUT_LOGICS = {
+                (function() return p:read_u32(enemy_ptr + 66 ); end),
+                (function() return p:read_u32(enemy_ptr + 70 ); end),
+                (function() return -p:read_u16(enemy_ptr + 72); end),
+                (function() return p:read_u16(enemy_ptr + 74 ); end),
+                (function() return p:read_u16(enemy_ptr + 104); end),
+                (function() return p:read_u16(enemy_ptr + 70 ); end),
+                (function() return p:read_u8(enemy_ptr + 96)*60; end),
+                [-1] = (function() return p:read_u16(0x20e9b8); end)
+            };
+            
+            if DEBUG then
+                if enemy_status & 0x8000 == 0x8000 then
+                    if previous_hp[enemy_idx] ~= enemy_hitpoints then
+                        dprint(string.format("Enemy %3d:%04x %06x:%d HP=%d", enemy_idx, enemy_status, enemy_type, enemy_part_id, enemy_hitpoints));
+                        previous_hp[enemy_idx] = enemy_hitpoints;
+                    end
+                    for ti=1,#TIMEOUT_LOGICS do
+                        local timeout = TIMEOUT_LOGICS[ti]();
+                        if previous_timeout[ti][enemy_idx] then
+                            if previous_timeout[ti][enemy_idx] - 1 == timeout then
+                                dprint(string.format("Enemy %3d:%04x %06x:%d T%d=%d", enemy_idx, enemy_status, enemy_type, enemy_part_id, ti, timeout));
+                                table.insert(active_timeouts, {['time'] = timeout, ['enemy'] = enemy_type, ['part'] = enemy_part, ['field'] = ti});
+                            end
+                        end
+                        previous_timeout[ti][enemy_idx] = timeout;
+                    end
+                else
+                    previous_hp[enemy_idx] = nil;
+                    previous_timeout[1][enemy_idx] = nil;
+                    previous_timeout[2][enemy_idx] = nil;
+                    previous_timeout[3][enemy_idx] = nil;
+                    previous_timeout[4][enemy_idx] = nil;
+                    previous_timeout[5][enemy_idx] = nil;
+                    previous_timeout[6][enemy_idx] = nil;
+                    previous_timeout[7][enemy_idx] = nil;
+                end
+            
+                if enemy_hitpoints > 0 and enemy_status & 0xf001 == 0x8000 then
+                    if not SAW_ENEMIES[enemy_type] then
+                        SAW_ENEMIES[enemy_type] = true;
+                        dprint(string.format("Saw enemy %06x:%d for the first time! HP=%d", enemy_type, enemy_part_id, enemy_hitpoints));
+                    end
+                end
+            end
+
+            if BOSSES[enemy_type] then
+                local hs = BOSSES[enemy_type]['hp'][enemy_part_id];
+                local ts = BOSSES[enemy_type]['time'][enemy_part_id] or BOSSES[enemy_type]['time']['*'];
+
+                if hs then
+                    if enemy_hitpoints > 0 and enemy_status & hs['mask'] == hs['value'] then
+                        boss_hp = enemy_hitpoints;
+                        dprint(string.format("Boss %3d:%04x %06x:%d HP=%d", enemy_idx, enemy_status, enemy_type, enemy_part_id, enemy_hitpoints));
+                    end
+                end
+
+                if ts then
+                    local timeout = TIMEOUT_LOGICS[ts['src']]();
+                    if timeout ~= 0 then
+                        boss_timer = timeout;
+                    end
+                end
+            end
+        end
+    end
+    
+    local preload_view = function(view)
+        local wallpaper = view.items["wallpaper"];
+        local shot_charge_bar = view.items["shot_charge_bar"];
+        local rank_bar = view.items["rank_bar"];
+
+        -- Miquel: Added line for rank_start_bar in a symmetric way as for the rank_bar
+	local rank_start_bar = view.items["rank_start_bar"];
+
+        local rank_digit_0 = view.items["rank_digit_0"];
+        local rank_digit_1 = view.items["rank_digit_1"];
+        local rank_digit_2 = view.items["rank_digit_2"];
+        local rank_digit_3 = view.items["rank_digit_3"];
+        local rank_digit_4 = view.items["rank_digit_4"];
+        local rank_digit_5 = view.items["rank_digit_5"];
+        local hp_digit_0 = view.items["hp_digit_0"];
+        local hp_digit_1 = view.items["hp_digit_1"];
+        local hp_digit_2 = view.items["hp_digit_2"];
+        local timer_digit_0 = view.items["timer_digit_0"];
+        local timer_digit_1 = view.items["timer_digit_1"];
+        local timer_digit_2 = view.items["timer_digit_2"];
+        local player_portrait_1 = view.items["player_portrait_1"];
+        local player_portrait_2 = view.items["player_portrait_2"];
+        local player_next_1 = view.items["player_next_1"];
+        local player_next_2 = view.items["player_next_2"];
+        local player_third_1 = view.items["player_third_1"];
+        local player_third_2 = view.items["player_third_2"];
+        local player_variant_1 = view.items["player_variant_1"];
+        local player_variant_2 = view.items["player_variant_2"];
+        local drop_viewer_0 = view.items["drop_viewer_0"];
+        local drop_viewer_1 = view.items["drop_viewer_1"];
+        local drop_viewer_2 = view.items["drop_viewer_2"];
+        local drop_viewer_3 = view.items["drop_viewer_3"];
+        local drop_viewer_4 = view.items["drop_viewer_4"];
+        local drop_viewer_5 = view.items["drop_viewer_5"];
+        local medal_display = view.items["medal_display"];
+        local p1_stick = view.items["p1_stick"];
+        local p1_input_gadget = view.items["p1_input_gadget"];
+        local p1_button_a = view.items["p1_button_a"];
+        local p1_button_b = view.items["p1_button_b"];
+        local p1_button_c = view.items["p1_button_c"];
+        local p1_button_d = view.items["p1_button_d"];
+        local p2_stick = view.items["p2_stick"];
+        local p2_input_gadget = view.items["p2_input_gadget"];
+        local p2_button_a = view.items["p2_button_a"];
+        local p2_button_b = view.items["p2_button_b"];
+        local p2_button_c = view.items["p2_button_c"];
+        local p2_button_d = view.items["p2_button_d"];
+        local condition_checkboxes = fetch_repeatables(view, "condition_checkbox_%d", 0);
+
+        local powerup_drops_digit = view.items["powerup_drops_digit"];
+        local bomb_drops_digit = view.items["bomb_drops_digit"];
+        local medal_drops_digit = view.items["medal_drops_digit"];
+        local big_powerup_drops_digit = view.items["big_powerup_drops_digit"];
+        local big_bomb_drops_digit = view.items["big_bomb_drops_digit"];
+        local option_drops_digit = view.items["option_drops_digit"];
+        local life_drops_digit = view.items["1up_drops_digit"];
+        
+        local RANK_BAR_BOUNDS = rank_bar.bounds;
+
+	-- Miquel: Added line for RANK_START_BAR_BOUNDS in a symmetric way as for the RANK_BAR_BOUNDS
+	local RANK_START_BAR_BOUNDS = rank_start_bar.bounds;
+
+        local SHOT_CHARGE_BAR_BOUNDS = shot_charge_bar.bounds;
+    
+        view:set_prepare_items_callback(function()
+            fetch_values();
+
+            if RANK_PERCENT then
+                -- Show rank in percent
+		-- Miquel: Modified the normalization factor replacing 0x1000000 by 0xff0000, which is the maximum possible rank across all playing modes. This is only a correction of 0.4 % wrt previous version
+                local v = ((1-rank/0xFF0000) * 1000000);
+                local digits = get_digits(v);
+                rank_digit_5:set_state(digits[0]);
+                rank_digit_4:set_state(digits[1]);
+                rank_digit_3:set_state(digits[2]);
+                rank_digit_2:set_state(digits[3]);
+                rank_digit_1:set_state(digits[4]);
+                rank_digit_0:set_state(digits[5]);
+            else
+                -- Show rank in hex
+                rank_digit_5:set_state(rank >>  0 & 15);
+                rank_digit_4:set_state(rank >>  4 & 15);
+                rank_digit_3:set_state(rank >>  8 & 15);
+                rank_digit_2:set_state(rank >> 12 & 15);
+                rank_digit_1:set_state(rank >> 16 & 15);
+                rank_digit_0:set_state(rank >> 20 & 15);
+            end
+            
+            if boss_hp then
+                local digits = get_digits(boss_hp);
+                hp_digit_2:set_state(digits[0]);
+                hp_digit_1:set_state(digits[1]);
+                hp_digit_0:set_state(digits[2]);
+            else
+                hp_digit_2:set_state(255);
+                hp_digit_1:set_state(255);
+                hp_digit_0:set_state(255);
+            end
+            
+            if boss_timer then
+                local digits = get_digits(boss_timer / 60);
+                timer_digit_2:set_state(digits[0]);
+                timer_digit_1:set_state(digits[1]);
+                timer_digit_0:set_state(digits[2]);
+            else
+                timer_digit_2:set_state(255);
+                timer_digit_1:set_state(255);
+                timer_digit_0:set_state(255);
+            end
+
+            condition_checkboxes[0x0]:set_state(condition_bashi);
+            condition_checkboxes[0x1]:set_state(condition_bashimk2);
+            condition_checkboxes[0x2]:set_state(condition_bashir);
+            condition_checkboxes[0x3]:set_state(condition_gobrobo);
+            condition_checkboxes[0x4]:set_state(condition_bheart);
+            condition_checkboxes[0x5]:set_state(condition_bheartmk2);
+            condition_checkboxes[0x6]:set_state(condition_gsquid);
+            condition_checkboxes[0x7]:set_state(condition_tsumiji);
+            condition_checkboxes[0x8]:set_state(condition_hayate);
+            condition_checkboxes[0x9]:set_state(condition_envy);
+            condition_checkboxes[0xa]:set_state(condition_blunt);
+            condition_checkboxes[0xb]:set_state(condition_sobut);
+            
+            local current_p1_ship_idx = 1;
+            local current_p2_ship_idx = 1;
+            for i=1,3 do
+                if p1_ships[i] == p1_ship then
+                    current_p1_ship_idx = i;
+                end
+                if p2_ships[i] == p2_ship then
+                    current_p2_ship_idx = i;
+                end
+            end
+            local next_p1_ship = p1_ships[(current_p1_ship_idx % 3) + 1];
+            local next_p2_ship = p2_ships[(current_p2_ship_idx % 3) + 1];
+            local third_p1_ship = p1_ships[((current_p1_ship_idx + 1) % 3) + 1];
+            local third_p2_ship = p2_ships[((current_p2_ship_idx + 1) % 3) + 1];
+            player_portrait_1:set_state((p1_status >> 15) == 0 and 100 or ((p1_ship >> 4) & 31));
+            player_portrait_2:set_state((p2_status >> 15) == 0 and 100 or ((p2_ship >> 4) & 31));
+            player_next_1:set_state((p1_status >> 15) == 0 and 100 or ((next_p1_ship >> 4) & 31));
+            player_next_2:set_state((p2_status >> 15) == 0 and 100 or ((next_p2_ship >> 4) & 31));
+            player_third_1:set_state((p1_status >> 15) == 0 and 100 or ((third_p1_ship >> 4) & 31));
+            player_third_2:set_state((p2_status >> 15) == 0 and 100 or ((third_p2_ship >> 4) & 31));
+            player_variant_1:set_state((p1_status >> 15) == 0 and 100 or (((p1_ship >> 2) & 3) + 10));
+            player_variant_2:set_state((p2_status >> 15) == 0 and 100 or (((p2_ship >> 2) & 3) + 10));
+            
+            drop_viewer_0:set_state(1+(next_drop  )%25);
+            drop_viewer_1:set_state(1+(next_drop+1)%25);
+            drop_viewer_2:set_state(1+(next_drop+2)%25);
+            drop_viewer_3:set_state(1+(next_drop+3)%25);
+            drop_viewer_4:set_state(1+(next_drop+4)%25);
+            drop_viewer_5:set_state(1+(next_drop+5)%25);
+
+            medal_display:set_state(next_medal);
+
+            p1_stick:set_state(in1_val & 0xf);
+            p2_stick:set_state(in2_val & 0xf);
+            p1_button_a:set_state((in1_val & 0x10 == 0) and 0 or 1);
+            p1_button_b:set_state((in1_val & 0x20 == 0) and 0 or 1);
+            p1_button_c:set_state((in1_val & 0x40 == 0) and 0 or 1);
+            p1_button_d:set_state((in1_val & 0x80 == 0) and 0 or 1);
+            p2_button_a:set_state((in2_val & 0x10 == 0) and 0 or 1);
+            p2_button_b:set_state((in2_val & 0x20 == 0) and 0 or 1);
+            p2_button_c:set_state((in2_val & 0x40 == 0) and 0 or 1);
+            p2_button_d:set_state((in2_val & 0x80 == 0) and 0 or 1);
+
+            powerup_drops_digit:set_state(dropped_powerups);
+            bomb_drops_digit:set_state(dropped_bombs);
+            medal_drops_digit:set_state(dropped_medals);
+            big_powerup_drops_digit:set_state(dropped_big_powerups);
+            big_bomb_drops_digit:set_state(dropped_big_bombs);
+            option_drops_digit:set_state(dropped_options);
+            life_drops_digit:set_state(dropped_1ups);
+            
+            render_count = render_count + 1;
+        end);
+        
+        rank_bar:set_bounds_callback(function()
+	-- Miquel: Modified the normalization factor replacing 0x1000000 by 0xff0000, which is the maximum possible rank across all playing modes. This is only a correction of 0.4 % wrt previous version
+            local v = (1-rank/0xff0000);
+            if v < 0 then v = 0; end
+            local result = emu.render_bounds();
+            if (RANK_BAR_BOUNDS.width > RANK_BAR_BOUNDS.height) then
+                result:set_wh(RANK_BAR_BOUNDS.x0, RANK_BAR_BOUNDS.y0, RANK_BAR_BOUNDS.width * v, RANK_BAR_BOUNDS.height);
+            else
+                result:set_wh(RANK_BAR_BOUNDS.x0, RANK_BAR_BOUNDS.y0, RANK_BAR_BOUNDS.width, RANK_BAR_BOUNDS.height * v);
+            end
+            return result;
+        end)
+
+	-- Miquel: Added set_bounds_callback function for rank_start_bar in a symmetric way as for the rank_bar, only changing the formula for the rank_start calculation.
+	rank_start_bar:set_bounds_callback(function()
+            local v_start = (1-rank_start/0xff0000);
+            if v_start < 0 then v_start = 0; end
+            local result = emu.render_bounds();
+            if (RANK_START_BAR_BOUNDS.width > RANK_START_BAR_BOUNDS.height) then
+                result:set_wh(RANK_START_BAR_BOUNDS.x0, RANK_START_BAR_BOUNDS.y0, RANK_START_BAR_BOUNDS.width * v_start, RANK_START_BAR_BOUNDS.height);
+            else
+                result:set_wh(RANK_START_BAR_BOUNDS.x0, RANK_START_BAR_BOUNDS.y0, RANK_START_BAR_BOUNDS.width, RANK_START_BAR_BOUNDS.height * v_start);
+            end
+            return result;
+        end)
+        
+        shot_charge_bar:set_bounds_callback(function()
+            local v = slope(p1_shot_charge/0x48);
+            if v < 0 then v = 0; end
+            local result = emu.render_bounds();
+            if (SHOT_CHARGE_BAR_BOUNDS.width > SHOT_CHARGE_BAR_BOUNDS.height) then
+                result:set_wh(SHOT_CHARGE_BAR_BOUNDS.x0, SHOT_CHARGE_BAR_BOUNDS.y0, SHOT_CHARGE_BAR_BOUNDS.width * v, SHOT_CHARGE_BAR_BOUNDS.height);
+            else
+                result:set_wh(SHOT_CHARGE_BAR_BOUNDS.x0, SHOT_CHARGE_BAR_BOUNDS.y1 - SHOT_CHARGE_BAR_BOUNDS.height * v, SHOT_CHARGE_BAR_BOUNDS.width, SHOT_CHARGE_BAR_BOUNDS.height * v);
+            end
+            return result;
+        end)
+        
+        shot_charge_bar:set_color_callback(function()
+            if p1_shot_charge == 0x48 then
+                a = (render_count % 20) / 10 - 1;
+                a = a > 0 and a or -a;
+                return emu.render_color(1, 1, a, 0)
+            else
+                return emu.render_color(1, 1, 0, 0)
+            end
+        end)
+
+        local p1_input_color_callback = function()
+            return emu.render_color(current_player == 1 and 1 or 0, 1, 1, 1)
+        end
+        local p2_input_color_callback = function()
+            return emu.render_color(current_player == 2 and 1 or 0, 1, 1, 1)
+        end
+        p1_input_gadget:set_color_callback(p1_input_color_callback)
+        p1_stick:set_color_callback(p1_input_color_callback)
+        p1_button_a:set_color_callback(p1_input_color_callback)
+        p1_button_b:set_color_callback(p1_input_color_callback)
+        p1_button_c:set_color_callback(p1_input_color_callback)
+        p1_button_d:set_color_callback(p1_input_color_callback)
+        p2_input_gadget:set_color_callback(p2_input_color_callback)
+        p2_stick:set_color_callback(p2_input_color_callback)
+        p2_button_a:set_color_callback(p2_input_color_callback)
+        p2_button_b:set_color_callback(p2_input_color_callback)
+        p2_button_c:set_color_callback(p2_input_color_callback)
+        p2_button_d:set_color_callback(p2_input_color_callback)
+
+        local make_digit_color_callback = function(getter, desired)
+            return (function()
+                if (getter() == desired) then
+                    return emu.render_color(1, 1, 0, 0);
+                else
+                    return emu.render_color(1, 1, 1, 1);
+                end
+            end)
+        end;
+            
+        powerup_drops_digit:set_color_callback(make_digit_color_callback((function() return dropped_powerups; end), 3));
+        bomb_drops_digit:set_color_callback(make_digit_color_callback((function() return dropped_bombs; end), 5));
+        option_drops_digit:set_color_callback(make_digit_color_callback((function() return dropped_options; end), 3));
+        big_powerup_drops_digit:set_color_callback(make_digit_color_callback((function() return dropped_big_powerups; end), 3));
+        big_bomb_drops_digit:set_color_callback(make_digit_color_callback((function() return dropped_big_bombs; end), 3));
+        life_drops_digit:set_color_callback(make_digit_color_callback((function() return dropped_1ups; end), 3));
+
+        wallpaper:set_state(0);
+        view.items["warning"]:set_state(0);
+    end
+    
+    file.views["GadgetsYOKO"]:set_preload_callback(function()
+        preload_view(file.views["GadgetsYOKO"])
+    end);
+    file.views["GadgetsTATE"]:set_preload_callback(function()
+        preload_view(file.views["GadgetsTATE"])
+    end);
+end)
+    ]]></script>
+</mamelayout>

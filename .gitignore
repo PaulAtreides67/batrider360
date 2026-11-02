@@ -1,0 +1,31 @@
+# An allow-list: what the .xex build reads (ninja deps of the br-xsdk build), the tools that make its generated
+# headers and the manual, and the PC harness. Everything else (work/, deploy/, release/, build/, the files the game
+# writes beside itself, ROMs) stays out.
+*
+!*/
+!/.gitignore
+!/README.md
+!/PLAN.md
+!/core/*
+!/third_party/**
+!/xsdk/main.c
+!/xsdk/CMakeLists.txt
+!/xsdk/build.sh
+!/xsdk/quad.vert
+!/xsdk/quad.frag
+!/build/gen/chase_patch.h
+!/build/gen/front_assets.h
+!/build/gen/gadgets_art.h
+!/pc/build.sh
+!/pc/harness.c
+!/docker/Dockerfile
+!/tools/*.py
+!/tools/*.sh
+!/tools/release_readme.txt
+!/tools/manual/Dockerfile
+!/tools/manual/build.py
+!/tools/manual/manual.css
+!/tools/manual/manual_en.html
+!/tools/manual/manual_ja.html
+!/tools/manual/art/*
+!/ref/**

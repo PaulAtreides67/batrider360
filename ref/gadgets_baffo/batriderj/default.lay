@@ -1,0 +1,326 @@
+<!-- batriderj.lay -->
+
+<mamelayout version="2">
+	<element name="digit">
+		<image state="0" file="0.png" />
+		<image state="1" file="1.png" />
+		<image state="2" file="2.png" />
+		<image state="3" file="3.png" />
+		<image state="4" file="4.png" />
+		<image state="5" file="5.png" />
+		<image state="6" file="6.png" />
+		<image state="7" file="7.png" />
+		<image state="8" file="8.png" />
+		<image state="9" file="9.png" />
+		<image state="10" file="A.png" />
+		<image state="11" file="B.png" />
+		<image state="12" file="C.png" />
+		<image state="13" file="D.png" />
+		<image state="14" file="E.png" />
+		<image state="15" file="F.png" />
+	</element>
+	<element name="drop_viewer">
+		<image state="1"  file="item_option.jpg" />
+		<image state="2"  file="item_small_shot.jpg" />
+		<image state="3"  file="item_large_shot.jpg" />
+		<image state="4"  file="item_small_bomb.jpg" />
+		<image state="5"  file="item_large_bomb.jpg" />
+		<image state="6"  file="item_medal.jpg" />
+		<image state="7"  file="item_1up.jpg" />
+	</element>
+	<element name="next_drop_viewer">
+		<image state="1"  file="item_medal.jpg" />
+		<image state="2"  file="item_small_shot.jpg" />
+		<image state="3"  file="item_medal.jpg" />
+		<image state="4"  file="item_small_shot.jpg" />
+		<image state="5"  file="item_option.jpg" />
+		<image state="6"  file="item_medal.jpg" />
+		<image state="7"  file="item_small_shot.jpg" />
+		<image state="8"  file="item_medal.jpg" />
+		<image state="9"  file="item_small_shot.jpg" />
+		<image state="10" file="item_option.jpg" />
+		<image state="11" file="item_medal.jpg" />
+		<image state="12" file="item_small_shot.jpg" />
+		<image state="13" file="item_medal.jpg" />
+		<image state="14" file="item_small_shot.jpg" />
+		<image state="15" file="item_option.jpg" />
+		<image state="16" file="item_medal.jpg" />
+		<image state="17" file="item_small_shot.jpg" />
+		<image state="18" file="item_medal.jpg" />
+		<image state="19" file="item_small_shot.jpg" />
+		<image state="20" file="item_option.jpg" />
+		<image state="21" file="item_medal.jpg" />
+		<image state="22" file="item_small_shot.jpg" />
+		<image state="23" file="item_medal.jpg" />
+		<image state="24" file="item_small_shot.jpg" />
+		<image state="25" file="item_large_shot.jpg" />
+	</element>
+	<element name="medal_display">
+		<image state="0"  file="Item_100.jpg" />
+		<image state="1"  file="Item_200.jpg" />
+		<image state="2"  file="Item_300.jpg" />
+		<image state="3"  file="Item_400.jpg" />
+		<image state="4"  file="Item_500.jpg" />
+		<image state="5"  file="Item_600.jpg" />
+		<image state="6"  file="Item_700.jpg" />
+		<image state="7"  file="Item_800.jpg" />
+		<image state="8"  file="Item_900.jpg" />
+		<image state="9"  file="Item_1000.jpg" />
+		<image state="10" file="Item_2000.jpg" />
+		<image state="11" file="Item_3000.jpg" />
+		<image state="12" file="Item_4000.jpg" />
+		<image state="13" file="Item_5000.jpg" />
+		<image state="14" file="Item_6000.jpg" />
+		<image state="15" file="Item_7000.jpg" />
+		<image state="16" file="Item_8000.jpg" />
+		<image state="17" file="Item_9000.jpg" />
+		<image state="18" file="Item_10000.jpg" />
+	</element>
+	<element name="background_layout">
+		<image state="0" file="layout_4x3.png" />
+	</element>
+    <element name="warning" defstate="1">
+        <text state="1" string="This view requires the layout plugin." />
+    </element>
+    <element name="rank_bar">
+        <rect><bounds x="0.00" y="0.00" width="1.00" height="1.00" /></rect>
+    </element>
+	<view name="Gadgets">
+		<element id="background_layout" ref="background_layout">
+			<bounds x="0" y="0" width="1920" height="1440" />
+		</element>
+		<element id="rank_bar" ref="rank_bar">
+			<bounds x="1512" y="100" width="396" height="25" />
+            <color red="1" green="0" blue="0" alpha="1" />
+		</element>
+
+		<element id="rank_digit_0" ref="digit">
+			<bounds x="1700" y="43" width="40" height="60" />
+		</element>
+		<element id="rank_digit_1" ref="digit">
+			<bounds x="1728" y="43" width="40" height="60" />
+		</element>
+		<element id="rank_digit_2" ref="digit">
+			<bounds x="1759" y="60.5" width="25" height="38" />
+		</element>
+		<element id="rank_digit_3" ref="digit">
+			<bounds x="1776" y="60.5" width="25" height="38" />
+		</element>
+		<element id="rank_digit_4" ref="digit">
+			<bounds x="1793" y="60.5" width="25" height="38" />
+		</element>
+		<element id="rank_digit_5" ref="digit">
+			<bounds x="1810" y="60.5" width="25" height="38" />
+		</element>
+
+		<element id="dropped_small_shot_0" ref="drop_viewer"><bounds x="1512" y="325" width="50" height="50" /></element>
+		<element id="dropped_small_shot_1" ref="drop_viewer"><bounds x="1572" y="325" width="50" height="50" /></element>
+		<element id="dropped_small_shot_2" ref="drop_viewer"><bounds x="1632" y="325" width="50" height="50" /></element>
+		<element id="dropped_small_shot_3" ref="drop_viewer"><bounds x="1692" y="325" width="50" height="50" /></element>
+		<element id="dropped_small_shot_4" ref="drop_viewer"><bounds x="1752" y="325" width="50" height="50" /></element>
+		<element id="dropped_small_shot_5" ref="drop_viewer"><bounds x="1812" y="325" width="50" height="50" /></element>
+
+		<element id="dropped_large_shot_0" ref="drop_viewer"><bounds x="1512" y="425" width="50" height="50" /></element>
+		<element id="dropped_large_shot_1" ref="drop_viewer"><bounds x="1572" y="425" width="50" height="50" /></element>
+		<element id="dropped_large_shot_2" ref="drop_viewer"><bounds x="1632" y="425" width="50" height="50" /></element>
+		<element id="dropped_large_shot_3" ref="drop_viewer"><bounds x="1692" y="425" width="50" height="50" /></element>
+		<element id="dropped_large_shot_4" ref="drop_viewer"><bounds x="1752" y="425" width="50" height="50" /></element>
+		<element id="dropped_large_shot_5" ref="drop_viewer"><bounds x="1812" y="425" width="50" height="50" /></element>
+
+		<element id="dropped_option_0" ref="drop_viewer"><bounds x="1512" y="525" width="50" height="50" /></element>
+		<element id="dropped_option_1" ref="drop_viewer"><bounds x="1572" y="525" width="50" height="50" /></element>
+		<element id="dropped_option_2" ref="drop_viewer"><bounds x="1632" y="525" width="50" height="50" /></element>
+		<element id="dropped_option_3" ref="drop_viewer"><bounds x="1692" y="525" width="50" height="50" /></element>
+		<element id="dropped_option_4" ref="drop_viewer"><bounds x="1752" y="525" width="50" height="50" /></element>
+		<element id="dropped_option_5" ref="drop_viewer"><bounds x="1812" y="525" width="50" height="50" /></element>
+
+		<element id="dropped_small_bomb_0" ref="drop_viewer"><bounds x="1512" y="625" width="50" height="50" /></element>
+		<element id="dropped_small_bomb_1" ref="drop_viewer"><bounds x="1572" y="625" width="50" height="50" /></element>
+		<element id="dropped_small_bomb_2" ref="drop_viewer"><bounds x="1632" y="625" width="50" height="50" /></element>
+		<element id="dropped_small_bomb_3" ref="drop_viewer"><bounds x="1692" y="625" width="50" height="50" /></element>
+		<element id="dropped_small_bomb_4" ref="drop_viewer"><bounds x="1752" y="625" width="50" height="50" /></element>
+		<element id="dropped_small_bomb_5" ref="drop_viewer"><bounds x="1812" y="625" width="50" height="50" /></element>
+
+		<element id="dropped_large_bomb_0" ref="drop_viewer"><bounds x="1512" y="725" width="50" height="50" /></element>
+		<element id="dropped_large_bomb_1" ref="drop_viewer"><bounds x="1572" y="725" width="50" height="50" /></element>
+		<element id="dropped_large_bomb_2" ref="drop_viewer"><bounds x="1632" y="725" width="50" height="50" /></element>
+		<element id="dropped_large_bomb_3" ref="drop_viewer"><bounds x="1692" y="725" width="50" height="50" /></element>
+		<element id="dropped_large_bomb_4" ref="drop_viewer"><bounds x="1752" y="725" width="50" height="50" /></element>
+		<element id="dropped_large_bomb_5" ref="drop_viewer"><bounds x="1812" y="725" width="50" height="50" /></element>
+
+		<element id="dropped_medal_0" ref="drop_viewer"><bounds x="1512" y="825" width="50" height="50" /></element>
+		<element id="dropped_medal_1" ref="drop_viewer"><bounds x="1572" y="825" width="50" height="50" /></element>
+		<element id="dropped_medal_2" ref="drop_viewer"><bounds x="1632" y="825" width="50" height="50" /></element>
+		<element id="dropped_medal_3" ref="drop_viewer"><bounds x="1692" y="825" width="50" height="50" /></element>
+		<element id="dropped_medal_4" ref="drop_viewer"><bounds x="1752" y="825" width="50" height="50" /></element>
+		<element id="dropped_medal_5" ref="drop_viewer"><bounds x="1812" y="825" width="50" height="50" /></element>
+
+		<element id="dropped_1up_0" ref="drop_viewer"><bounds x="1512" y="925" width="50" height="50" /></element>
+		<element id="dropped_1up_1" ref="drop_viewer"><bounds x="1572" y="925" width="50" height="50" /></element>
+		<element id="dropped_1up_2" ref="drop_viewer"><bounds x="1632" y="925" width="50" height="50" /></element>
+		<element id="dropped_1up_3" ref="drop_viewer"><bounds x="1692" y="925" width="50" height="50" /></element>
+		<element id="dropped_1up_4" ref="drop_viewer"><bounds x="1752" y="925" width="50" height="50" /></element>
+		<element id="dropped_1up_5" ref="drop_viewer"><bounds x="1812" y="925" width="50" height="50" /></element>
+
+		<element id="next_drop_viewer_0" ref="next_drop_viewer"><bounds x="56" y="425" width="50" height="50" /></element>
+		<element id="next_drop_viewer_1" ref="next_drop_viewer"><bounds x="116" y="425" width="50" height="50" /></element>
+		<element id="next_drop_viewer_2" ref="next_drop_viewer"><bounds x="176" y="425" width="50" height="50" /></element>
+		<element id="next_drop_viewer_3" ref="next_drop_viewer"><bounds x="236" y="425" width="50" height="50" /></element>
+		<element id="next_drop_viewer_4" ref="next_drop_viewer"><bounds x="296" y="425" width="50" height="50" /></element>
+		<element id="next_drop_viewer_5" ref="next_drop_viewer"><bounds x="356" y="425" width="50" height="50" /></element>
+
+
+		<element id="medal_display" ref="medal_display">
+			<bounds x="1661" y="186" width="80" height="80" />
+		</element>
+
+		<element id="warning" ref="warning">
+			<bounds x="1500" y="900" width="400" height="30" />
+            <color red="1" green="0" blue="0" alpha="1" />
+		</element>
+
+		<screen index="0">
+			<bounds x="420" y="0" width="1080" height="1440" />
+		</screen>
+	</view>
+    <script><![CDATA[
+local RANK_ADDR = 0x20F9D0;
+local RANK_START_ADDR = 0x20F9D8;
+local MEDAL_ADDR = 0x20E459;
+local RANK_PERCENT = true;
+local RANK_RELATIVE = false;
+local NEXT_DROP_ADDR = 0x20e457;
+
+file:set_resolve_tags_callback(function()
+    local p = machine.devices[':maincpu'].spaces['program'];
+    local background_layout = file.views["Gadgets"].items["background_layout"];
+    local rank_bar = file.views["Gadgets"].items["rank_bar"];
+    local rank_digit_0 = file.views["Gadgets"].items["rank_digit_0"];
+    local rank_digit_1 = file.views["Gadgets"].items["rank_digit_1"];
+    local rank_digit_2 = file.views["Gadgets"].items["rank_digit_2"];
+    local rank_digit_3 = file.views["Gadgets"].items["rank_digit_3"];
+    local rank_digit_4 = file.views["Gadgets"].items["rank_digit_4"];
+    local rank_digit_5 = file.views["Gadgets"].items["rank_digit_5"];
+    local dropped_small_shots = {file.views["Gadgets"].items["dropped_small_shot_0"],
+                                 file.views["Gadgets"].items["dropped_small_shot_1"],
+                                 file.views["Gadgets"].items["dropped_small_shot_2"],
+                                 file.views["Gadgets"].items["dropped_small_shot_3"],
+                                 file.views["Gadgets"].items["dropped_small_shot_4"],
+                                 file.views["Gadgets"].items["dropped_small_shot_5"]};
+    local dropped_large_shots = {file.views["Gadgets"].items["dropped_large_shot_0"],
+                                 file.views["Gadgets"].items["dropped_large_shot_1"],
+                                 file.views["Gadgets"].items["dropped_large_shot_2"],
+                                 file.views["Gadgets"].items["dropped_large_shot_3"],
+                                 file.views["Gadgets"].items["dropped_large_shot_4"],
+                                 file.views["Gadgets"].items["dropped_large_shot_5"]};
+    local dropped_options = {file.views["Gadgets"].items["dropped_option_0"],
+                             file.views["Gadgets"].items["dropped_option_1"],
+                             file.views["Gadgets"].items["dropped_option_2"],
+                             file.views["Gadgets"].items["dropped_option_3"],
+                             file.views["Gadgets"].items["dropped_option_4"],
+                             file.views["Gadgets"].items["dropped_option_5"]};
+    local dropped_small_bombs = {file.views["Gadgets"].items["dropped_small_bomb_0"],
+                                 file.views["Gadgets"].items["dropped_small_bomb_1"],
+                                 file.views["Gadgets"].items["dropped_small_bomb_2"],
+                                 file.views["Gadgets"].items["dropped_small_bomb_3"],
+                                 file.views["Gadgets"].items["dropped_small_bomb_4"],
+                                 file.views["Gadgets"].items["dropped_small_bomb_5"]};
+    local dropped_large_bombs = {file.views["Gadgets"].items["dropped_large_bomb_0"],
+                                 file.views["Gadgets"].items["dropped_large_bomb_1"],
+                                 file.views["Gadgets"].items["dropped_large_bomb_2"],
+                                 file.views["Gadgets"].items["dropped_large_bomb_3"],
+                                 file.views["Gadgets"].items["dropped_large_bomb_4"],
+                                 file.views["Gadgets"].items["dropped_large_bomb_5"]};
+    local dropped_medals = {file.views["Gadgets"].items["dropped_medal_0"],
+                            file.views["Gadgets"].items["dropped_medal_1"],
+                            file.views["Gadgets"].items["dropped_medal_2"],
+                            file.views["Gadgets"].items["dropped_medal_3"],
+                            file.views["Gadgets"].items["dropped_medal_4"],
+                            file.views["Gadgets"].items["dropped_medal_5"]};
+    local dropped_1ups = {file.views["Gadgets"].items["dropped_1up_0"],
+                          file.views["Gadgets"].items["dropped_1up_1"],
+                          file.views["Gadgets"].items["dropped_1up_2"],
+                          file.views["Gadgets"].items["dropped_1up_3"],
+                          file.views["Gadgets"].items["dropped_1up_4"],
+                          file.views["Gadgets"].items["dropped_1up_5"]};
+    local next_drops = {file.views["Gadgets"].items["next_drop_viewer_0"],
+                        file.views["Gadgets"].items["next_drop_viewer_1"],
+                        file.views["Gadgets"].items["next_drop_viewer_2"],
+                        file.views["Gadgets"].items["next_drop_viewer_3"],
+                        file.views["Gadgets"].items["next_drop_viewer_4"],
+                        file.views["Gadgets"].items["next_drop_viewer_5"]};
+    local medal_display = file.views["Gadgets"].items["medal_display"];
+    local input = file.device:ioport(":IN");
+
+    local next_medal = 0;
+    local rank = 0;
+    background_layout:set_state(0);
+
+    file.views["Gadgets"]:set_prepare_items_callback(function()
+        next_medal = p:read_u8(MEDAL_ADDR);
+        rank = p:read_u32(RANK_ADDR);
+        if (RANK_RELATIVE) then
+            max_rank = p:read_u32(RANK_START_ADDR);
+        else
+            max_rank = 0xf80000;
+        end
+        if RANK_PERCENT then
+            local v = ((1-rank/max_rank) * 1000000);
+            local r = v % 1; v = v - r;
+            r = v % 10; rank_digit_5:set_state(r); v = (v - r) / 10;
+            r = v % 10; rank_digit_4:set_state(r); v = (v - r) / 10;
+            r = v % 10; rank_digit_3:set_state(r); v = (v - r) / 10;
+            r = v % 10; rank_digit_2:set_state(r); v = (v - r) / 10;
+            r = v % 10; rank_digit_1:set_state(r); v = (v - r) / 10;
+            r = v % 10; rank_digit_0:set_state(r); v = (v - r) / 10;
+        else
+            -- Show rank in hex
+            rank_digit_5:set_state(rank >>  0 & 15);
+            rank_digit_4:set_state(rank >>  4 & 15);
+            rank_digit_3:set_state(rank >>  8 & 15);
+            rank_digit_2:set_state(rank >> 12 & 15);
+            rank_digit_1:set_state(rank >> 16 & 15);
+            rank_digit_0:set_state(rank >> 20 & 15);
+        end
+
+        function set_items_counter_display(counter, count, state, max)
+            for i=1,max do
+                if i <= count then
+                    counter[i]:set_state(state);
+                else
+                    counter[i]:set_state(0);
+                end
+            end
+        end
+        set_items_counter_display(dropped_small_shots, p:read_u8(0x20e45a), 2, 6);
+        set_items_counter_display(dropped_small_bombs, p:read_u8(0x20e45b), 4, 6);
+        set_items_counter_display(dropped_medals,      p:read_u8(0x20e45c), 6, 6);
+        set_items_counter_display(dropped_large_shots, p:read_u8(0x20e45d), 3, 6);
+        set_items_counter_display(dropped_large_bombs, p:read_u8(0x20e45e), 5, 6);
+        set_items_counter_display(dropped_options,     p:read_u8(0x20e45f), 1, 6);
+        set_items_counter_display(dropped_1ups,        p:read_u8(0x20e460), 7, 6);
+
+        local next_drop = p:read_u8(NEXT_DROP_ADDR);
+        next_drops[1]:set_state(1+(next_drop  )%25);
+        next_drops[2]:set_state(1+(next_drop+1)%25);
+        next_drops[3]:set_state(1+(next_drop+2)%25);
+        next_drops[4]:set_state(1+(next_drop+3)%25);
+        next_drops[5]:set_state(1+(next_drop+4)%25);
+        next_drops[6]:set_state(1+(next_drop+5)%25);
+
+		medal_display:set_state(next_medal >> 1);
+
+        local input_val = input:read();
+    end);
+
+    rank_bar:set_bounds_callback(function()
+        local v = (1-rank/max_rank);
+        if v < 0 then v = 0; end
+        local result = emu.render_bounds();
+        result:set_wh(1512/1920, 100/1440, 396/1920 * v, 25/1440);
+        return result;
+    end)
+    file.views["Gadgets"].items["warning"]:set_state(0);
+end)
+    ]]></script>
+</mamelayout>
