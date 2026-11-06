@@ -40,6 +40,10 @@ typedef struct {
 	int bombs;                         /* +0x112: bombs in stock, 0..4 */
 	int bomb_gauge;                    /* +0x113: small-bomb gauge 0..40 (40 = a bomb) */
 	int rate;                          /* +0x10C: 0..7, the game's START+button rate popup "#60".."#7" (0x8972) */
+	uint32_t extend;                   /* test 21: player +0xF8, the next score extend; 0xFFFFFFFF = none left */
+	int bomb_on;                       /* test 21: a bomb runs: bit 4 of the first flags byte (P1 0x204062), see gadgets.c */
+	int bomb_frames;                   /* its frames so far */
+	int bomb_last;                     /* the rider's last bomb's frames (0 = none yet) */
 	int formation;                     /* the options' formation (test 6), only the Battle Garegga guests (riders 9-12)
 	                                      have one: player +0x22 = 0 V (also the default and after a respawn), 2 BACK,
 	                                      4 FRONT, 6 CIRCLE, 8 CONTROL (the commands 623A 282A 828A 41236A 421A, or C
@@ -81,6 +85,8 @@ typedef struct {
 	/* SECRET BOSSES: Baffo's 12 checkboxes in its order (gad_cond_names) */
 	int cond[GAD_CONDS];
 	int sp_power, sp_option;           /* 0x20E463 / 0x20E464: SPECIAL POWER UP / SPECIAL OPTION taken */
+	int all_secrets;                   /* test 21 (user): an ADVANCE SPECIAL credit: the first nine conditions show met (main.c
+	                                      sets it after gadgets_update; ENVY / BLUNT / SOBUT keep the game's state) */
 
 	/* STATUS */
 	int stage_no;                      /* 0x20E6A9: 1.. the stage's place in the course (0 = none) */
@@ -137,16 +143,26 @@ void gadgets_update(GadgetState *g, const uint8_t *ram, int chase_mode);
 void gadgets_music(GadgetState *g, int tune, const char *title);   /* br_music(), br_music_title() */
 
 /* ---- drawing (gadgets_draw.c) ---- */
-enum { GAD_YOKO, GAD_TATE };
+/* layouts: YOKO = 16:9 (CHASE! panels in a CHASE! credit), TATE, YOKO_ORIG (v0.20) = 16:9 in an ORIGINAL program: the
+ * arcade layout (release/batrider_arcade_gadgets: Medal Lv. and Item Count where CHASE!'s panels are) */
+enum { GAD_YOKO, GAD_TATE, GAD_YOKO_ORIG, GAD_LAYOUTS };
 enum { GAD_YOKO_W = 1280, GAD_YOKO_H = 720, GAD_TATE_W = 720, GAD_TATE_H = 1280 };
 /* The game's rectangle in the canvas (drawn by the GPU, left alone here). */
 enum { GAD_YOKO_GX = 370, GAD_YOKO_GY = 0, GAD_YOKO_GW = 540, GAD_YOKO_GH = 720,
        GAD_TATE_GX = 0, GAD_TATE_GY = 160, GAD_TATE_GW = 720, GAD_TATE_GH = 960 };
 
 int gadgets_init(void);                /* unpack the baked art; 0 = ok */
-/* canvas 0xAARRGGBB, viewer-upright, GAD_YOKO_W x H or GAD_TATE_W x H by screen; chase = show the CHASE! panels;
+/* canvas 0xAARRGGBB, viewer-upright, GAD_TATE_W x H for GAD_TATE, GAD_YOKO_W x H otherwise (screen = a layout); chase = show the CHASE! panels;
  * glyphs = br_text_glyphs() (the board's font, cached on the first call that has it). */
-void gadgets_draw(uint32_t *canvas, int screen, int chase, const GadgetState *g, const uint8_t *glyphs);
+/* test 21: mask = GAD_P_ bits of the panels to draw; a panel not in it shows the wallpaper (GAD_P_ALL = all) */
+enum {
+	GAD_P_PLAYER = 1 << 0, GAD_P_CONTROLLER = 1 << 1, GAD_P_CHARGE = 1 << 2, GAD_P_STATUS = 1 << 3,
+	GAD_P_WEAPON = 1 << 4, GAD_P_MUSIC = 1 << 5, GAD_P_RANK_BAR = 1 << 6, GAD_P_ITEM_DROPS = 1 << 7,
+	GAD_P_ITEM_COUNT = 1 << 8, GAD_P_MEDAL = 1 << 9, GAD_P_BOSS_INFO = 1 << 10, GAD_P_SECRET_BOSSES = 1 << 11,
+	GAD_P_STAGES = 1 << 12, GAD_P_CHASE = 1 << 13,
+	GAD_P_N = 14, GAD_P_ALL = (1 << 14) - 1,
+};
+void gadgets_draw(uint32_t *canvas, int screen, int chase, const GadgetState *g, const uint8_t *glyphs, unsigned mask);
 void gadgets_blank(uint32_t *canvas, int screen);
 /* Test 11: Baffo's list frame in nine pieces for the menus (core/menudraw.c): top band (title plate), body band,
  * bottom band, each left / middle / right; RGBA, NULL before gadgets_init. Read-only after gadgets_init. */

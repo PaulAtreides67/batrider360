@@ -19,7 +19,7 @@
 /* ---- RAM ---- */
 enum {
 	P1 = 0x204062, P2 = 0x2041D4,      /* player structs, 0x172 bytes */
-	PL_PILOT = 0x12, PL_TEAM = 0x1A, PL_FORM = 0x22, PL_SCORE = 0xF4, PL_OPTLV = 0x104, PL_RATE = 0x10C,
+	PL_PILOT = 0x12, PL_TEAM = 0x1A, PL_FORM = 0x22, PL_SCORE = 0xF4, PL_EXTEND = 0xF8, PL_OPTLV = 0x104, PL_RATE = 0x10C,
 	PL_SHOTLV = 0x110, PL_SHOTP = 0x111, PL_BOMBS = 0x112, PL_BGAUGE = 0x113, PL_CHARGE = 0x117, PL_OPTS = 0x118,
 	IN_P1 = 0x203456, IN_P2 = 0x203457, IN_SYS = 0x203459,
 	NEXT_DROP = 0x20E457, MEDAL = 0x20E459, DROP_P = 0x20E45A, DROP_B = 0x20E45B, DROP_M = 0x20E45C,
@@ -142,11 +142,19 @@ static int32_t timeout(uint32_t e, int src)
 	switch (src) {
 	case 1: return (int32_t)rd32(e + 66);
 	case 2: return (int32_t)rd32(e + 70);
-	case 3: return -rd16(e + 72);
+	case 3: {                              /* test 21 (user): B.HEART / B.H.mk2 count up to 0x960 (67CF0, 67D52): count down */
+		const int v = 0x960 - rd16(e + 72);
+		return v < 0 ? 0 : v;
+	}
 	case 4: return rd16(e + 74);
 	case 5: return rd16(e + 104);
 	case 6: return rd16(e + 70);
-	case 7: return rd8(e + 96) * 60;
+	case 7: {                              /* test 22 (user): TSUMUJI / HAJATE's byte +0x60 is NOT a clock: it is the attack-cycle
+		                                * count, +1 per attack (68000 06D8C4, 06E7FE); the boss leaves when it reaches 15 (06D8BA,
+		                                * 06EB68). So this counts DOWN: the digits show attacks left (15 .. 0), not seconds */
+		const int v = 15 - rd8(e + 96);
+		return v < 0 ? 0 : v * 60;
+	}
 	default: return rd16(GLOBAL_TIMEOUT);
 	}
 }
@@ -184,9 +192,18 @@ static struct {
 	int played[GAD_STAGES];
 } H;
 
+/* test 21: the bombs, per player: a run of bit 4 of the first flags byte (see gadgets_update); the frames of the last
+ * bomb of each rider (pilot 0..17). Kept out of the save state (STIO) on purpose. */
+static struct {
+	int on[2], n[2], rider[2];
+	int last[18];
+} BH;
+
 void gadgets_reset(void)
 {
 	memset(&H, 0, sizeof H);
+	memset(&BH, 0, sizeof BH);
+	BH.rider[0] = BH.rider[1] = -1;
 	H.last_in[0] = H.last_in[1] = 0xFF;  /* default.lay: p1_last_input = 0xff, so the first frame sets P1 */
 	H.cur_row = -1;
 }
@@ -218,6 +235,7 @@ static void player(GadgetPlayer *p, uint32_t base, int in_addr, int start_bit)
 	p->third_down = th != 0xFFFF && (th & 1);
 	p->type = (cur >> 2) & 3;
 	p->score = rd32(base + PL_SCORE);
+	p->extend = rd32(base + PL_EXTEND);
 	p->shot_charge = rd8(base + PL_CHARGE);
 	p->in = (rd8(in_addr) & 0x7F) | ((rd8(IN_SYS) & start_bit) ? 0x80 : 0);
 	p->shot_lv = rd8(base + PL_SHOTLV) + 1;
@@ -237,6 +255,26 @@ static void player(GadgetPlayer *p, uint32_t base, int in_addr, int start_bit)
 static int cond3(int forced, int team_ok, int event)
 {
 	return forced ? GAD_COND_MET : !team_ok ? GAD_COND_NA : event ? GAD_COND_MET : GAD_COND_OPEN;
+}
+
+/* test 21 (user: the attract and demo show empty gadgets): every value zero or "-" (the caller sets the music after) */
+static void attract_blank(GadgetState *g)
+{
+	const int in = g->in_credit, course = g->course;
+	memset(g, 0, sizeof *g);
+	g->in_credit = in;
+	g->course = course;
+	g->music = -1;
+	g->music_by = "";
+	g->boss_hp = g->boss_timer = g->boss_secs = -1;
+	g->mult = 1;
+	g->timer_max = TIMER_MAX;
+	g->timer_state = GAD_TIMER_BLUE;
+	g->stage_cur = -1;
+	for (int pl = 0; pl < 2; pl++) {
+		g->p[pl].pilot = g->p[pl].next = g->p[pl].third = -1;
+		g->p[pl].formation = -1;
+	}
 }
 
 void gadgets_update(GadgetState *g, const uint8_t *ram, int chase_mode)
@@ -289,6 +327,25 @@ void gadgets_update(GadgetState *g, const uint8_t *ram, int chase_mode)
 	/* players and input: whose input changed last is "current" */
 	player(&g->p[0], P1, IN_P1, 0x20);
 	player(&g->p[1], P2, IN_P2, 0x40);
+	/* test 21 (user: the Bomb row): a bomb runs while bit 4 of the player's first flags byte is set (set by the bomb
+	 * launch 0x30694/0x30650, cleared when it ends); its frames are counted per gadgets_update, kept per rider */
+	for (int pl = 0; pl < 2; pl++) {
+		GadgetPlayer *p = &g->p[pl];
+		const int on = p->active && (rd8(pl ? P2 : P1) & 0x10) != 0;
+		if (on) {
+			if (!BH.on[pl])
+				BH.on[pl] = 1, BH.n[pl] = 0, BH.rider[pl] = p->pilot;
+			BH.n[pl]++;
+		} else if (BH.on[pl]) {
+			if (BH.rider[pl] >= 0 && BH.rider[pl] < 18 && BH.n[pl])
+				BH.last[BH.rider[pl]] = BH.n[pl];
+			BH.on[pl] = 0;
+		}
+		const int rider = BH.on[pl] ? BH.rider[pl] : p->pilot;
+		p->bomb_on = BH.on[pl];
+		p->bomb_frames = BH.on[pl] ? BH.n[pl] : 0;
+		p->bomb_last = rider >= 0 && rider < 18 ? BH.last[rider] : 0;
+	}
 	for (int i = 0; i < 2; i++)
 		if (g->p[i].in != H.last_in[i]) {
 			H.last_in[i] = g->p[i].in;
@@ -373,7 +430,7 @@ void gadgets_update(GadgetState *g, const uint8_t *ram, int chase_mode)
 					src = b->time[k].src;
 		if (src) {
 			const int32_t t = timeout(e, src);
-			if (t != 0) {
+			if (t != 0 || src == 7) {          /* test 22: attacks left reaches 0 for the last attack: show 0 */
 				g->boss_timer = t < 0 ? -t : t;   /* the digits show |t| / 60 */
 				t_name = b->name;
 			}
@@ -482,4 +539,7 @@ void gadgets_update(GadgetState *g, const uint8_t *ram, int chase_mode)
 		if (g->msg < 0 || g->msg > 3)
 			g->msg = 0;
 	}
+
+	if (!g->in_credit)
+		attract_blank(g);
 }

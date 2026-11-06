@@ -21,14 +21,16 @@ cp third_party/ymfm/LICENSE "$D/licences/ymfm.txt"
 cp third_party/z80/LICENSE "$D/licences/z80.txt"
 sed -n '/Copyright/,/Mark Adler/p' third_party/zlib/zlib.h > "$D/licences/zlib.txt"
 cp "/c/New folder/xsdk-src/xsdk/LICENSE" "$D/licences/xsdk.txt"
-# the MAME folder: work/mame_rom/batriderj.zip (the four patched program ROMs of batrider-chase out/roms) and
-# batrider-chase out/artwork/batriderj (tools/mame/mkgadgets_mame.py from this project's mkgadgets.py)
+# the MAME folder (public release, 2026-11-06: NO ROM data): the GADGETS artwork for both games (batrider-chase
+# out/artwork/batriderj, from tools/mame/mkgadgets_mame.py), the .bat launchers, and the CHASE! xdelta kit
+# (tools/chase_xdelta: builds batriderj.zip from the user's own batrider.zip). roms\ is left for the user to fill.
 mkdir -p "$D/mame/roms" "$D/mame/artwork"
-cp work/mame_rom/batriderj.zip "$D/mame/roms/"
 cp -r "/c/New folder/batrider-chase/out/artwork/batriderj" "$D/mame/artwork/"
 cp tools/mame_release/batrider_chase.bat tools/mame_release/batrider_original.bat tools/mame_release/README_MAME.txt "$D/mame/"
-# no other ROM data may ship: refuse any zip or ROM-like file but the mame folder's CHASE! program zip
-if find "$D" \( -iname '*.zip' ! -path "$D/mame/roms/batriderj.zip" \) -o -iname '*.u2*' -o \( -iname '*.bin' ! -name batrider360_manual.bin \) | grep -q .; then
+mkdir -p "$D/mame/chase_xdelta"
+cp tools/chase_xdelta/README.txt tools/chase_xdelta/make_batriderj.bat tools/chase_xdelta/make_batriderj.ps1 tools/chase_xdelta/*.xdelta "$D/mame/chase_xdelta/"
+# no ROM data may ship: refuse any zip or ROM-like file
+if find "$D" \( -iname '*.zip' \) -o \( -iname '*.u2*' ! -name '*.xdelta' \) -o \( -iname '*.u7*' ! -name '*.xdelta' \) -o -iname 'rom-*' -o \( -iname '*.bin' ! -name batrider360_manual.bin \) | grep -q .; then
 	echo "ROM-like file in $D: refusing"; exit 1
 fi
 (cd release && powershell.exe -NoProfile -Command "Compress-Archive -Path 'batrider360_v$V' -DestinationPath 'batrider360_v$V.zip'")

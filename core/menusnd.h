@@ -13,7 +13,9 @@
 #define BR_MENUSND_H
 #include <stdint.h>
 
-enum { MS_CURSOR, MS_DECIDE, MS_PAUSE, MS_SOUNDS };
+/* test 21 (user): MS_TOGGLE = the SFX TEST's sound 0x2B (a LEFT / RIGHT that changes a value), MS_DEMO = sound 0x21
+ * (START in the attract demo) */
+enum { MS_CURSOR, MS_DECIDE, MS_PAUSE, MS_TOGGLE, MS_DEMO, MS_SOUNDS };
 
 int menusnd_render(void);                  /* 0 = all made; < 0 = out of memory (no menu sounds then) */
 int menusnd_frames(int id);                /* its length in board frames (BR_AUDIO_PER_FRAME samples each), 0 = none */
@@ -23,7 +25,7 @@ void menusnd_mix(int16_t *out, unsigned starts, int volume);
 void menusnd_stop(void);
 /* Test 14 (faster boot): the rendered sounds as a file's bytes (MENUSND_FILE_MAX at most; returns the length, 0 =
  * nothing rendered), and back (0 = taken, -1 = not this build's file or out of memory: render them then). */
-enum { MENUSND_FILE_MAX = 16 + 3 * 90 * 1600 * 2 };
+enum { MENUSND_FILE_MAX = 16 + 5 * 90 * 1600 * 2 };
 int menusnd_pack(uint8_t *buf);
 int menusnd_unpack(const uint8_t *buf, int len);
 #endif

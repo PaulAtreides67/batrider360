@@ -2,7 +2,7 @@
 // Loads MAME's batrider.zip from beside the .xex, runs the board one frame per display frame (60 Hz; the board's
 // 59.637 Hz plays 0.6% fast), shows the picture upright in the middle of 1280x720 (YOKO), plays its sound through
 // XAudio and reads the first connected pad. Coin = BACK, start = START. (Test 14: the title's EXIT row ends it.)
-// Everything it does goes to batrider360.log beside the .xex.
+// Everything it does goes to batrider360.log beside the .xex (v0.20: only when batrider360_log_on.txt is there too).
 // Test 1b: three cores. The 68000, Z80 and OKIs run here (hardware thread 0); the picture (GP9001 drawing, colours,
 // texture fill) on hardware thread 2 from the VDP state copied at the picture's line, one frame behind; the YM2151's
 // sound and the resampler on hardware thread 4 from the frame's logged writes (core/board.c, split board: the PC
@@ -1000,7 +1000,8 @@ static void sound_job(uint32_t n)
 enum { GADGET_THREAD = 5 };
 static uint32_t canvas_px[CANVAS_W * CANVAS_H];
 static GadgetState gstate, gjob;
-static int gjob_screen, gjob_chase;
+static int gjob_screen, gjob_chase, gjob_orig;
+static unsigned gjob_mask;                 // test 21: GADGETS per panel (GAD_P_ bits, FeOut.gad_mask)
 static bool gjob_on;
 static int gjob_drawn[CANVAS_BUFFERS];     // per canvas: the screen it was drawn for, -1 = none
 
@@ -1011,7 +1012,8 @@ static void gadget_job(uint32_t n)
 		return;
 	}
 	const int tate = gjob_screen != SCREEN_YOKO;
-	gadgets_draw(canvas_px, tate, gjob_chase, &gjob, br_text_glyphs());
+	gadgets_draw(canvas_px, tate ? GAD_TATE : gjob_orig ? GAD_YOKO_ORIG : GAD_YOKO, gjob_chase, &gjob, br_text_glyphs(),
+		gjob_mask);
 	xsdk_texture_upload(&ctex[tate][n % CANVAS_BUFFERS], 0, canvas_px, (tate ? CANVAS_H : CANVAS_W) * 4);
 	gjob_drawn[n % CANVAS_BUFFERS] = gjob_screen;
 }
@@ -1041,14 +1043,17 @@ static void draw(const FeOut *o, const XsdkTexture *canvas, int t, const XsdkTex
 	const int screen = o->screen;
 	// test 10: the game's quad, written again only when its place changed (the next buffer: the GPU may still read
 	// the last ones)
+	// v0.20: also when ROTATION changes (LEFT and RIGHT give a centred picture the same rectangle, so the game kept
+	// the first direction it was turned)
 	static float last[4] = { -1, -1, -1, -1 };
-	static int gq = -1;
+	static int gq = -1, last_screen = -1;
 	float r[4];
 	game_rect(o, width, height, r);
-	if (gq < 0 || memcmp(r, last, sizeof r)) {
+	if (gq < 0 || memcmp(r, last, sizeof r) || screen != last_screen) {
 		gq = (gq + 1) % GAME_QUADS;
 		put_quad(gquads[gq], r, width, height, uv_game[screen]);
 		memcpy(last, r, sizeof r);
+		last_screen = screen;
 	}
 	xsdk_gpu_set_target(width, height);
 	xsdk_gpu_set_shaders(&vs, &ps);
@@ -1525,6 +1530,7 @@ static void board_step(const FePad *pad)
 	sjob_se_vol[sjob_set] = out.se_vol;
 	if (out.run && !out.held) {
 		gadgets_update(&gstate, br_ram(), out.chase_credit);
+		gstate.all_secrets = out.special;      // test 21: ADVANCE SPECIAL's Secret bosses panel (gadgets_draw)
 		// test 13: an invalid score's TOTAL red, and the stage it went invalid in (ibara360's continue stage)
 		static uint8_t stage_red[GAD_STAGES];
 		static unsigned red_gen;
@@ -1919,9 +1925,26 @@ static void ticker_stop(void)
 	xsdk_log_write("now loading: %u frames shown", (unsigned)tk_frames);
 }
 
+// v0.20 (user: "stop the game from generating batrider360 log files"): xsdk's start opened batrider360.log before
+// main; it is closed and deleted here, so lines go nowhere from now on. xsdk's log lock exists by now, so remove()'s
+// allocations may log (ibara360 test 89 hung on a delete before the lock). batrider360_log_on.txt beside the .xex keeps
+// the log, for a hardware test.
+static void log_file_off(void)
+{
+	FILE *f = fopen("game:/batrider360_log_on.txt", "rb");
+	if (f) {
+		fclose(f);
+		xsdk_log_write("log: kept, as batrider360_log_on.txt asks");
+		return;
+	}
+	xsdk_log_close();
+	(void)remove("game:/batrider360.log");
+}
+
 int main(void)
 {
-	xsdk_log_write("batrider360 version 0.19 (test 19): TRAINING's MEDAL row (the starting medal value, ibara360's)");
+	log_file_off();
+	xsdk_log_write("batrider360 version 0.20 (test 20): arcade GADGETS layout for ORIGINAL, upright controller panel, centred medal panel, Boss Info / Secret bosses swapped, ROTATION LEFT / RIGHT fix");
 	struct timespec boot_t0, t0;
 	clock_gettime(CLOCK_MONOTONIC, &boot_t0);
 	NTSTATUS st = xsdk_gpu_open();
@@ -2044,7 +2067,8 @@ int main(void)
 	uint32_t gkick = 0, gskipped = 0;       // the gadget jobs handed over; frames that found the last one unfinished
 	uint32_t gsame = 0;                     // test 5: frames with nothing new to draw (no job)
 	static GadgetState glast;               // what the last job was handed (gjob may still be read by the gadget thread)
-	int glast_screen = -1, glast_chase = -1, glast_on = -1;
+	int glast_screen = -1, glast_chase = -1, glast_on = -1, glast_orig = -1;
+	unsigned glast_mask = 0;                // test 21: the GADGETS panels of the last job (FeOut.gad_mask)
 	for (int k = 0; k < CANVAS_BUFFERS; k++)
 		gjob_drawn[k] = -1;
 	static FeOut shown;                     // what this frame shows: the front end's last frame (+ a replay's banner)
@@ -2211,13 +2235,16 @@ int main(void)
 		const uint32_t gdone = __atomic_load_n(&gadget.done, __ATOMIC_ACQUIRE);
 		const int gon = shown.gadgets != 0, gshape = shown.screen != SCREEN_YOKO;
 		const bool gchanged = gon != glast_on || (gon && (gshape != (glast_screen != SCREEN_YOKO) ||
-			shown.chase_credit != glast_chase || gstate.p[0].shot_charge == 0x48 || memcmp(&gstate, &glast, sizeof gstate)));
+			shown.chase_credit != glast_chase || shown.original != glast_orig || shown.gad_mask != glast_mask ||
+			gstate.p[0].shot_charge == 0x48 || memcmp(&gstate, &glast, sizeof gstate)));
 		if (!gchanged) {
 			gsame++;
 		} else if (gdone == gkick) {
 			gjob = glast = gstate;
 			gjob_screen = glast_screen = shown.screen;
 			gjob_chase = glast_chase = shown.chase_credit;
+			gjob_orig = glast_orig = shown.original;
+			gjob_mask = glast_mask = shown.gad_mask;
 			glast_on = gon;
 			gjob_on = gon != 0;
 			gkick++;

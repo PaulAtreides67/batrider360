@@ -42,13 +42,16 @@ def blank(im, box):
 GRID = (28, 28, 28, 255)
 
 
-def list_frame(n, width, pitch=39):
-    """Secret bosses' frame, any width, n rows: title box and body blank (titles and rows drawn by the 360)"""
+def list_frame(n, width, pitch=39, h=None):
+    """Secret bosses' frame, any width, n rows: title box and body blank (titles and rows drawn by the 360).
+    test 21: pitch = the row pitch, h = the height (default 112 + n rows + the bottom band)"""
     src = img('secret_conditions.png')
-    h = 112 + n * pitch + 33
+    if h is None:
+        h = 112 + n * pitch + 33
     col = Image.new('RGBA', (246, h), (0, 0, 0, 0))
     for y in range(112, h - 33, 39):
-        col.alpha_composite(src.crop((0, 112, 246, 151)), (0, y))
+        th = min(39, h - 33 - y)
+        col.alpha_composite(src.crop((0, 112, 246, 112 + th)), (0, y))
     col.alpha_composite(src.crop((0, 0, 246, 112)), (0, 0))
     col.alpha_composite(src.crop((0, 580, 246, 613)), (0, h - 33))
     p = Image.new('RGBA', (width, h), (0, 0, 0, 0))
@@ -64,6 +67,64 @@ def list_frame(n, width, pitch=39):
     for y in range(108 + pitch, h - 26, pitch):
         d.rectangle((22, y, width - 22, y + 1), fill=GRID)
     return p
+
+
+INPUT_SRC = 'input_display.png'
+INPUT_GAP = 8
+
+
+def content_box(src, box):
+    """the bounding box (in src) of what is drawn in box, the frame's black and grid left out"""
+    x0, y0, x1, y1 = box
+    xs, ys = [], []
+    for y in range(y0, y1):
+        for x in range(x0, x1):
+            r, g, b, a = src.getpixel((x, y))
+            if a and r + g + b > 3 * GRID[0] + 6:
+                xs.append(x)
+                ys.append(y)
+    return min(xs), min(ys), max(xs) + 1, max(ys) + 1
+
+
+def vstretch(strip, h):
+    """a frame's edge strip (Baffo's 160 rows) made h rows: its top and bottom halves, the space between filled from
+    rows 20..80 over and over"""
+    p = Image.new('RGBA', (strip.width, h), (0, 0, 0, 0))
+    for y in range(80, h - 80, 60):
+        p.alpha_composite(strip.crop((0, 20, strip.width, 80)), (0, y))
+    p.alpha_composite(strip.crop((0, 0, strip.width, 80)), (0, 0))
+    p.alpha_composite(strip.crop((0, 80, strip.width, 160)), (0, h - 80))
+    return p
+
+
+def input_frame_v():
+    """v0.20 (user: the controller gadget vertical for 16:9): Baffo's input display stood up, the stick's box above the
+    four buttons' boxes, in the frame's own edges and grid. Returns the frame and where the stick and the buttons'
+    pieces went (offsets from the source picture)."""
+    src = img(INPUT_SRC)
+    st = content_box(src, (8, 10, 110, 150))
+    bt = content_box(src, (110, 10, 269, 150))
+    sw, sh, bw, bh = st[2] - st[0], st[3] - st[1], bt[2] - bt[0], bt[3] - bt[1]
+    w = 8 + 2 * INPUT_GAP + max(sw, bw) + 9
+    h = 10 + sh + bh + 3 * INPUT_GAP + 9
+    p = Image.new('RGBA', (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(p)
+    d.rectangle((8, 10, w - 10, h - 10), fill=(0, 0, 0, 255))
+    for x in range(38, w - 9, 37):
+        d.rectangle((x, 10, x + 1, h - 10), fill=GRID)
+    for y in range(13, h - 9, 37):
+        d.rectangle((8, y, w - 10, y + 1), fill=GRID)
+    p.alpha_composite(vstretch(src.crop((0, 0, 8, 160)), h), (0, 0))
+    p.alpha_composite(vstretch(src.crop((269, 0, 278, 160)), h), (w - 9, 0))
+    half = w // 2
+    for (y0, y1, dy) in ((0, 10, 0), (151, 160, h - 9)):
+        p.alpha_composite(src.crop((0, y0, half, y1)), (0, dy))
+        p.alpha_composite(src.crop((278 - (w - half), y0, 278, y1)), (half, dy))
+    so = ((w - sw) // 2, 10 + INPUT_GAP)
+    bo = ((w - bw) // 2, so[1] + sh + INPUT_GAP)
+    p.alpha_composite(src.crop(st), so)
+    p.alpha_composite(src.crop(bt), bo)
+    return p, (so[0] - st[0], so[1] - st[1]), (bo[0] - bt[0], bo[1] - bt[1])
 
 
 COUNT_SLOTS = [(28 + 81 * i, 121) for i in range(6)]
@@ -83,27 +144,26 @@ def count_frame():
 
 
 def chain_frame():
-    p = img('rank_bar.png')
-    blank(p, (112, 32, 400, 70))
-    blank(p, (170, 140, 345, 168))
-    return p
-
-
-def mult_frame():
-    p = img('next_medal.png')
-    blank(p, (14, 14, 186, 50))
+    """test 21: the Chain bar with the multiplier at its end (x3) and the forward arrow and C after the count"""
+    """test 21 (fix): the bar frame stays whole. Baffo's count box sat on the bar's bottom edge, so it moves down 10 px
+    (its own art, 190 px frame); the bar's edge is put back where it was, from the edge's own pixels."""
+    src = img('rank_bar.png')
+    p = Image.new('RGBA', (src.width, 190), (0, 0, 0, 0))
+    p.alpha_composite(src, (0, 0))
+    box = src.crop((170, 132, 345, 178))
+    blank(box, (0, 12, 15, 40))         # the rank bar's % sign (its pieces start left of the box), all of it
+    blank(p, (112, 32, 400, 70))        # the title
+    blank(p, (170, 128, 345, 178))      # the count box's old place
+    edge = src.crop((20, 128, 120, 140))
+    p.alpha_composite(edge, (170, 128))
+    p.alpha_composite(edge, (270, 128))
+    p.alpha_composite(box, (170, 142))
     return p
 
 
 def lives_frame():
     p = img('1up_drops.png')
     blank(p, (124, 30, 202, 104))
-    return p
-
-
-def extend_box():
-    p = img('rank_bar.png').crop((158, 136, 356, 177))
-    blank(p, (8, 6, 190, 34))
     return p
 
 
@@ -126,6 +186,7 @@ def music_box(wn, hn):
 
 def music_panel(sc, x, y, w, h, lines):
     """the tune playing: the sound ROM's title and its composer, drawn by the 360 (gadgets_draw.c)"""
+    sc.panel('MUSIC')
     m = sc.put(music_box(w, h), 1, x, y)
     if lines == 1:
         sc.rect('MUSIC_0', m(10, 4, w - 20, h - 8))
@@ -164,26 +225,42 @@ def medal_plate():
 RECTS = []          # names, in order
 SPR = {}            # name -> RGBA image
 TEXT = []           # (screen, layer, x, y, scale, tint, string)
-TINTS = ['white', 'red', 'yellow', 'amber', 'blue', 'green', 'cyan']
+TINTS = ['white', 'red', 'yellow', 'amber', 'blue', 'green', 'cyan', 'grey']   # grey = test 21 (the last bomb, dim)
 
 
 def sprite(name, im):
     if name not in SPR:
         SPR[name] = im
+    assert SPR[name].size == im.size, 'sprite %s made twice in two sizes (give the screen its own tag)' % name
     return name
+
+
+# test 21: the panels, by their bit in GAD_P_ (gadgets.h); the order is the C enum's
+PANELS = ['PLAYER', 'CONTROLLER', 'CHARGE', 'STATUS', 'WEAPON', 'MUSIC', 'RANK', 'DROPS', 'COUNT', 'MEDAL', 'BOSS',
+          'SECRET', 'STAGES', 'CHASE']
 
 
 class Screen:
     def __init__(self, idx, w, h, wallpaper, game):
         self.idx, self.w, self.h, self.game = idx, w, h, game
         self.bg = img(wallpaper).resize((w, h), Image.LANCZOS)
+        self.wall = self.bg.copy()          # the wallpaper alone: a switched-off panel shows it (test 21)
         self.chase = Image.new('RGBA', (w, h), (0, 0, 0, 0))
         self.rects = {}
+        self.cur = None                     # the panel whose frames are being put
+        self.boxes = {}                     # panel -> [x0, y0, x1, y1] of its frames on the static canvas
+
+    def panel(self, name):
+        self.cur = PANELS.index(name)
 
     def put(self, im, s, x, y, layer=0):
         """a frame at canvas (x, y), scale s; returns a mapper native -> canvas rect"""
         sim = scaled(im, s)
-        (self.chase if layer else self.bg).alpha_composite(sim, (round(x), round(y)))
+        px, py = round(x), round(y)
+        (self.chase if layer else self.bg).alpha_composite(sim, (px, py))
+        if self.cur is not None and not layer:
+            b = self.boxes.get(self.cur, [px, py, px + sim.width, py + sim.height])
+            self.boxes[self.cur] = [min(b[0], px), min(b[1], py), max(b[2], px + sim.width), max(b[3], py + sim.height)]
 
         def m(nx, ny, nw=0, nh=0):
             return (round(x + nx * s), round(y + ny * s), max(1, round(nw * s)), max(1, round(nh * s)))
@@ -234,11 +311,17 @@ def medals(tag, size):
         sprite('MD%s_%d' % (tag, i), img(f).resize((size, size), Image.NEAREST))
 
 
-def input_panel(sc, tag, s, x, y):
-    m = sc.put(img('input_display.png'), s, x, y)
-    sc.rect('IN_STICK', m(22, 43, 71, 71))
-    for n, (bx, by) in zip('ABCS', [(125, 34), (203, 34), (125, 93), (203, 93)]):
-        sc.rect('IN_' + n, m(bx, by, 36, 36))
+def input_panel(sc, tag, s, x, y, upright=False):
+    """upright (v0.20, 16:9): input_frame_v's tall frame, the stick above the buttons"""
+    sc.panel('CONTROLLER')
+    if upright:
+        im, (sx, sy), (bx, by) = input_frame_v()
+    else:
+        im, (sx, sy), (bx, by) = img(INPUT_SRC), (0, 0), (0, 0)
+    m = sc.put(im, s, x, y)
+    sc.rect('IN_STICK', m(22 + sx, 43 + sy, 71, 71))
+    for n, (px, py) in zip('ABCS', [(125, 34), (203, 34), (125, 93), (203, 93)]):
+        sc.rect('IN_' + n, m(px + bx, py + by, 36, 36))
     st = sc.rects['IN_STICK']
     for k, f in STICK.items():
         sprite('ST%s_%d' % (tag, k), img('stick_%s.png' % f).resize((st[2], st[3]), Image.LANCZOS))
@@ -248,6 +331,7 @@ def input_panel(sc, tag, s, x, y):
 
 
 def profile_panel(sc, tag, s, x, y):
+    sc.panel('PLAYER')
     m = sc.put(img('profile.png'), s, x, y)
     sc.rect('PL_MAIN', m(38, 121, 164, 191))
     sc.rect('PL_NEXT', m(214, 121, 109, 127))
@@ -261,6 +345,7 @@ def profile_panel(sc, tag, s, x, y):
 
 
 def rank_panel(sc, tag, s, x, y):
+    sc.panel('RANK')
     m = sc.put(img('rank_bar.png'), s, x, y)
     sc.rect('RANK_BAR', m(17, 104, 490, 30))
     for i, dx in enumerate([189, 216, 250, 272, 296, 320]):
@@ -271,6 +356,7 @@ def rank_panel(sc, tag, s, x, y):
 
 
 def drops_panel(sc, tag, s, x, y):
+    sc.panel('DROPS')
     m = sc.put(img('next_drop.png'), s, x, y)
     for i in range(6):
         sc.rect('NEXT_%d' % i, m(33 + 81 * i, 131, 49, 49))
@@ -279,6 +365,7 @@ def drops_panel(sc, tag, s, x, y):
 
 
 def count_panel(sc, s, x, y):
+    sc.panel('COUNT')
     m = sc.put(count_frame(), s, x, y)
     sc.ctext(0, m(118, 44, 280, 46), 2 if s > 0.5 else 1, 'white', 'Item Count')
     for i, (sx, sy) in enumerate(COUNT_SLOTS):
@@ -287,6 +374,7 @@ def count_panel(sc, s, x, y):
 
 
 def medal_panel(sc, tag, s, x, y):
+    sc.panel('MEDAL')
     p = medal_plate()
     m = sc.put(p, s, x, y)
     sc.rect('MEDAL_CNT', m(124, 52 + 22, 80, 80))
@@ -297,6 +385,7 @@ def medal_panel(sc, tag, s, x, y):
 
 
 def boss_panel(sc, tag, s, x, y):
+    sc.panel('BOSS')
     m = sc.put(img('boss_info.png'), s, x, y)
     for i, dx in enumerate([46, 84, 122]):
         sc.rect('BOSS_HP%d' % i, m(dx, 210, 38, 32))
@@ -308,6 +397,7 @@ def boss_panel(sc, tag, s, x, y):
 
 
 def secret_panel(sc, tag, s, x, y):
+    sc.panel('SECRET')
     m = sc.put(img('secret_conditions.png'), s, x, y)
     for i in range(12):
         sc.rect('COND_%d' % i, m(197, 123 + 39 * i, 23, 23))
@@ -318,37 +408,49 @@ def secret_panel(sc, tag, s, x, y):
 
 
 def charge_panel(sc, s, x, y):
+    sc.panel('CHARGE')
     m = sc.put(img('shot_charge.png'), s, x, y)
     sc.rect('CHARGE_V', m(7, 16, 13, 414))
     return m
 
 
-LIST_ROWS = {'STATUS': ['Course', 'Stage', 'Time', 'Enemies', 'Bullets'],
-             'WEAPON': ['Shot', 'Options', 'Formation', 'Bombs', 'Sp.Power', 'Sp.Option']}
+# test 21: STATUS = Course, Enemies, Bullets, Extend, Sp.Extend (the 1UP / BOMB secret extends); WEAPON gets Bomb
+# test 22: the label is Sp.Extend, on the row's top line; its value "1UP0/3 B0/3" (88 px) is right-aligned on the bottom line
+# (label + value on one line = 160 px, wider than the row in every layout: 147 px 16:9, 117 px TATE)
+LIST_ROWS = {'STATUS': ['Course', 'Enemies', 'Bullets', 'Extend', 'Sp.Extend'],
+             'WEAPON': ['Shot', 'Options', 'Formation', 'Bombs', 'Bomb', 'Sp.Power', 'Sp.Option']}
 LIST_TINT = {'STATUS': ('Status', 'yellow'), 'WEAPON': ('Weapon', 'green')}
-ROW_TINT = {'Sp.Power': 'red', 'Sp.Option': 'red'}
+ROW_TINT = {'Sp.Power': 'red', 'Sp.Option': 'red', 'Bomb': 'amber'}
 
 
-def list_panel(sc, name, s, x, y, cw):
-    """a list panel of canvas width cw: title + row labels drawn by the 360, values right-aligned in VAL rects"""
+def list_panel(sc, name, s, x, y, cw, pitch=39, h=None):
+    """a list panel of canvas width cw: title + row labels drawn by the 360, values right-aligned in VAL rects.
+    test 21: pitch / h of the rows; WEAPON's Bomb row gets a gauge (WBOMB) between its label and its frame count"""
+    sc.panel(name)
     rows = LIST_ROWS[name]
     nw = round(cw / s)
-    m = sc.put(list_frame(len(rows), nw), s, x, y)
+    m = sc.put(list_frame(len(rows), nw, pitch, h), s, x, y)
     title, tint = LIST_TINT[name]
     fs = 2 if s >= 0.5 else 1
     sc.ctext(0, m(12, 12, nw - 24, 54), fs, tint, title)
     for i, lab in enumerate(rows):
-        r = m(26, 108 + 39 * i, nw - 52, 39)
-        sc.text(0, r[0], r[1] + (r[3] - 8) // 2, 1, ROW_TINT.get(lab, 'white'), lab)
+        r = m(26, 108 + pitch * i, nw - 52, pitch)
+        if lab == 'Sp.Extend':              # test 22: two lines (the value is on the bottom line, gadgets_draw.c sp_extend)
+            sc.text(0, r[0], r[1] + 1, 1, 'white', lab)
+        else:
+            sc.text(0, r[0], r[1] + (r[3] - 8) // 2, 1, ROW_TINT.get(lab, 'white'), lab)
         sc.rect('%s_%d' % (name, i), r)
     if name == 'WEAPON':                    # Sp.Power / Sp.Option's tick
         h = sc.rects['WEAPON_0'][3] - 4
-        sprite('WK%s' % 'YT'[sc.idx], img('checked.png').resize((max(4, h * 21 // 31), h), Image.LANCZOS))
+        sprite('WK%s' % 'YTY'[sc.idx], img('checked.png').resize((max(4, h * 21 // 31), h), Image.LANCZOS))
+        r = sc.rects['WEAPON_4']            # the Bomb row: the gauge's bar, 6 px high, between label and count
+        sc.rect('WBOMB', (r[0] + 40, r[1] + r[3] // 2 - 3, r[2] - 40 - 36, 6))
     return m
 
 
 def stages_panel(sc, s, x, y, cw, ch):
     """STAGES (ibara's): 7 rows of name + score, then TOTAL; rows of two text lines"""
+    sc.panel('STAGES')
     nw = round(cw / s)
     n = 8
     pitch = max(39, round((ch / s - 112 - 33) / n))
@@ -359,44 +461,77 @@ def stages_panel(sc, s, x, y, cw, ch):
     return m
 
 
-def chase_panels(sc, s, x, y, mult_dx, mult_dy, lives_dx, lives_dy, ext_dx, ext_dy):
+def chase_panels(sc, s, x, y, lives_dx, lives_dy, lives_s):
+    """test 21: the CHASE! group, compact: the Chain frame (bar with xN at its right end inside the frame, count, forward
+    arrow, C) and the Lives frame beside the count row (lives_dx, lives_dy in canvas px from the frame's corner,
+    lives_s its scale). CHASE!'s Next Extend is STATUS's Extend row now."""
+    sc.panel('CHASE')
     m = sc.put(chain_frame(), s, x, y, 1)
     fs = 2 if s >= 0.5 else 1
     sc.ctext(1, m(108, 28, 296, 48), fs, 'blue', 'Chain')
-    sc.rect('CH_BAR', m(17, 104, 490, 30))
-    sc.rect('CH_CHAIN', m(170, 138, 175, 32))
-    mm = sc.put(mult_frame(), s, x + mult_dx, y + mult_dy, 1)
-    tb = mm(10, 10, 180, 44)
-    sc.ctext(1, tb, 1, 'amber', 'Multiplier' if tb[2] >= 84 else 'Mult.')
-    sc.rect('CH_MULT', mm(56, 84, 84, 76))
-    sc.rect('CH_C', mm(140, 70, 50, 46))
-    sc.rect('CH_FWD', mm(140, 118, 50, 46))
-    ml = sc.put(lives_frame(), s, x + lives_dx, y + lives_dy, 1)
+    sc.rect('CH_BAR', m(17, 104, 396, 30))             # the bar stops short of the multiplier
+    sc.rect('CH_MULT', m(420, 100, 88, 38))            # xN inside the bar slot, at its right end
+    sc.rect('CH_CHAIN', m(170, 146, 175, 36))
+    sc.rect('CH_FWD', m(352, 148, 40, 28))
+    sc.rect('CH_C', m(400, 148, 40, 28))
+    ml = sc.put(lives_frame(), lives_s, x + lives_dx, y + lives_dy, 1)
     sc.rect('CH_LIVES', ml(120, 26, 86, 82))
-    me = sc.put(extend_box(), s, x + ext_dx, y + ext_dy, 1)
-    lab_y = y + ext_dy - 10
-    sc.text(1, x + ext_dx + 2, lab_y, 1, 'green', 'Next Extend')
-    sc.rect('CH_EXT', me(8, 4, 182, 32))
+
+
+# v0.20: the upright controller (input_frame_v, 180 x 240 native) between Current Player and the shot charge bar.
+# test 21 (user: fill the gaps above and below it): its height = Current Player's (PROF_S 0.46, 167 px; was 0.5) and the
+# charge bar moves to the right edge; the controller's frame is 240 native, so its scale is 167 / 240.
+PROF_S = 0.46
+PROF_H = round(364 * PROF_S)                  # 167
+INPUT_V_S, INPUT_V_X, INPUT_V_Y = PROF_H / 240, 230, 4
+CHARGE_X = 357
+LEFT_Y = 180                                  # STATUS and WEAPON's top (16:9)
+WEAPON_ROWS_H = 112 + 7 * 39 + 33             # 418 native: STATUS is made the same height
 
 
 def yoko():
     sc = Screen(0, 1280, 720, 'background_yoko.png', (370, 0, 540, 720))
-    # LEFT: Current Player + input, shot charge, Status + Weapon, CHASE! at the bottom
-    profile_panel(sc, 'Y', 0.5, 4, 4)
-    input_panel(sc, 'Y', 0.42, 249, 24)
-    charge_panel(sc, 0.4, 352, 6)
-    list_panel(sc, 'STATUS', 0.55, 4, 194, 176)
-    list_panel(sc, 'WEAPON', 0.55, 186, 194, 176)
-    chase_panels(sc, 0.62, 18, 430, 0, 126, 128, 132, 128, 222)
-    music_panel(sc, 4, 404, 358, 25, 1)
-    # RIGHT: Rank Bar, Item Drops, Item Count packed; the medal gadget; Secret bosses, Boss Info, Stages
+    # LEFT: Current Player + input, shot charge, Status + Weapon, CHASE! (compact), BGM strip at the bottom left
+    profile_panel(sc, 'Y', PROF_S, 4, 4)
+    input_panel(sc, 'Y', INPUT_V_S, INPUT_V_X, INPUT_V_Y, True)
+    charge_panel(sc, PROF_H / 446, CHARGE_X, 4)
+    list_panel(sc, 'STATUS', 0.55, 4, LEFT_Y, 176, 54, WEAPON_ROWS_H)
+    list_panel(sc, 'WEAPON', 0.55, 186, LEFT_Y, 176, 39, WEAPON_ROWS_H)
+    chase_panels(sc, 0.66, 4, 430, 112, 128, 0.5)      # Lives under the count row (test 21: 0.5, as first shown)
+    music_panel(sc, 4, 691, 358, 25, 1)                 # test 21: bottom-left corner
+    # RIGHT: Rank Bar, Item Drops, Item Count packed; the medal gadget; Boss Info, Secret bosses, Stages
     rank_panel(sc, 'Y', 0.6, 938, 0)
     drops_panel(sc, 'Y', 0.6, 939, 86)
-    count_panel(sc, 0.6, 939, 198)
-    medal_panel(sc, 'Y', 0.5, 920, 332)
-    secret_panel(sc, 'Y', 0.45, 912, 442)
-    boss_panel(sc, 'Y', 0.5, 1026, 440)
+    mc = count_panel(sc, 0.6, 939, 198)
+    # v0.20 (user: the medal gadget more centred): on the column's axis, in the middle of the gap above Secret bosses
+    ms, mw, mh = 0.55, medal_plate().width, medal_plate().height
+    medal_panel(sc, 'Y', ms, mc.x + (mc.w - mw * ms) / 2, mc.y + mc.h + (442 - mc.y - mc.h - mh * ms) / 2)
+    boss_panel(sc, 'Y', 0.5, 912, 440)          # v0.20 (user): Boss Info and Secret bosses swapped
+    secret_panel(sc, 'Y', 0.45, 1029, 442)
     stages_panel(sc, 0.5, 1140, 440, 138, 278)
+    return sc
+
+
+def yoko_original():
+    """v0.20 (user: the improved arcade gadgets for vanilla Batrider = release/batrider_arcade_gadgets' layout,
+    batrider-chase tools/mame/mkgadgets_mame.py yoko_original()): 16:9 in an ORIGINAL program. The CHASE! corner (lower
+    left) gets Medal Lv. and Item Count; the right column is Rank Bar + Item Drops over Secret bosses, Boss Info and
+    Stages. Tag O = its own sprite sizes; Y where a panel is yoko()'s size."""
+    sc = Screen(2, 1280, 720, 'background_yoko.png', (370, 0, 540, 720))
+    profile_panel(sc, 'Y', PROF_S, 4, 4)
+    input_panel(sc, 'Y', INPUT_V_S, INPUT_V_X, INPUT_V_Y, True)
+    charge_panel(sc, PROF_H / 446, CHARGE_X, 4)
+    list_panel(sc, 'STATUS', 0.55, 4, LEFT_Y, 176, 54, WEAPON_ROWS_H)
+    list_panel(sc, 'WEAPON', 0.55, 186, LEFT_Y, 176, 39, WEAPON_ROWS_H)
+    # test 22 (user): centred on the left column's axis (STATUS 4..180, WEAPON 186..362: x = 183), from the scaled widths
+    medal_panel(sc, 'O', 0.6, round((4 + 362 - medal_plate().width * 0.6) / 2), 420)   # test 21: smaller, room for BGM
+    count_panel(sc, 0.6, round((4 + 362 - count_frame().width * 0.6) / 2), 540)
+    music_panel(sc, 4, 690, 358, 26, 1)                 # test 21: bottom-left corner
+    rank_panel(sc, 'O', 0.69, 914, 0)
+    drops_panel(sc, 'O', 0.69, 915, 99)
+    secret_panel(sc, 'O', 0.72, 912, 262)
+    boss_panel(sc, 'Y', 0.5, 1129, 264)
+    stages_panel(sc, 0.5, 1093, 488, 185, 230)
     return sc
 
 
@@ -412,9 +547,10 @@ def tate():
     charge_panel(sc, 0.34, 644, 4)
     # BOTTOM strip: Item Count, Status, Weapon, CHASE!
     count_panel(sc, 0.42, 2, 1122)
-    list_panel(sc, 'STATUS', 0.4, 222, 1121, 138)
-    list_panel(sc, 'WEAPON', 0.4, 360, 1121, 138)
-    chase_panels(sc, 0.38, 500, 1120, 0, 66, 82, 68, 82, 128)
+    # test 21: STATUS and WEAPON the same height (WEAPON's 7 rows at pitch 34)
+    list_panel(sc, 'STATUS', 0.4, 222, 1121, 138, 47, 383)
+    list_panel(sc, 'WEAPON', 0.4, 360, 1121, 138, 34, 383)
+    chase_panels(sc, 0.38, 500, 1120, 0, 74, 0.3)      # no room beside the count in TATE: Lives under it
     music_panel(sc, 4, 1228, 214, 48, 2)
     return sc
 
@@ -447,7 +583,7 @@ def c_bytes(name, data):
 
 
 def main():
-    screens = [yoko(), tate()]
+    screens = [yoko(), tate(), yoko_original()]
     menu_kit()
     L = ['/* generated by tools/mkgadgets.py from ref/gadgets_baffo04/0.4 (Baffo\'s Batrider layout v0.4): do not edit */',
          '#ifndef BR_GADGETS_ART_H', '#define BR_GADGETS_ART_H', '#include <stdint.h>', '']
@@ -455,7 +591,7 @@ def main():
     L += ['\tGA_%s,' % n for n in RECTS]
     L.append('\tGA_N };')
     L.append('/* x, y, w, h on each screen (w 0 = not on that screen) */')
-    L.append('static const int16_t ga_rect[2][GA_N][4] = {')
+    L.append('static const int16_t ga_rect[GAD_LAYOUTS][GA_N][4] = {')
     for sc in screens:
         L.append('\t{ ' + ' '.join('{%d,%d,%d,%d},' % sc.rects.get(n, (0, 0, 0, 0)) for n in RECTS) + ' },')
     L.append('};')
@@ -475,6 +611,22 @@ def main():
     s, n = c_bytes('ga_spr_z', blob)
     L.append(s)
     total = n
+    # test 21: each panel's frames on the static canvas (x, y, w, h; w 0 = not on that screen), and the wallpaper alone
+    L.append('/* test 21: GAD_P_ bit order (gadgets.h); each screen\'s frames box on the static canvas */')
+    L.append('static const int16_t ga_panel[GAD_LAYOUTS][GAD_P_N][4] = {')
+    for sc in screens:
+        cells = []
+        for k in range(len(PANELS)):
+            b = sc.boxes.get(k)
+            cells.append('{%d,%d,%d,%d}' % (b[0], b[1], b[2] - b[0], b[3] - b[1]) if b else '{0,0,0,0}')
+        L.append('\t{ ' + ', '.join(cells) + ' },')
+    L.append('};')
+    for sc in screens:
+        rgb = Image.new('RGB', (sc.w, sc.h))
+        rgb.paste(sc.wall.convert('RGB'))
+        s, n = c_bytes('ga_wall%d_z' % sc.idx, rgb.tobytes())
+        L.append(s)
+        total += n
     for sc in screens:
         rgb = Image.new('RGB', (sc.w, sc.h))
         rgb.paste(sc.bg.convert('RGB'))
@@ -508,7 +660,7 @@ def main():
         for (scr, layer, x, y, scale, tint, st) in TEXT:
             if scr == sc.idx:
                 d.rectangle((x, y, x + 8 * scale * len(st) - 1, y + 8 * scale - 1), outline=(255, 255, 0, 255))
-        im.convert('RGB').save(P + '/work/gadgets_layout_%s.png' % ('yoko', 'tate')[sc.idx])
+        im.convert('RGB').save(P + '/work/gadgets_layout_%s.png' % ('yoko', 'tate', 'yoko_original')[sc.idx])
     print('gadgets_art.h: %d rects, %d sprites (%d bytes raw), %d bytes deflated' % (len(RECTS), len(names),
                                                                                     len(blob), total))
 

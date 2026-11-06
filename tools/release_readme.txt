@@ -39,8 +39,9 @@ QUICK CONTROLS (the manual has the rest)
 
 MAME (PC)
 ---------
-The mame folder plays both games in MAME on a PC with the same GADGETS: CHASE! (its patched program ROMs are in
-mame\roms) and the original game. See mame\README_MAME.txt.
+The mame folder plays both games in MAME on a PC with the same GADGETS: CHASE! and the original game. No ROM data
+is included: CHASE! comes as xdelta patches (mame\chase_xdelta) that build its program ROMs from your own
+batrider.zip. See mame\README_MAME.txt.
 
 
 CREDITS
@@ -51,5 +52,4 @@ bar Miquel), ported to the 360 with new CHASE! panels.
 Built with xsdk; the board uses Musashi (68000), superzazu's z80, ymfm (YM2151) and zlib — their licences are in
 the licences folder.
 
-This is a fan project for private use. The only ROM data in it is the patched CHASE! program in mame\roms;
-keep this release private.
+This is a fan project. No ROM data is included: you need your own MAME batrider.zip.

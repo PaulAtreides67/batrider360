@@ -72,7 +72,8 @@ typedef struct {
 /* ---- GADGETS (core/gadgets.c) ----
  * BR_GADGETS=<file>: the gadget values, one line every BR_GADGETS_EVERY frames (default 60).
  * BR_GADGETS_PNG=<frame>[,<frame>...]: the 360's canvases with the game pasted in at those frames,
- *   <outdir>/gy<frame>.ppm (YOKO 1280x720) and gt<frame>.ppm (TATE 720x1280). */
+ *   <outdir>/gy<frame>.ppm (YOKO 1280x720), go<frame>.ppm (YOKO, the ORIGINAL program's layout) and gt<frame>.ppm
+ *   (TATE 720x1280). */
 #include "gadgets.h"
 
 static void gad_ppm(const char *path, const uint32_t *c, int w, int h)
@@ -104,6 +105,8 @@ static void gad_frame(long fr, const char *od, const uint32_t *pic)
 	static FILE *lf;
 	static int every = 60, init;
 	const char *e = getenv("BR_MODE");
+	/* test 21: BR_GADMASK=<hex> = the GAD_P_ panels drawn (default all; the previews of a panel off) */
+	const unsigned gmask = getenv("BR_GADMASK") ? (unsigned)strtoul(getenv("BR_GADMASK"), NULL, 16) : GAD_P_ALL;
 	gadgets_update(&g, br_ram(), e && !strcmp(e, "chase"));
 	{
 		char title[24];
@@ -162,12 +165,16 @@ static void gad_frame(long fr, const char *od, const uint32_t *pic)
 			char p[1024];
 			uint64_t t0 = now_ns();
 			for (int k = 0; k < 10; k++)
-				gadgets_draw(cy, GAD_YOKO, g.chase, &g, br_text_glyphs());
+				gadgets_draw(cy, GAD_YOKO, g.chase, &g, br_text_glyphs(), gmask);
 			printf("gadgets_draw YOKO %.0f us\n", (now_ns() - t0) / 1e4);
 			gad_paste(cy, GAD_YOKO_W, pic, GAD_YOKO_GX, GAD_YOKO_GY, GAD_YOKO_GW, GAD_YOKO_GH);
 			snprintf(p, sizeof p, "%s/gy%05ld.ppm", od, fr);
 			gad_ppm(p, cy, GAD_YOKO_W, GAD_YOKO_H);
-			gadgets_draw(ct, GAD_TATE, g.chase, &g, br_text_glyphs());
+			gadgets_draw(cy, GAD_YOKO_ORIG, 0, &g, br_text_glyphs(), gmask);   /* v0.20: the ORIGINAL program's layout */
+			gad_paste(cy, GAD_YOKO_W, pic, GAD_YOKO_GX, GAD_YOKO_GY, GAD_YOKO_GW, GAD_YOKO_GH);
+			snprintf(p, sizeof p, "%s/go%05ld.ppm", od, fr);
+			gad_ppm(p, cy, GAD_YOKO_W, GAD_YOKO_H);
+			gadgets_draw(ct, GAD_TATE, g.chase, &g, br_text_glyphs(), gmask);
 			gad_paste(ct, GAD_TATE_W, pic, GAD_TATE_GX, GAD_TATE_GY, GAD_TATE_GW, GAD_TATE_GH);
 			snprintf(p, sizeof p, "%s/gt%05ld.ppm", od, fr);
 			gad_ppm(p, ct, GAD_TATE_W, GAD_TATE_H);
@@ -532,6 +539,8 @@ static int fe_run(BrRoms *r, const char *od, long nframes, const char *script)
 				dump = 1;
 			else if (!strcmp(cmd[i].op, "poke"))
 				br_wr8(cmd[i].a, (uint8_t)cmd[i].b);
+			else if (!strcmp(cmd[i].op, "dips"))   /* test 21: the script's dips op (<dsw hex16> <dswc hex8>, as the other loop's) */
+				br_set_dips((uint16_t)cmd[i].a, (uint8_t)cmd[i].b);
 			else if (!strcmp(cmd[i].op, "regs"))
 				printf("%6ld PC %06X SR %04X SP %06X A5 %06X\n", fe_fr, br_reg(M68K_REG_PC), br_reg(M68K_REG_SR),
 					br_reg(M68K_REG_SP), br_reg(M68K_REG_A5));

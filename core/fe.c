@@ -13,6 +13,7 @@
 #include "stio.h"
 
 #include "chasehud.h"
+#include "gadgets.h"
 #include "menusnd.h"
 #include "menudraw.h"
 
@@ -31,6 +32,10 @@ enum {
 	/* test 15 (work/t15/r1/REPORT.md): SELECT TYPE's choice x 2, the guests' formation, the options' level, P1's HUD
 	 * repaint bits (0x40 gauge, 0x80 bombs) */
 	TYPE_MODE = 0x20E488, PL_FORM = 0x22, PL_OPTLV = 0x104, PL_REPAINT = 1,
+	/* test 21 (user): the attract's idle factor: 0xC0 at power on, +2 per attract step to 0x100 (0x1A9E, 0x1BC0), less
+	 * after stages (0x1BEA); the run's start rank = 0xC7E[0x20F9FA] x it x 0xC86[course] (0xB5A): 0x100 = 14.9020%
+	 * ADVANCE, 2.7451% TRAINING / NORMAL, 20.9804% SPECIAL (user's values). h_credit sets 0x100 for ORIGINAL */
+	IDLE_RANK = 0x20F9CE,
 	RANK_NOW = 0x20F9D0, RANK_CAP = 0x20F9D8, STAGE_NO = 0x20E6A9, CS_STATE = 0x201000, CS_BANK = 0x201026,
 	SOUND_ON = 0x20FA07, DEMO_SOUND = 0x20F9F7, SE_WAIT = 0x20E589,
 	MEDAL = 0x20E459,                   /* test 19: the next medal's step x 2 (gadgets.c's; 0 = 100 .. 0x24 = 10000) */
@@ -41,12 +46,13 @@ enum {
 	ILLEGAL = 0x4AFC,
 };
 
-/* DIPs (spec 0.4): DSWC 0xE0 = Special Course, Player Select, Guest Players ON (batriderj reads 0 = On... MAME's
- * PORT_MODIFY for batriderj: 1 = On); Stage Edit, Continue Play, Invulnerability, Flip OFF, as the N64 forces them
- * (user 2026-11-01: the N64's DIP handling, not test 2's 0xE4). */
+/* DIPs (spec 0.4): DSWC 0xE4 = Special Course, Player Select, Guest Players ON (batriderj reads 0 = On... MAME's
+ * PORT_MODIFY for batriderj: 1 = On), Stage Edit ON (bit 0x04); Continue Play, Invulnerability, Flip OFF, as the N64
+ * forces them. test 21 (user 2026-11-06: "restore stage edit after course selection"): 0xE0 -> 0xE4; test 4 had turned
+ * Stage Edit off. */
 /* ORIGINAL's low byte: free play 0x1C + SW1:6-8 = Hit Score, Sound Effect, Music on (the N64's 0xDC leaves Hit
  * Score off: no points for shot hits; test 7) */
-enum { DSWC = 0xE0, DSW_CHASE = 0xC6FC, DSW_ORIGINAL_LOW = 0xFC };
+enum { DSWC = 0xE4, DSW_CHASE = 0xC6FC, DSW_ORIGINAL_LOW = 0xFC };
 
 /* timings (frames) */
 enum {
@@ -70,7 +76,8 @@ enum { OV_SET = 0x80000000u, OV_OPAQUE = 0x40000000u };
 
 static FePlatform plat;
 static uint8_t *prog[2];
-static uint32_t tramp_of[16];
+enum { TRAMP_MAX_HOOKS = 32 };          /* test 21: one per hook (21 now; was 12 with 16 slots) */
+static uint32_t tramp_of[TRAMP_MAX_HOOKS];
 
 #define LOG(...) do { if (plat.log) plat.log(__VA_ARGS__); } while (0)
 
@@ -84,7 +91,10 @@ enum { BRIGHT_MIN = 50, BRIGHT_MAX = 150, STRENGTH_MIN = 5, STRENGTH_MAX = 100 }
 typedef struct {
 	int hitbox, music, effects, language, screen, gadgets, mode, bright, smooth, scan;
 	int strength, attract, mute, picture, aspect;
+	int demo;                  /* test 21 (user): ATTRACT DEMO on (1) / off (0); read at power on (fe_init) only */
 	int pic_size[FE_SHAPES], pic_sx[FE_SHAPES], pic_sy[FE_SHAPES], pic_x[FE_SHAPES], pic_y[FE_SHAPES];
+	int special;               /* test 21 (user): PLAY's MODE ADVANCE SPECIAL (host.mode is ORIGINAL then) */
+	int gad_mask;              /* test 21 (user): GADGETS per panel (GAD_P_ bits; GAD_P_ALL = all) */
 } Host;
 /* test 14: cmd[] (test 8's button map until test 9's CONTROLS; the same place, so the replays' layout stays) = SECRET
  * COMMANDS: cmd[0] SHOT RATE (0 the game's, 1..8 = its autofire value 0..7), cmd[1] SCORE BREAKDOWN, cmd[2] CMD_SET |
@@ -93,9 +103,11 @@ typedef struct {
 typedef struct { int continues, cmd[3], music_test, sound_test, gs[4]; } Options;
 enum { CMD_SET = 0x1000 };   /* (above the colours' 9 bits) */
 static const Host host_default = { 1, 100, 100, 0, FE_YOKO, 1, FE_CHASE, 100, 0, 0, 35, 100, 0, FE_PIC_FULL,
-	FE_ASPECT_AUTO, { 1000, 1000, 1000, 1000 }, { 1000, 1000, 1000, 1000 }, { 1000, 1000, 1000, 1000 }, { 0 }, { 0 } };
+	FE_ASPECT_AUTO, 1, { 1000, 1000, 1000, 1000 }, { 1000, 1000, 1000, 1000 }, { 1000, 1000, 1000, 1000 }, { 0 }, { 0 },
+	0, GAD_P_ALL };
 static const Options opt_default = { 3, { 0, 0, CMD_SET }, 0x01, 0x20, { 0, 0, 0, 0 } };
 static Host host;
+static int demo_on = 1;                 /* test 21: the ATTRACT DEMO this power on (fe_init); off = the title never times out */
 /* test 14: HITBOX (DEBUG MENU and TRAINING): test 13's ON = PLAYER, ALL adds the enemies' and their bullets' */
 enum { HITBOX_OFF, HITBOX_PLAYER, HITBOX_ALL, HITBOX_MODES };
 static const char *const hitbox_names[HITBOX_MODES] = { "OFF", "PLAYER", "ALL" };
@@ -103,8 +115,9 @@ static Options opt;
 
 /* Test 9: CONTROLS (ibara360's page): each pad button OFF, SHOT, BOMB, SPECIAL or AUTO SHOT (the shot down and up at
  * AUTOFIRE's rate while held); defaults A SHOT, B BOMB, X SPECIAL, RT AUTO SHOT (user 2026-11-01) */
-enum { ACT_OFF, ACT_SHOT, ACT_BOMB, ACT_SPECIAL, ACT_AUTO, ACTS };
-static const char *const act_names[ACTS] = { "OFF", "SHOT", "BOMB", "SPECIAL", "AUTO SHOT" };
+/* test 21 (user): ACT_MSTART = A+START, the game's START held with its SHOT (the secret commands in play) */
+enum { ACT_OFF, ACT_SHOT, ACT_BOMB, ACT_SPECIAL, ACT_AUTO, ACT_MSTART, ACTS };
+static const char *const act_names[ACTS] = { "OFF", "SHOT", "BOMB", "SPECIAL", "AUTO SHOT", "A+START" };
 static const char *const key_names[FE_KEYS] = { "A", "B", "X", "Y", "LB", "RB", "LT", "RT" };
 static const char *const key_words[FE_KEYS] = { "pad_a", "pad_b", "pad_x", "pad_y", "pad_lb", "pad_rb", "pad_lt",
 	"pad_rt" };
@@ -118,7 +131,7 @@ static int af_t;                        /* display frames AUTO SHOT has been hel
 
 uint16_t fe_controls(unsigned down)
 {
-	static const uint16_t bit[ACTS] = { 0, FE_SHOT, FE_BOMB, FE_SPECIAL, 0 };
+	static const uint16_t bit[ACTS] = { 0, FE_SHOT, FE_BOMB, FE_SPECIAL, 0, FE_SHOT | FE_MSTART };
 	uint16_t o = 0;
 	int autoshot = 0;
 	for (int k = 0; k < FE_KEYS; k++)
@@ -139,7 +152,7 @@ uint16_t fe_controls(unsigned down)
 }
 
 /* ---- state (spec 0.5's fe struct, the 360's names) ---- */
-/* test 9: PG_PLAY (PLAY: START RUN, MODE, CONTINUES, DIP SWITCHES) where test 8 had the N64 OPTIONS page; the
+/* test 9: PG_PLAY (PLAY: START RUN, MODE, DIP SWITCHES; test 21 took CONTINUES off) where test 8 had the N64 OPTIONS page; the
  * values keep their numbers (a state holds page) */
 enum { PG_TITLE, PG_PRACTICE, PG_PLAY, PG_END, PG_SETTINGS_UNUSED };
 /* the title's menu rows (test 9: ibara360's MENU; test 14: EXIT at the bottom, user: instead of BACK + START held)
@@ -192,6 +205,13 @@ static int title_t = -1, title_keep, title_quiet;   /* frames into the title sce
 static uint32_t title_gen;
 static Vdp title_vdp;
 static int practice, replay, restart_req, restore_team, team_captured;
+static int course_auto, course_wait;   /* test 22 (user): an ADVANCE SPECIAL credit's SELECT COURSE takes ADVANCE (h_course_pick) */
+static int quit_req;                    /* test 22 (user): the pause's QUIT TO TITLE asked (h_after_game skips the results) */
+/* test 21 (user): this credit is ADVANCE SPECIAL (the ORIGINAL program, its course set, every secret boss's condition met);
+ * set at the credit's start (h_credit), kept in the states (fe_state_io's kept_bits bit 3); secret_seen = the bosses
+ * whose success was logged this credit */
+static int run_special;
+static uint32_t secret_seen;
 static int veil;                        /* black: -1 until a RETRY / RESTART's team is back, then frames left */
 static uint16_t team[4];
 static int opt_dirty, music_played;
@@ -202,8 +222,8 @@ static int db_lives, db_bombs, db_inv;
 static uint8_t snap[RANK_BYTES];
 /* Test 13 (user: "apply the same rules as ibara when it comes to score validity", ibara360 test 117's): red = this
  * credit's score is invalid (a continue, GAME SETTINGS off their defaults in ORIGINAL, TRAINING, INVULNERABLE, RESTART
- * STAGE past stage 1, LOAD STATE): GADGETS' TOTAL red and SAVE REPLAY? still asked, its score red with "*"; the
- * game's own ranking rules stand (not_kept is INVULNERABLE's alone now). rp_drop = this credit gets no replay
+ * STAGE past stage 1, LOAD STATE; test 21: SAVE STATE too): GADGETS' TOTAL red and SAVE REPLAY? still asked, its score
+ * red with "*"; the game's own ranking rules stand, except credit_invalid (test 21) also sets not_kept (no name entry). rp_drop = this credit gets no replay
  * (TRAINING, INVULNERABLE, RESTART STAGE past stage 1, LOAD STATE, QUIT, FULL RESTART's old run), rp_why the first
  * reason. Both ride in not_kept's bits 1-2 in the states (the layout unchanged). credit_gen counts credits (a FULL
  * RESTART's too) for main.c's new replay; not in the states. */
@@ -229,10 +249,10 @@ static int host_dirty;
  * game. Not in save states or replays. */
 enum {
 	OV_NONE, OV_OPTIONS, OV_SCREEN, OV_CONTROLS, OV_SOUND, OV_DEBUG, OV_DIPS, OV_STATES, OV_REPLAYS, OV_MANUAL,
-	OV_PROMPT, OV_COMMANDS, OV_PLAYER,
+	OV_PROMPT, OV_COMMANDS, OV_PLAYER, OV_GADGETS,
 };
 static int ovl, ovl_stack[8], ovl_depth;
-static int ov_cur[OV_PLAYER + 1];                   /* each page's row */
+static int ov_cur[OV_GADGETS + 1];                  /* each page's row */
 static int ov_armed;                                /* the row asked once (A = YES, B = NO), -1 none */
 static char ov_msg[FE_HM_CHARS];                    /* a result in the help's place until the cursor moves */
 static int st_save, st_mode;                        /* SAVE / LOAD STATE: which, the MODE shown */
@@ -252,6 +272,7 @@ static int rep_t[4];                    /* auto-repeat counters, up down left ri
 enum { REP_DELAY = 24, REP_EVERY = 9 };
 static int rep_due(int t) { return t >= REP_DELAY && (t - REP_DELAY) % REP_EVERY == 0; }
 static int rep_fired;                   /* test 11: a held direction repeated this frame (menu_se) */
+static int se_lr;                       /* test 21: a LEFT / RIGHT press or repeat this frame (menu_se's MS_TOGGLE) */
 static uint32_t frame_no;
 static FeOut *cur_out;
 
@@ -270,9 +291,12 @@ static void push_return(uint32_t ret)
 	wr32(sp, ret);
 }
 
+/* test 21: the SERVICE MENU (the arcade's test mode, service_enter) runs: the board is the game's test menu, not a credit */
+static int service_on;
+
 static int in_credit(void)
 {
-	return !booting && resetting < 0 && !(br_rd8(ATTRACT) & 0x80);
+	return !service_on && !booting && resetting < 0 && !(br_rd8(ATTRACT) & 0x80);
 }
 
 static int stage_running(void)
@@ -306,6 +330,17 @@ static void replay_drop(const char *why)
 	rp_drop = 1;
 }
 
+/* test 21 (user 2026-11-06): a continue, SAVE STATE, LOAD STATE, RESTART STAGE past stage 1 and TRAINING make the
+ * credit's score invalid AND give no name entry (not_kept: the rankings put back, h_name_entry) AND no replay */
+static void credit_invalid(const char *why)
+{
+	score_red(why);
+	replay_drop(why);
+	if (!not_kept)
+		LOG("fe: no name entry (%s)", why);
+	not_kept = 1;
+}
+
 /* a credit (or a FULL RESTART's new run) begins: what it starts with */
 static int gs_any(void);
 static void credit_flags(void)
@@ -318,6 +353,8 @@ static void credit_flags(void)
 		not_kept = 1;
 		LOG("fe: %s ON (score not kept)", cheat);
 	}
+	if (practice)
+		credit_invalid("TRAINING");     /* test 21: no name entry for a practice credit either */
 	credit_gen++;
 }
 
@@ -366,11 +403,13 @@ static void snd_pump(void)
 /* ---- files ---- */
 static void save_host(void)
 {
-	char b[640];
+	char b[768];
 	int n = snprintf(b, sizeof b, "hitbox=%d|vol_music=%d|vol_sfx=%d|attract=%d|mute=%d|language=%d|screen=%d|"
-		"gadgets=%d|mode=%d|brightness=%d|smooth=%d|scanlines=%d|strength=%d|picture=%d|aspect=%d|", host.hitbox,
+		"gadgets=%d|mode=%d|brightness=%d|smooth=%d|scanlines=%d|strength=%d|picture=%d|aspect=%d|demo=%d|"
+		"special=%d|gadmask=%d|", host.hitbox,
 		host.music, host.effects, host.attract, host.mute, host.language, host.screen, host.gadgets, host.mode,
-		host.bright, host.smooth, host.scan, host.strength, host.picture, host.aspect);
+		host.bright, host.smooth, host.scan, host.strength, host.picture, host.aspect, host.demo, host.special,
+		host.gad_mask);
 	for (int k = 0; k < FE_SHAPES; k++)
 		n += snprintf(b + n, sizeof b - n, "size%d=%d|xsize%d=%d|ysize%d=%d|xpos%d=%d|ypos%d=%d|", k, host.pic_size[k],
 			k, host.pic_sx[k], k, host.pic_sy[k], k, host.pic_x[k], k, host.pic_y[k]);
@@ -420,7 +459,7 @@ static int field(const char *s, const char *key, int def, int lo, int hi)
 
 static void load_settings(void)
 {
-	char b[640];
+	char b[768];
 	host = host_default;
 	opt = opt_default;
 	ctl = ctl_default;
@@ -457,6 +496,12 @@ static void load_settings(void)
 		host.screen = field(b, "screen", FE_YOKO, 0, 2);
 		host.gadgets = field(b, "gadgets", 1, 0, 1);
 		host.mode = field(b, "mode", FE_CHASE, 0, 1);
+		host.demo = field(b, "demo", 1, 0, 1);
+		/* test 21: a file without these keys (test 20's) has ADVANCE SPECIAL off and every panel on */
+		host.special = field(b, "special", 0, 0, 1);
+		if (host.special)
+			host.mode = FE_ORIGINAL;
+		host.gad_mask = field(b, "gadmask", GAD_P_ALL, 0, GAD_P_ALL);
 	}
 	n = plat.load ? plat.load("options.txt", b, sizeof b - 1) : -1;
 	if (n > 0) {
@@ -586,7 +631,8 @@ static int hexbytes(const char *s, uint8_t *out)
 }
 
 static uint32_t h_splash(void), h_title(void), h_credit(void), h_course(void), h_after_game(void),
-	h_setup(void), h_name_entry(void), h_hit(void), h_text_dma(void), h_type(void), h_opts(void), h_power(void);
+	h_setup(void), h_name_entry(void), h_hit(void), h_text_dma(void), h_type(void), h_opts(void), h_power(void),
+	h_secret(void), h_course_pick(void);
 
 /* Hook sites: the displaced instruction (checked), the trampoline's copy of it (PC-relative ones made absolute),
  * where the trampoline jumps back to, and the C side. A handler returns the PC to go on at, 0 = the trampoline. */
@@ -601,6 +647,8 @@ static const Hook hooks[] = {
 	{ 0x001AEA, "4EB9000127F4", "4EB9000127F4", 0x001AF0, h_title },       /* jsr 0x127F4 (the title) */
 	{ 0x001AF0, "1039002034C2", "1039002034C2", 0x001AF6, h_credit },      /* move.b 0x2034C2,d0 (credit?) */
 	{ 0x001B00, "4EB9000134DC", "4EB9000134DC", 0x001B06, h_course },      /* jsr 0x134DC SELECT COURSE */
+	/* test 22 (user): SELECT COURSE's wait loop (tst.b 0x20E6BA; bmi 0x1356C): ADVANCE SPECIAL's menu takes ADVANCE here */
+	{ 0x013574, "4A390020E6BA", "4A390020E6BA", 0x01357A, h_course_pick },
 	{ 0x001B18, "4EBA0016", "4EB900001B30", 0x001B1C, h_after_game },      /* jsr (pc,0x1B30) */
 	{ 0x010A1C, "201D", "201D", 0x010A1E, h_setup },                       /* move.l (a5)+,d0 (player setup) */
 	{ 0x013F4E, "303900204062", "303900204062", 0x013F54, h_name_entry },  /* move.w 0x204062,d0 */
@@ -609,8 +657,21 @@ static const Hook hooks[] = {
 	{ 0x0132F4, "4A390020FA22", "4A390020FA22", 0x0132FA, h_type },        /* tst.b 0x20FA22 (SELECT TYPE) */
 	{ 0x000D48, "1D7C00020104", "1D7C00020104", 0x000D4E, h_opts },        /* move.b #2,(0x104,a6) (TRAINING) */
 	{ 0x000D42, "1D7C00030110", "1D7C00030110", 0x000D48, h_power },       /* move.b #3,(0x110,a6) (TRAINING) */
+	/* test 21 (user): ADVANCE SPECIAL's secret bosses. Each site is move.b #origin,0x20E6E8.l (origin 1 = G.SQUID and the
+	 * B.HEART pair, 2 = the rest) before its $F200 check (a flying rider of that origin); h_secret's success PC is the
+	 * game's own success path (its addq.w #4,a5), so the check and the boss's counter are skipped */
+	{ 0x06A9CE, "13FC00010020E6E8", "13FC00010020E6E8", 0x06A9D6, h_secret },   /* G.SQUID */
+	{ 0x049446, "13FC00020020E6E8", "13FC00020020E6E8", 0x04944E, h_secret },   /* BASHI-R */
+	{ 0x050DB4, "13FC00020020E6E8", "13FC00020020E6E8", 0x050DBC, h_secret },   /* BASHI mk2 */
+	{ 0x04BC02, "13FC00020020E6E8", "13FC00020020E6E8", 0x04BC0A, h_secret },   /* GOB-ROBO */
+	{ 0x04DACA, "13FC00020020E6E8", "13FC00020020E6E8", 0x04DAD2, h_secret },   /* BASHINET */
+	{ 0x067A34, "13FC00010020E6E8", "13FC00010020E6E8", 0x067A3C, h_secret },   /* B.HEART */
+	{ 0x06919C, "13FC00010020E6E8", "13FC00010020E6E8", 0x0691A4, h_secret },   /* B.HEART mk2 */
+	{ 0x06D54C, "13FC00020020E6E8", "13FC00020020E6E8", 0x06D554, h_secret },   /* TSUMUJI */
+	{ 0x06E5FE, "13FC00020020E6E8", "13FC00020020E6E8", 0x06E606, h_secret },   /* HAYATEMARU */
 };
 enum { NHOOKS = sizeof hooks / sizeof hooks[0] };
+_Static_assert((int)NHOOKS <= (int)TRAMP_MAX_HOOKS, "tramp_of holds every hook");
 
 static int fe_hook(int opcode)
 {
@@ -653,6 +714,10 @@ static int install_hooks(uint8_t *p, const char *name)
 		const int n = hexbytes(hooks[i].old, old), m = hexbytes(hooks[i].tramp, tr);
 		if (memcmp(p + hooks[i].site, old, n)) {
 			LOG("fe: %s: hook site %06X holds other bytes", name, (unsigned)hooks[i].site);
+			return -1;
+		}
+		if (t + m + 6 > TRAMP_END) {        /* test 21: the trampolines of every hook must fit */
+			LOG("fe: %s: the trampoline area %06X is too small for the hooks", name, TRAMP);
 			return -1;
 		}
 		tramp_of[i] = t;
@@ -698,10 +763,27 @@ static void apply_volumes(void)
 	br_set_volumes(m, e, m);
 }
 
+/* test 21: SW1:1 (bit 0) = the service mode (ref/mame's PORT_SERVICE_DIPLOC): the board boots into the test menu */
 static uint16_t dsw_for(int m)
 {
-	return m == FE_CHASE ? DSW_CHASE :
+	const uint16_t d = m == FE_CHASE ? DSW_CHASE :
 		(uint16_t)(opt.gs[0] << 8 | opt.gs[1] << 10 | opt.gs[2] << 12 | opt.gs[3] << 14 | DSW_ORIGINAL_LOW);
+	return service_on ? (uint16_t)(d | 1) : d;
+}
+
+/* test 21: the test menu is over when the game reaches the attract's opening or its title (the hooks 0x1AD8 / 0x1AEA):
+ * back to the front end, the service bit off at once, the rankings put back from the files at the title (as a MODE
+ * change does, switch_program) */
+static void service_exit(void)
+{
+	if (!service_on)
+		return;
+	service_on = 0;
+	br_set_dips(dsw_for(prog_now), DSWC);
+	rk_load_due = 1;
+	rk_def_ok = 0;
+	snap_taken = not_kept = 0;
+	LOG("fe: SERVICE MENU over: the game is back (board frame %u)", (unsigned)br_frame_count());
 }
 
 /* The other program: reset, into the attract's title at RESET_GOTO (test 2's way); the new MODE's rankings are put
@@ -731,9 +813,12 @@ static void switch_program(int m)
  * (84-105, ROM 0x9C666) into the game's unfaded palette copy (0x20E9C8, which the title's fades work from): the
  * arcade logo, drawn since test 10, came out black. They go in here when they are not there (harness work/t10 pc/pf:
  * the copy then equals the splash path's for those palettes). */
-enum { PAL_COPY = 0x20E9C8, LOGO_PAL = 84, LOGO_PALS = 22, LOGO_PAL_ROM = 0x9C666 };
+/* test 21 (user: "discoloration when the intro animation plays out", D:/obs/2026-11-06 14-13-09.mp4): after a START in
+ * the demo the title's background (palettes 64-83, ROM 0x9C3E6, just before the logo's) wiped in with the demo's
+ * colours (harness work/t21/a: VRAM equal to the boot path's, the copy's palettes 64-83 not): 64-105 go in together */
+enum { PAL_COPY = 0x20E9C8, LOGO_PAL = 64, LOGO_PALS = 42, LOGO_PAL_ROM = 0x9C3E6 };
 /* test 17: the arcade title's copyright text lines (0 = bottom), kept in the title picture */
-enum { TITLE_COPY_LO = 3, TITLE_COPY_HI = 5 };
+enum { TITLE_COPY_LO = 3, TITLE_COPY_HI = 5, TITLE_BVER = 25 };   /* test 21: + line 25, "B VERSION" (batriderj) */
 
 static void logo_palettes(void)
 {
@@ -765,6 +850,7 @@ static void goto_title(void)
  * on the hook (fe_frame holds it) until the splash is over. */
 static uint32_t h_splash(void)
 {
+	service_exit();
 	booting = 0;
 	if (splash == SPL_WAIT) {
 		splash = SPL_ON;
@@ -823,6 +909,7 @@ static void front_end_on(void)
 
 static uint32_t h_title(void)
 {
+	service_exit();
 	booting = 0;
 	if (resetting >= 0) {
 		resetting = -1;
@@ -840,11 +927,17 @@ static uint32_t h_credit(void)
 	active = 0;
 	title_keep = 0;
 	switch_hush = 0;
+	run_special = 0;                /* (a demonstration's or TRAINING's run is never ADVANCE SPECIAL) */
 	if (!(br_rd8(CREDIT_P1) | br_rd8(CREDIT_P2))) {
 		LOG("fe: the title timed out: demonstration");
 		return 0;
 	}
 	practice = phase == 2;
+	run_special = host.special && prog_now == FE_ORIGINAL && !practice;
+	secret_seen = 0;
+	course_auto = 0;                /* test 22 */
+	if (run_special)
+		LOG("fe: ADVANCE SPECIAL credit: course ADVANCE, every secret boss's condition met");
 	phase = pulse = 0;
 	tr_rider = tr_started = tr_bank = tr_cleared = tr_play_t = tr_powered = 0;
 	tr_stage0 = -1;
@@ -867,6 +960,10 @@ static uint32_t h_credit(void)
 		practice ? " PRACTICE" : "", red && !practice ? " (score invalid: " : "",
 		red && !practice ? rp_why[0] ? rp_why : "GAME SETTINGS" : "", red && !practice ? ")" : "", dsw_for(prog_now),
 		(unsigned)br_frame_count());
+	/* test 21 (user): the attract's idle factor, so the run's start rank is the arcade's after a long idle (ORIGINAL only;
+	 * CHASE! has its own rank) */
+	if (prog_now == FE_ORIGINAL)
+		br_wr16(IDLE_RANK, 0x100);
 	/* the 68000 reads the DIPs again (0x15304), then the displaced instruction */
 	push_return(tramp_of[2]);
 	return 0x15304;
@@ -875,6 +972,14 @@ static uint32_t h_credit(void)
 /* 0x1B00, before SELECT COURSE: a practice's course (spec 1.4 step 2). */
 static uint32_t h_course(void)
 {
+	/* test 22 (user): ADVANCE SPECIAL runs SELECT COURSE as a normal credit does (its routines, RAM and tune 02 "Choice or
+	 * Die", then the stage edit): h_course_pick takes ADVANCE (4) where the player's pick would go. Test 21 skipped it
+	 * (COURSE 4 written, no tune, the stage edit skipped). */
+	if (run_special && !practice) {
+		course_auto = 1;
+		course_wait = 0;
+		return 0;
+	}
 	if (!practice)
 		return 0;
 	br_wr8(COURSE, (uint8_t)((prac_target + 4) * 2));
@@ -890,15 +995,60 @@ static uint32_t h_course(void)
 	return 0x1B0C;
 }
 
+/* test 22 (user): 0x13574, SELECT COURSE's wait loop (one pass a frame). An ADVANCE SPECIAL credit's menu takes ADVANCE
+ * (COURSE_PICK = 4, the menu's value for ADVANCE in the picture) COURSE_WAIT_PASSES frames after it opens (the menu's
+ * own tune 02 starts about 17 frames in: test 22's trace), with the wait over (COURSE_WAIT 0 = done), so the routine's
+ * own tail copies it to COURSE, counts it and returns, then the stage edit and SELECT TYPE run as after a player's A. */
+enum { COURSE_PICK = 0x20FD4E, COURSE_WAIT = 0x20E6BA, COURSE_ADVANCE = 4, COURSE_WAIT_PASSES = 40 };
+static uint32_t h_course_pick(void)
+{
+	if (course_auto && ++course_wait >= COURSE_WAIT_PASSES) {
+		course_auto = 0;
+		br_wr8(COURSE_PICK, COURSE_ADVANCE);
+		br_wr8(COURSE_WAIT, 0);
+		LOG("fe: ADVANCE SPECIAL: SELECT COURSE takes ADVANCE (board frame %u)", (unsigned)br_frame_count());
+	}
+	return 0;
+}
+
+/* test 21 (user): ADVANCE SPECIAL's secret bosses. 0x06A9CE and the eight others: the boss's check is move.b #origin,
+ * 0x20E6E8 then $F200 (a flying rider of that origin); in an ADVANCE SPECIAL credit the success path (the site's ok PC,
+ * the game's own addq.w #4,a5) runs for every team, else the trampoline runs the displaced move.b. */
+static const struct { uint32_t site, ok; } secret_sites[] = {
+	{ 0x06A9CE, 0x06A9E8 }, { 0x049446, 0x049460 }, { 0x050DB4, 0x050DCE }, { 0x04BC02, 0x04BC1C }, { 0x04DACA, 0x04DAE2 },
+	{ 0x067A34, 0x067A4E }, { 0x06919C, 0x0691B0 }, { 0x06D54C, 0x06D560 }, { 0x06E5FE, 0x06E612 },
+};
+static uint32_t h_secret(void)
+{
+	if (!run_special)
+		return 0;
+	const uint32_t ppc = br_reg(M68K_REG_PPC) & 0xFFFFFF;
+	for (unsigned i = 0; i < sizeof secret_sites / sizeof secret_sites[0]; i++)
+		if (secret_sites[i].site == ppc) {
+			if (!(secret_seen >> i & 1)) {
+				secret_seen |= 1u << i;
+				LOG("fe: ADVANCE SPECIAL: secret boss check at %06X met (board frame %u)", (unsigned)ppc,
+					(unsigned)br_frame_count());
+			}
+			return secret_sites[i].ok;
+		}
+	return 0;
+}
+
 /* 0x1B18, the game returned: RESTART, a practice's end page, or the name entry (spec 1.6, 2.4). */
 static uint32_t h_after_game(void)
 {
+	const int quit = quit_req;      /* test 22: read and cleared here, whatever the path */
+	quit_req = 0;
 	if (restart_req) {
 		restart_req = 0;
 		restore_team = team_captured;
 		if (!restore_team)
 			veil = 0;
 		LOG("fe: RESTART (team %s)", restore_team ? "restored" : "chosen again");
+		/* test 21: a FULL RESTART is a fresh run from stage 1 (ibara360's): the old run's continue / state / restart
+		 * no longer counts, so the name entry is back too (credit_flags sets it again for TRAINING and the cheats) */
+		not_kept = 0;
 		credit_flags();                 /* test 13: a new run, a new replay (ibara360's FULL RESTART) */
 		return 0x1B12;
 	}
@@ -912,6 +1062,14 @@ static uint32_t h_after_game(void)
 		LOG("fe: practice over: %s", tr_quit_title ? "the title's menu" : "the TRAINING page");
 		tr_quit_title = 0;
 		return 0x1AEA;
+	}
+	/* test 22 (user): QUIT TO TITLE shows no score results. 0x1B30 (the name entry's set-up) and 0x13F2C (the ranking
+	 * tables, then the name entry) are skipped; the rankings go back as the not-kept credit's, and 0x1BEA (the rank step
+	 * at a game's end) and the title (0x1B26) run as before */
+	if (quit) {
+		rk_restore_snapshot();
+		LOG("fe: QUIT TO TITLE: no results (board frame %u)", (unsigned)br_frame_count());
+		return 0x1B22;
 	}
 	return 0;
 }
@@ -1044,6 +1202,7 @@ int fe_init(const FePlatform *p, uint8_t *progs[2])
 	if (chasehud_patch(prog[FE_CHASE]))
 		LOG("fe: CHASE!'s vblank site for the HUD holds other bytes: no CHASE! HUD extras");
 	load_settings();
+	demo_on = host.demo;                /* test 21: the setting as the power on read it */
 	rk_load_files();
 	apply_language();
 	apply_volumes();
@@ -1090,6 +1249,17 @@ static const char *prac_name(int i)
 }
 
 static const char *mode_word(int m) { return m == FE_CHASE ? "CHASE!" : "ORIGINAL"; }
+
+/* test 21 (user): PLAY's MODE = CHASE! / ORIGINAL / ADVANCE SPECIAL (the ORIGINAL program, the course set, every secret
+ * boss's condition met). host.mode stays the program; host.special says the third. TRAINING's MODE is CHASE! / ORIGINAL. */
+enum { MODE_CHASE, MODE_ORIGINAL, MODE_SPECIAL, MODE_N };
+static int mode3(void) { return host.special ? MODE_SPECIAL : host.mode; }
+static void set_mode3(int m)
+{
+	host.mode = m == MODE_CHASE ? FE_CHASE : FE_ORIGINAL;
+	host.special = m == MODE_SPECIAL;
+}
+static const char *mode3_word(void) { return host.special ? "ADVANCE SPECIAL" : mode_word(host.mode); }
 
 /* test 9: a menu's title names the game first, as ibara360's do ("IBARA  OPTIONS", two spaces) */
 static const char *game_word(int m) { return m == FE_CHASE ? "BATRIDER CHASE!" : "BATRIDER"; }
@@ -1229,6 +1399,8 @@ static uint16_t ov_dirs(const FePad *pad)
 			r |= bit, rep_fired = 1;
 		ov_rep[i]++;
 	}
+	if (r & (FE_LEFT | FE_RIGHT))
+		se_lr = 1;
 	return r;
 }
 
@@ -1270,7 +1442,27 @@ static int open_manual(void)
 	return 1;
 }
 
-/* ---- the title's menu (test 9: ibara360's MENU rows) ---- */
+/* test 21 (user: "service menu ... enters the arcade's own test mode"): the DEBUG MENU's SERVICE MENU. The board is reset
+ * with the service bit in its DIPs (dsw_for), so the boot goes into the test menu (GAME MODE, DIP SWITCH SETTING, TEXT /
+ * OBJECT / CHARACTER / MAP / SOUND / ADPCM TEST); service_frame drives it with the pad until service_exit. */
+static void service_enter(void)
+{
+	ovl_close_all();
+	if (plat.quiesce)
+		plat.quiesce();
+	service_on = 1;
+	active = 0;
+	br_hold_main(0);
+	br_set_dips(dsw_for(prog_now), DSWC);
+	br_reset();
+	chasehud_reset();
+	booting = 1;
+	resetting = -1;
+	sq_n = sq_wait = 0;
+	LOG("fe: SERVICE MENU: board reset into the test mode (%s)", mode_word(prog_now));
+}
+
+/* the title's menu (test 9: ibara360's MENU rows) */
 
 static void draw_title_page(void)
 {
@@ -1293,26 +1485,26 @@ static void draw_title_page(void)
 	put(1, 18, "COIN-OP", P_BLUE, 0);
 }
 
-/* ---- PLAY (the title's page): START RUN, MODE, CONTINUES, DIP SWITCHES ---- */
-enum { PL_START, PL_MODE, PL_CONT, PL_DIPS, PL_ROWS };
+/* ---- PLAY (the title's page): START RUN, MODE, DIP SWITCHES ---- */
+/* test 21 (user): CONTINUES is gone from the page (unlimited continues; opt.continues stays in the file, unused) */
+enum { PL_START, PL_MODE, PL_DIPS, PL_ROWS };
 
 static void play_build(void)
 {
-	char v[16];
 	const int dips = host.mode == FE_ORIGINAL, starting = start_due || switch_due || resetting >= 0;
+	if (opt_cur >= PL_ROWS)             /* (a state saved on the old page, with its CONTINUES row) */
+		opt_cur = PL_ROWS - 1;
 	m_begin(184, 13, "%s  PLAY", game_word(host.mode));
 	m_row("START RUN", NULL, opt_cur == PL_START, 0, 0);
-	m_row("MODE", mode_word(host.mode), opt_cur == PL_MODE, 0, 1);
-	snprintf(v, sizeof v, "%d", opt.continues);
-	m_row("CONTINUES", v, opt_cur == PL_CONT, 0, 1);
+	m_row("MODE", mode3_word(), opt_cur == PL_MODE, 0, 1);
 	FeRow *r = m_row("DIP SWITCHES", dips && gs_any() ? "CHANGED" : NULL, opt_cur == PL_DIPS, !dips, 0);
 	if (dips && gs_any() && opt_cur != PL_DIPS)
 		r->value_c = FE_C_RED;
 	static const char *const helps[PL_ROWS] = { "PLAY WITH THE SETTINGS BELOW",
-		"CHASE! OR THE ORIGINAL GAME\nSCORES KEPT FOR EACH MODE", "CONTINUES AFTER A GAME OVER",
-		"DIFFICULTY, TIMER, LIVES,\nBONUS LIFE" };
+		"CHASE!, THE ORIGINAL GAME OR\nADVANCE SPECIAL (SEE BELOW)", "DIFFICULTY, TIMER, LIVES,\nBONUS LIFE" };
 	m_help(FE_C_CYAN, opt_cur == PL_START && starting ? "CHANGING THE MODE..." :
-		opt_cur == PL_DIPS && !dips ? "THE ORIGINAL GAME'S ONLY" : helps[opt_cur]);
+		opt_cur == PL_DIPS && !dips ? "THE ORIGINAL GAME'S ONLY" :
+		opt_cur == PL_MODE && host.special ? "ADVANCE COURSE, EVERY SECRET\nBOSS'S CONDITION MET" : helps[opt_cur]);
 	m_line(FE_C_GREEN, "UP/DOWN ROW, LEFT/RIGHT SET");
 	m_line(FE_C_GREEN, "%s", opt_cur == PL_START ? "A = CONFIRM" : opt_cur == PL_DIPS ? "A = OPEN" : "A = NEXT VALUE");
 	m_line(FE_C_GREEN, "B / BACK = MENU");
@@ -1337,7 +1529,7 @@ static void play_start(void)
 	}
 	phase = 1;
 	start_pulse();
-	LOG("fe: START %s", mode_word(prog_now));
+	LOG("fe: START %s", host.special ? "ADVANCE SPECIAL" : mode_word(prog_now));
 }
 
 static void play_input(int up, int down, int left, int right, uint16_t press)
@@ -1357,18 +1549,12 @@ static void play_input(int up, int down, int left, int right, uint16_t press)
 	switch (opt_cur) {
 	case PL_MODE:
 		if (left || right || a) {
-			/* the board takes the other program at once (switch_due; the title stays, title_keep) */
-			host.mode = !host.mode;
+			/* the board takes the other program at once (switch_due; the title stays, title_keep); ADVANCE SPECIAL is the
+			 * ORIGINAL program, so from ORIGINAL it takes no reset */
+			set_mode3((mode3() + (left ? MODE_N - 1 : 1)) % MODE_N);
 			host_dirty = 1;
 			switch_due = host.mode != prog_now;
-			LOG("fe: MODE %s", mode_word(host.mode));
-		}
-		break;
-	case PL_CONT:
-		if (left || right || a) {
-			static const int nx[8] = { 0, 0, 0, 5, 0, 7, 0, 3 }, pv[8] = { 0, 0, 0, 7, 0, 3, 0, 5 };
-			opt.continues = left ? pv[opt.continues] : nx[opt.continues];
-			opt_dirty = 1;
+			LOG("fe: MODE %s", mode3_word());
 		}
 		break;
 	case PL_DIPS:
@@ -1483,7 +1669,7 @@ static const char *const tr_team_names[TT_N] = { "CHOOSE", "SAME", "SELECT TEAM"
 	"SELECT PLAYER", "CUSTOM" };
 /* FORMATION: DEFAULT (the game's), the five a guest's C and commands give, the five special ones its option items give
  * after the hidden counters (REPORT.md 3); +0x22's values */
-static const char *const tr_form_names[TR_FORMS] = { "DEFAULT", "V", "BACK", "FRONT", "CIRCLE", "CONTROL", "SECRET 1",
+static const char *const tr_form_names[TR_FORMS] = { "DEFAULT", "STANDARD", "BACK", "FRONT", "CIRCLE", "CONTROL", "SECRET 1",
 	"SECRET 2", "SECRET 3", "SECRET 4", "SECRET 5" };
 enum { TR_GUEST_FIRST = 9, TR_GUEST_LAST = 12 };
 
@@ -1867,7 +2053,9 @@ static void tr_step(int row, int d)
 {
 	switch (row) {
 	case TR_MODE:
+		/* (test 21: TRAINING's MODE is CHASE! / ORIGINAL; from ADVANCE SPECIAL it goes to CHASE! and clears it) */
 		host.mode = !host.mode;
+		host.special = 0;
 		host_dirty = 1;
 		switch_due = host.mode != prog_now;
 		tr_clamp();
@@ -1990,7 +2178,10 @@ static void options_build(void)
 	m_help(FE_C_CYAN, help);
 	if (id[*cur] == O_GADGETS && host.gadgets && gadgets_off_why()[0])
 		m_line(FE_C_DIM, "%s", gadgets_off_why());
-	m_line(FE_C_GREEN, "%s", id[*cur] == O_GADGETS || id[*cur] == O_LANG ? "LEFT/RIGHT CHANGE" : "A = CONFIRM");
+	if (id[*cur] == O_GADGETS)
+		m_line(FE_C_GREEN, "A = EDIT");   /* test 21: the GADGETS page; test 22 (user): "A = EDIT" (the long line dropped the page to 1x) */
+	else
+		m_line(FE_C_GREEN, "%s", id[*cur] == O_LANG ? "LEFT/RIGHT CHANGE" : "A = CONFIRM");
 	m_back();
 }
 
@@ -2017,7 +2208,14 @@ static void options_input(const FePad *pad)
 	case O_DEBUG: if (a) { ov_cur[OV_DEBUG] = 0; rk_both = 0; ovl_open(OV_DEBUG); } break;
 	case O_MANUAL: if (a) open_manual(); break;
 	case O_GADGETS:
-		if (any) { host.gadgets = !host.gadgets; host_dirty = 1; }
+		/* test 21 (user): A opens the GADGETS page (every panel); LEFT / RIGHT is the master switch as before */
+		if (a) {
+			ov_cur[OV_GADGETS] = 0;
+			ovl_open(OV_GADGETS);
+		} else if (d & (FE_LEFT | FE_RIGHT)) {
+			host.gadgets = !host.gadgets;
+			host_dirty = 1;
+		}
 		break;
 	case O_LANG:
 		/* not in a credit: the program's text routine changes (a replay holds the LANGUAGE it began with) */
@@ -2291,6 +2489,72 @@ static void screen_input(const FePad *pad)
 	host_dirty = 1;
 }
 
+/* GADGETS (test 21, user: "turn GADGETS off per panel"): OPTIONS' GADGETS row opens this page. Row 0 = the master switch
+ * (host.gadgets, as OPTIONS had it), rows 1..14 = one per GAD_P_ panel in the gadget enum's order (host.gad_mask bit
+ * k - 1), then ALL ON (A). A and LEFT / RIGHT change a row; the panels show nothing while the master is off. */
+enum { GP_MASTER, GP_PANELS, GP_ALL = GP_PANELS + GAD_P_N, GP_ROWS };
+static const char *const gp_names[GAD_P_N] = { "CURRENT PLAYER", "CONTROLLER", "SHOT CHARGE", "STATUS", "WEAPON",
+	"MUSIC", "RANK BAR", "ITEM DROPS", "ITEM COUNT", "MEDAL", "BOSS INFO", "SECRET BOSSES", "STAGES", "CHASE!" };
+/* test 22 (user): the helps in ibara360's style: short noun phrases, no leading THE, 27 letters a line at most, 2 lines */
+static const char *const gp_helps[GAD_P_N] = { "PILOT AND NEXT TWO RIDERS\n(P2 OVER P1)",
+	"STICK AND BUTTONS OF THE\nLAST PLAYER WHO MOVED", "P1'S SHOT CHARGE BAR", "STAGE, TIME, ENEMIES\nAND BULLETS",
+	"SHOT, OPTIONS, BOMBS\nAND RATE", "CURRENT TRACK AND COMPOSER", "DETAILED RANK DISPLAY", "NEXT SIX ITEM DROPS",
+	"ITEM DROP COUNTS", "MEDAL COUNT AND VALUE", "BOSS HP AND TIMER", "12 SECRET BOSS CONDITIONS",
+	"INDIVIDUAL STAGE SCORES\nAND TIMES", "CHAIN, TIMER AND EXTENDS\n(CHASE! CREDITS)" };
+
+static void gadgets_build(void)
+{
+	const int cur = ov_cur[OV_GADGETS];
+	if (paused)
+		m_begin(228, 16, "PAUSE  GADGETS");
+	else
+		m_begin(228, 16, "%s  GADGETS", game_word(prog_now));
+	FeRow *r = m_row("GADGETS", host.gadgets ? "ON" : "OFF", cur == GP_MASTER, 0, 1);
+	if (!host.gadgets && cur != GP_MASTER)
+		r->value_c = FE_C_DIM;
+	for (int k = 0; k < GAD_P_N; k++) {
+		r = m_row(gp_names[k], host.gad_mask >> k & 1 ? "ON" : "OFF", cur == GP_PANELS + k, 0, 1);
+		if ((!host.gadgets || !(host.gad_mask >> k & 1)) && cur != GP_PANELS + k)
+			r->value_c = FE_C_DIM;
+	}
+	m_row("ALL ON", NULL, cur == GP_ALL, 0, 0);
+	if (cur == GP_MASTER)
+		m_help(FE_C_CYAN, "GADGETS AROUND THE GAME\n(PANELS KEEP THEIR SETTING)");   /* test 22 (user) */
+	else if (cur == GP_ALL)
+		m_help(FE_C_CYAN, "EVERY PANEL ON");
+	else
+		m_help(FE_C_CYAN, gp_helps[cur - GP_PANELS]);
+	if (host.gadgets && gadgets_off_why()[0])
+		m_line(FE_C_DIM, "%s", gadgets_off_why());
+	m_line(FE_C_GREEN, "A / LEFT / RIGHT = CHANGE");
+	m_back();
+}
+
+static void gadgets_input(const FePad *pad)
+{
+	const uint16_t press = pad->press, d = ov_dirs(pad);
+	const int cur = ov_cur[OV_GADGETS], a = press & FE_A, lr = press & (FE_LEFT | FE_RIGHT);
+	if (press & (FE_B | FE_BACK)) {
+		ovl_back();
+		return;
+	}
+	if (ov_move(OV_GADGETS, d, GP_ROWS))
+		return;
+	if (cur == GP_ALL) {
+		if (!a)
+			return;
+		host.gad_mask = GAD_P_ALL;
+	} else if (!a && !lr) {
+		return;
+	} else if (cur == GP_MASTER) {
+		host.gadgets = !host.gadgets;
+	} else {
+		host.gad_mask ^= 1 << (cur - GP_PANELS);
+	}
+	host_dirty = 1;
+	LOG("fe: GADGETS %s, panels %04X", host.gadgets ? "on" : "off", (unsigned)host.gad_mask);
+}
+
 /* CONTROLS (test 9): A B X Y LB RB LT RT, AUTOFIRE, DEFAULTS */
 enum { CT_AUTOFIRE = FE_KEYS, CT_DEFAULTS, CT_ROWS };
 
@@ -2329,7 +2593,7 @@ static void controls_build(void)
 	else
 		snprintf(h, sizeof h, "LEFT/RIGHT: SELECT FUNCTION");
 	m_help(FE_C_CYAN, h);
-	m_line(FE_C_DIM, "BACK = PAUSE, START = THE GAME'S");
+	/* test 22 (user): the grey "BACK = PAUSE, START = THE GAME'S" line is gone */
 	m_back();
 }
 
@@ -2464,7 +2728,8 @@ static void sound_input(const FePad *pad)
 
 /* DEBUG MENU (outside a credit): HITBOX, INFINITE LIVES, INFINITE BOMBS (test 16), INVINCIBILITY (test 17),
  * INITIALIZE RANKINGS (this MODE's or both), DEFAULT SETTINGS */
-enum { DB_HITBOX, DB_LIVES, DB_BOMBS, DB_INV, DB_RANKS, DB_DEFAULTS, DB_ROWS };
+/* test 21 (user): ATTRACT DEMO and SERVICE MENU sit before INITIALIZE RANKINGS */
+enum { DB_HITBOX, DB_LIVES, DB_BOMBS, DB_INV, DB_DEMO, DB_SERVICE, DB_RANKS, DB_DEFAULTS, DB_ROWS };
 
 static void rk_init(int both)
 {
@@ -2482,9 +2747,11 @@ static void rk_init(int both)
 /* every option, DIP switch and button as they come (MODE stays: it is PLAY's) */
 static void settings_default(void)
 {
-	const int m = host.mode;
+	const int m = host.mode, demo = host.demo, sp = host.special;
 	host = host_default;
 	host.mode = m;
+	host.special = sp;                  /* test 21: MODE (ADVANCE SPECIAL too) is PLAY's, kept as it is */
+	host.demo = demo;                   /* test 21: the ATTRACT DEMO is a power-on setting (kept, as MODE is) */
 	opt = opt_default;
 	ctl = ctl_default;
 	db_lives = db_bombs = db_inv = 0;
@@ -2502,7 +2769,11 @@ static void debug_build(void)
 	m_row("INFINITE LIVES", db_lives ? "ON" : "OFF", cur == DB_LIVES, 0, 1);
 	m_row("INFINITE BOMBS", db_bombs ? "ON" : "OFF", cur == DB_BOMBS, 0, 1);
 	m_row("INVINCIBILITY", db_inv ? "ON" : "OFF", cur == DB_INV, 0, 1);
-	FeRow *r = m_row("INITIALIZE RANKINGS", rk_both ? "BOTH MODES" : "THIS MODE", cur == DB_RANKS, 0, 1);
+	m_row("ATTRACT DEMO", host.demo ? "ON" : "OFF", cur == DB_DEMO, 0, 1);
+	FeRow *r = m_row("SERVICE MENU", NULL, cur == DB_SERVICE, 0, 0);
+	if (ov_armed == DB_SERVICE)
+		r->name_c = FE_C_RED;
+	r = m_row("INITIALIZE RANKINGS", rk_both ? "BOTH MODES" : "THIS MODE", cur == DB_RANKS, 0, 1);
 	if (ov_armed == DB_RANKS)
 		r->name_c = FE_C_RED;
 	r = m_row("DEFAULT SETTINGS", NULL, cur == DB_DEFAULTS, 0, 0);
@@ -2517,6 +2788,8 @@ static void debug_build(void)
 			cur == DB_LIVES ? "THE TEAM NEVER RUNS OUT\n(INVALIDATES SCORE)" :
 			cur == DB_BOMBS ? "THE BOMBS NEVER RUN OUT\n(INVALIDATES SCORE)" :
 			cur == DB_INV ? "NO DAMAGE\n(INVALIDATES SCORE)" :
+			cur == DB_DEMO ? "ENABLE/DISABLE THE ATTRACT DEMO\nONLY FROM THE NEXT POWER ON" :
+			cur == DB_SERVICE ? "THE ARCADE'S TEST MODE\nTHE PAD DRIVES IT" :
 			cur == DB_RANKS ? "CLEAR THE HIGH SCORE TABLES\nOF THIS MODE OR OF BOTH" :
 			"EVERY OPTION, DIP SWITCH AND\nBUTTON BACK TO ITS DEFAULT");
 	m_line(FE_C_GREEN, "LEFT/RIGHT CHANGE");
@@ -2534,6 +2807,8 @@ static void debug_input(const FePad *pad)
 			if (ov_armed == DB_RANKS) {
 				rk_init(rk_both);
 				snprintf(ov_msg, sizeof ov_msg, "RANKINGS INITIALIZED");
+			} else if (ov_armed == DB_SERVICE) {
+				service_enter();
 			} else {
 				settings_default();
 				snprintf(ov_msg, sizeof ov_msg, "SETTINGS BACK TO DEFAULT");
@@ -2569,6 +2844,16 @@ static void debug_input(const FePad *pad)
 			LOG("fe: DEBUG %s %s", cur == DB_LIVES ? "INFINITE LIVES" : cur == DB_BOMBS ? "INFINITE BOMBS" :
 				"INVINCIBILITY", *v ? "ON" : "OFF");
 		}
+		break;
+	case DB_DEMO:
+		if (lr || a) {
+			host.demo = !host.demo;
+			host_dirty = 1;
+			LOG("fe: ATTRACT DEMO %s (from the next power on)", host.demo ? "ON" : "OFF");
+		}
+		break;
+	case DB_SERVICE:
+		if (a) ov_armed = DB_SERVICE;
 		break;
 	case DB_RANKS:
 		if (lr) { rk_both = !rk_both; ov_msg[0] = 0; }
@@ -2680,6 +2965,9 @@ static void st_request(int kind, int slot)
 	req_kind = kind;
 	req_arg = st_mode * FE_SLOTS + slot;
 	st_last = slot;
+	/* test 21 (user): a SAVE STATE in a credit makes its score invalid (no replay, no name entry) */
+	if (kind == FE_REQ_SAVE_STATE && in_credit() && !pb_on)
+		credit_invalid("SAVE STATE");
 	if (kind == FE_REQ_SAVE_STATE)
 		snprintf(ov_msg, sizeof ov_msg, "SAVED IN SLOT %02d", slot + 1);
 	else if (kind == FE_REQ_DELETE_STATE)
@@ -2863,6 +3151,7 @@ static void ovl_input(const FePad *pad)
 	case OV_MANUAL: man_input(pad); break;
 	case OV_PROMPT: prompt_input(pad); break;
 	case OV_PLAYER: player_input(pad); break;
+	case OV_GADGETS: gadgets_input(pad); break;
 	}
 }
 
@@ -2880,6 +3169,7 @@ static void ovl_build(void)
 	case OV_REPLAYS: rp_build(); break;
 	case OV_PROMPT: prompt_build(); break;
 	case OV_PLAYER: player_build(); break;
+	case OV_GADGETS: gadgets_build(); break;
 	}
 }
 
@@ -2921,7 +3211,8 @@ static void title_input(int up, int down, int left, int right, uint16_t press)
  * (fe_set_restart says which there are; grey without). A asks once like FULL RESTART. The ids keep test 10's numbers
  * (PS_STAGE last), the rows' order is pause_rows'. TRAINING has its RESTART (the training stage) and no RESTART STAGE. */
 enum { PS_RESUME, PS_RESTART, PS_SAVE, PS_LOAD, PS_OPTIONS, PS_INVULN, PS_QUIT, PS_STAGE, PS_QTITLE, PS_ROWS };
-static const uint8_t ps_game[] = { PS_RESUME, PS_STAGE, PS_RESTART, PS_SAVE, PS_LOAD, PS_OPTIONS, PS_INVULN, PS_QUIT };
+/* test 21 (user): no INVULNERABLE row (PS_INVULN keeps its number; nothing turns invuln on any more) */
+static const uint8_t ps_game[] = { PS_RESUME, PS_STAGE, PS_RESTART, PS_SAVE, PS_LOAD, PS_OPTIONS, PS_QUIT };
 /* test 14: TRAINING's (ibara360's training pause): INVINCIBLE is on the TRAINING page, QUIT goes back to it;
  * test 15 (user): no SAVE / LOAD STATE there */
 static const uint8_t ps_training[] = { PS_RESUME, PS_RESTART, PS_OPTIONS, PS_QUIT, PS_QTITLE };
@@ -2943,10 +3234,8 @@ void fe_restart_loaded(int stage)
 	state_loaded(0);
 	/* test 13 (ibara360's test 87 rule): stage 1's start is a new run with a new replay (main.c), past it the score
 	 * goes red and the credit gets no replay; a STATE's restart (stage 0) already did both in fe_state_loaded */
-	if (stage != 1 && in_credit()) {
-		score_red("RESTART STAGE");
-		replay_drop("RESTART STAGE");
-	}
+	if (stage != 1 && in_credit())
+		credit_invalid("RESTART STAGE");    /* test 21: and no name entry */
 	paused = 0;                     /* the stage goes on at once (fe_state_loaded paused it as LOAD STATE does) */
 	pause_t = 0;
 	swallow = pad_press;
@@ -2988,7 +3277,7 @@ static void pause_build(void)
 			r->name_c = FE_C_RED;
 	}
 	static const char *const helps[PS_ROWS] = { "RESUME GAME", "FULL RESTART FROM STAGE 1\nWITH THE SAME TEAM",
-		"SAVE POSITION WITHIN THE GAME", "LOAD A SAVED POSITION\n(INVALIDATES SCORE)",
+		"SAVE POSITION\n(INVALIDATES SCORE)", "LOAD A SAVED POSITION\n(INVALIDATES SCORE)",
 		"SCREEN, GADGETS, CONTROLS,\nSOUND, MANUAL", "INVALID SCORE, NO RANKING\nAND NO REPLAY ONCE IT IS ON",
 		"RETURN TO THE TITLE", "", "RETURN TO THE TITLE" };   /* test 13: ibara360's score words */
 	char h[2 * FE_HM_CHARS];
@@ -2996,7 +3285,7 @@ static void pause_build(void)
 		if (pick < 0)
 			snprintf(h, sizeof h, "NO STAGE START OR SAVE STATE\nIN THIS CREDIT YET");
 		else if (pick)
-			snprintf(h, sizeof h, "RELOAD THE LAST STATE SAVED\nOR LOADED (INVALIDATES SCORE)");
+			snprintf(h, sizeof h, "RELOAD THE LAST STATE\n(INVALIDATES SCORE)");
 		else if (rs_stage == 1)
 			snprintf(h, sizeof h, "RESTART FROM THE START\nOF STAGE 1");
 		else
@@ -3026,6 +3315,12 @@ static void pause_close(int choice)
 		br_wr8(CONT_COUNT, 0xFF);
 	if (choice == 1 || choice == 2)
 		replay_drop(choice == 1 ? "FULL RESTART" : "QUIT");   /* test 13: ibara360's */
+	/* test 21 (user): QUIT TO TITLE in a credit gives no name entry (the rankings put back at the title) */
+	if (choice == 2 && !practice) {
+		not_kept = 1;
+		quit_req = 1;                   /* test 22: h_after_game skips the results for this one */
+		LOG("fe: no name entry (QUIT TO TITLE)");
+	}
 	if (choice == 3) {
 		req_kind = FE_REQ_RESTART_STAGE;
 		req_arg = rs_pick();
@@ -3054,16 +3349,6 @@ static void pause_input(int up, int down, int left, int right, uint16_t press)
 		}
 		else if (press & (FE_B | FE_BACK)) {
 			pause_armed = 0;
-		}
-		return;
-	}
-	if (pause_cur == PS_INVULN && (a || left || right)) {
-		invuln = !invuln;
-		if (invuln) {
-			not_kept = 1;
-			LOG("fe: INVULNERABLE ON (score not kept)");
-			score_red("INVULNERABLE");
-			replay_drop("INVULNERABLE");    /* test 13: ibara360's EX-DEBUG cheats */
 		}
 		return;
 	}
@@ -3115,6 +3400,8 @@ static uint16_t repeat_dirs(const FePad *pad)
 			r |= bit, rep_fired = 1;
 		rep_t[i]++;
 	}
+	if (r & (FE_LEFT | FE_RIGHT))
+		se_lr = 1;
 	return r;
 }
 
@@ -3142,16 +3429,35 @@ static void menu_se(uint32_t sig0, int paused0, uint16_t press, int moved)
 {
 	if (!press && !moved)
 		return;
-	if (paused != paused0)
+	if (paused != paused0) {
 		se_due |= 1u << MS_PAUSE;
-	else if (menu_sig() != sig0)
-		se_due |= 1u << (press & (FE_A | FE_START) ? MS_DECIDE : MS_CURSOR);
+		return;
+	}
+	if (menu_sig() == sig0)
+		return;
+	/* test 21 (user): while a MUSIC TEST tune plays (SOUND page), a LEFT / RIGHT change or an A makes no sound until
+	 * STOP (leaving the page); the cursor's sound stays */
+	if (music_played && ovl == OV_SOUND && (se_lr || (press & FE_A)))
+		return;
+	/* test 21: a LEFT / RIGHT that changed a value is the toggle's sound (the SFX TEST's 0x2B), not the cursor's */
+	se_due |= 1u << (se_lr ? MS_TOGGLE : press & (FE_A | FE_START) ? MS_DECIDE : MS_CURSOR);
 }
 
 /* the game's buttons 1-3: SHOT / BOMB / SPECIAL as CONTROLS set them (test 9; spec 4.2's map was A / B / X) */
 static uint16_t game_buttons(uint16_t held)
 {
 	return (uint16_t)((held & FE_SHOT ? BR_B1 : 0) | (held & FE_BOMB ? BR_B2 : 0) | (held & FE_SPECIAL ? BR_B3 : 0));
+}
+
+/* test 21: a frame of the test menu: the pad is the game's (directions, SHOT / BOMB / SPECIAL, START), no page or title */
+static void service_frame(const FePad *pad, FeOut *out)
+{
+	const uint16_t held = pad->held;
+	const uint16_t in = (uint16_t)((held & (FE_UP | FE_DOWN | FE_LEFT | FE_RIGHT)) | game_buttons(held));
+	out->run = 1;
+	out->held = 0;
+	br_hold_main(0);
+	br_set_inputs(in, held & (FE_START | FE_MSTART) ? BR_START1 : 0);
 }
 
 static void title_display(FeOut *out)
@@ -3189,6 +3495,8 @@ void fe_frame(const FePad *pad, FeOut *out)
 	const uint32_t sig0 = menu_sig();
 	const int paused0 = paused;
 	rep_fired = 0;
+	se_lr = 0;
+	int demo_start = 0;                 /* test 21: START in the attract (the title's jump) this frame */
 	FeVideoJob *j = J;
 	j->text = 0;
 	j->ndisc = 0;
@@ -3230,6 +3538,10 @@ void fe_frame(const FePad *pad, FeOut *out)
 		goto fields;                    /* (the pause box is not drawn under a page: its rows showed through) */
 	}
 
+	if (service_on) {                   /* test 21: the arcade's test menu has the pad; no page, title or demo skip */
+		service_frame(pad, out);
+		goto fields;
+	}
 	const uint16_t dirs = repeat_dirs(pad);
 	const int up = dirs & FE_UP, down = dirs & FE_DOWN, left = dirs & FE_LEFT, right = dirs & FE_RIGHT;
 
@@ -3295,7 +3607,8 @@ void fe_frame(const FePad *pad, FeOut *out)
 			play_build();
 		if (page == PG_TITLE && (title_keep || title_t >= FLASH_TEXT))
 			draw_title_page();      /* the arcade's text comes with the flash */
-		if (page != PG_TITLE || idle < IDLE_DEMO)
+		/* test 21: ATTRACT DEMO off keeps the timer up, so the title never runs out into the demonstration */
+		if (!demo_on || page != PG_TITLE || idle < IDLE_DEMO)
 			br_wr16(TITLE_TIMER, 0x012C);
 		br_wr16(TITLE_TIMER2, 0x04B0);
 		if (pulse > 0) {
@@ -3331,7 +3644,7 @@ void fe_frame(const FePad *pad, FeOut *out)
 			 * board's in play too (hold START + BOMB: the score breakdown; + SHOT / SPECIAL: the autofire speed;
 			 * + RIGHT / DOWN / LEFT: the bullets' colours), BACK alone pauses */
 			in = (uint16_t)((held & (FE_UP | FE_DOWN | FE_LEFT | FE_RIGHT)) | game_buttons(held));
-			if (held & FE_START)
+			if (held & (FE_START | FE_MSTART))   /* test 21: CONTROLS' A+START is START too */
 				sys = BR_START1;
 		}
 		/* test 15: TEAM CUSTOM's SELECT TEAM confirmed by SHOT taps (the riders come after it, tr_custom_team) */
@@ -3356,14 +3669,14 @@ void fe_frame(const FePad *pad, FeOut *out)
 		}
 		if (!paused && !ovl && in_credit())
 			db_frame();                 /* test 16: the DEBUG MENU's INFINITE LIVES / BOMBS */
-		/* CONTINUES (spec 3); test 14: none in TRAINING (ibara360's: a GAME OVER is the TRAINING page again) */
-		const int used = br_rd8(CONT_USED);
-		br_wr8(CONT_OK, practice ? 0 : !br_rd8(CONT_SCREEN) ? (used < opt.continues ? 0xFF : 0) :
-			(opt.continues < used ? 0 : 0xFF));
+		/* CONTINUES: unlimited since test 21 (user); test 14: none in TRAINING (ibara360's: a GAME OVER is the TRAINING
+		 * page again) */
+		br_wr8(CONT_OK, practice ? 0 : 0xFF);
 		/* Test 12 took a continue's score out of the rankings and its replay away; test 13 (ibara360's rules): the
-		 * score red, the replay still offered, the ranking the game's (its 0x7DE8 refuses a continued player) */
+		 * score red, the replay still offered, the ranking the game's (its 0x7DE8 refuses a continued player).
+		 * Test 21 (user): a continue also gives no name entry (credit_invalid) */
 		if (cont_taken())
-			score_red("a continue");
+			credit_invalid("a continue");
 	} else {
 		/* boot, attract, demo: START -> the title; test 17 (hardware: the demo's music went on under the title): the
 		 * jump skips the demo's own end, so the music is stopped as the SOUND page's STOP does */
@@ -3373,6 +3686,9 @@ void fe_frame(const FePad *pad, FeOut *out)
 			goto_title();
 			music_cmd(0x21, 0x00);
 			music_cmd(0x20, 0xE0);
+			/* test 21 (user): the demo's START plays sound 0x21 (menusnd); the SE is the only one this frame */
+			se_due |= 1u << MS_DEMO;
+			demo_start = 1;
 		}
 		if (br_rd8(SCENE) == SCENE_TITLE && !booting)
 			j->kind = FE_V_BLACK;       /* the arcade title's white flash before the title hook (test 2's prep) */
@@ -3420,12 +3736,15 @@ fields:
 	}
 	out->screen = host.screen;
 	out->gadgets = host.gadgets && !gadgets_off_why()[0];
+	out->gad_mask = (unsigned)host.gad_mask;
 	out->in_credit = in_credit();
+	out->special = out->in_credit && run_special;
 	out->chase_credit = out->in_credit && prog_now == FE_CHASE;
+	out->original = prog_now == FE_ORIGINAL;
 	out->mode = host.mode;
 	out->host_menu = ovl != OV_NONE;
 	out->paused = paused;
-	if (!pb_on)
+	if (!pb_on && !demo_start)
 		menu_se(sig0, paused0, press & 0x0FFF, rep_fired);
 	out->se = se_due;
 	se_due = 0;
@@ -3550,6 +3869,7 @@ void fe_after_board_frame(void)
 			(br_rd16(P1) & 0x8000))
 			team_capture();
 		out->chase_credit = out->in_credit && prog_now == FE_CHASE;
+		out->special = out->in_credit && run_special;
 		if (out->job.kind == FE_V_GAME)
 			hitbox(&out->job);
 	}
@@ -3983,7 +4303,7 @@ void fe_video(Vdp *v, const FeVideoJob *job, uint32_t *tex)
 		/* test 17 (user: the original copyright back): the arcade title's text lines 3-5 kept (the (C) / RAIZING /
 		 * 8ING logo tiles, "1998", "CO.,LTD."; harness work/t17/v o_t), the rest of its text (FREE PLAY) cleared */
 		for (int i = 0; i < 0x1000; i++)
-			if (i % 64 < TITLE_COPY_LO || i % 64 > TITLE_COPY_HI)
+			if ((i % 64 < TITLE_COPY_LO || i % 64 > TITLE_COPY_HI) && i % 64 != TITLE_BVER)
 				v->txram[i] = 0x20;
 		front_text_palettes(v);
 		if (job->text)
@@ -4071,13 +4391,19 @@ void fe_state_io(Stio *s, int settings)
 	STIO(s, team_ram);
 	STIO(s, music_played);
 	STIO(s, invuln);
-	int kept_bits = not_kept | red << 1 | rp_drop << 2;   /* test 13: red and rp_drop in not_kept's bits 1-2 */
+	/* test 13: red and rp_drop in not_kept's bits 1-2. test 21: the run's ADVANCE SPECIAL in bit 3: a state's length does not
+	 * change (snap_load wants it exact), and a state saved before reads 0 = off */
+	int kept_bits = not_kept | red << 1 | rp_drop << 2 | run_special << 3;
 	STIO(s, kept_bits);
 	if (s->load) {
 		not_kept = kept_bits & 1;
 		red = kept_bits >> 1 & 1;
 		rp_drop = kept_bits >> 2 & 1;
+		run_special = kept_bits >> 3 & 1;
 	}
+	/* test 21: INVULNERABLE is gone; a state saved with it on loads it off */
+	if (s->load)
+		invuln = 0;
 	STIO(s, snap_taken);
 	STIO(s, snap);
 	STIO(s, switch_due);
@@ -4115,9 +4441,9 @@ void fe_state_io(Stio *s, int settings)
 void fe_state_loaded(int quiet)
 {
 	state_loaded(quiet);
+	/* test 21 (user): after the state's own red / rp_drop / not_kept were read (fe_state_io), so the state cannot clear it */
 	if (!quiet && in_credit()) {
-		score_red("LOAD STATE");
-		replay_drop("LOAD STATE");
+		credit_invalid("LOAD STATE");
 		if (db_lives || db_bombs || db_inv) {   /* test 16: the DEBUG MENU's cheats apply to the loaded run too */
 			not_kept = 1;
 			LOG("fe: DEBUG MENU cheats on the loaded run (score not kept)");
@@ -4212,6 +4538,7 @@ unsigned fe_menu_sounds_take(void)
 int fe_playback_input(const FePad *pad)
 {
 	const uint32_t sig0 = menu_sig();
+	se_lr = 0;
 	const int r = playback_input(pad);
 	menu_se(sig0, 0, pad->press & 0x0FFF, 0);
 	return r;

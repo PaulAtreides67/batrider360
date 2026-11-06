@@ -7,7 +7,8 @@
 #include "board.h"
 
 /* the N64 front end's SE codes (work/n64_frontend_spec.md 0.2): 0x24 cursor / back, 0x22 decide, 0x28 pause */
-static const uint8_t codes[MS_SOUNDS] = { 0x24, 0x22, 0x28 };
+/* test 21: the toggle (0x2B) and the demo's START (0x21) too */
+static const uint8_t codes[MS_SOUNDS] = { 0x26, 0x27, 0x28, 0x2B, 0x21 };
 enum {
 	WARM = 30,          /* frames of the 68000's boot (it starts the sound side) before the first code */
 	MAX_FRAMES = 90,    /* the longest kept (1.5 s) */
@@ -16,7 +17,7 @@ enum {
 };
 static int16_t *pcm[MS_SOUNDS];
 static int frames_of[MS_SOUNDS];
-static int pos[MS_SOUNDS] = { -1, -1, -1 };   /* the sound thread's voices: next sample, -1 = not playing */
+static int pos[MS_SOUNDS] = { -1, -1, -1, -1, -1 };   /* the sound thread's voices: next sample, -1 = not playing */
 
 static int quiet(const int16_t *s)
 {
@@ -110,7 +111,7 @@ void menusnd_stop(void)
 
 /* "BRMS", the format (FILE_VERSION: a change to the codes, the board's sound or the mix makes a new one), the frames
  * per frame's samples, then each sound's frame count (u16) and its samples (s16), all big-endian */
-enum { FILE_VERSION = 1 };
+enum { FILE_VERSION = 3 };             /* test 21: the five sounds (3) */
 
 static void put16(uint8_t *p, int v) { p[0] = (uint8_t)(v >> 8); p[1] = (uint8_t)v; }
 static int get16(const uint8_t *p) { return (int16_t)(p[0] << 8 | p[1]); }

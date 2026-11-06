@@ -3,8 +3,8 @@ BATRIDER CHASE! AND BATRIDER ON MAME (with the batrider360 GADGETS)
 
 This folder lets you play both games on a PC with MAME, with the same GADGETS side panels as the Xbox 360 version.
 
-  roms\batriderj.zip     the CHASE! program (four patched program ROMs; everything else comes from your own
-                         batrider.zip, which is not included)
+  chase_xdelta\          the CHASE! program as four xdelta patches. No ROM data is included: the kit builds
+                         roms\batriderj.zip from your own batrider.zip (see chase_xdelta\README.txt)
   artwork\batriderj\     the GADGETS for MAME: one layout for both games. In the original game the CHASE! panels
                          stay empty, as on the 360.
   batrider_chase.bat     starts CHASE!
@@ -12,8 +12,12 @@ This folder lets you play both games on a PC with MAME, with the same GADGETS si
 
 SETUP
 1. You need MAME (0.289 or newer was used for testing) and your own MAME ROM set batrider.zip (merged set).
-2. Open both .bat files in a text editor and set MAME= to your MAME folder and ROMS= to the folder that holds
-   batrider.zip. Keep this folder's roms\ and artwork\ next to the .bat files.
+   Build the CHASE! ROM: copy batrider.zip into chase_xdelta\ and double-click make_batriderj.bat (it needs
+   xdelta3.exe, see chase_xdelta\README.txt). Move the resulting out\batriderj.zip into this folder's roms\.
+2. The .bat files find mame.exe by themselves (D:\mame, C:\mame, their own folder, or the PATH) and use the
+   ROM folders from MAME's mame.ini. If yours are elsewhere, set MAME= and ROMS= at the top of the .bat files.
+   Keep this folder's roms\ and artwork\ next to the .bat files.
+   Note: make_batriderj.bat's "out" folder is inside chase_xdelta\; move out\batriderj.zip to roms\batriderj.zip.
 3. Double-click batrider_chase.bat or batrider_original.bat.
 
 NOTES

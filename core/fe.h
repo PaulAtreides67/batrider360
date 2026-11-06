@@ -34,10 +34,12 @@ enum {
 	FE_START = 0x100, FE_BACK = 0x200, FE_LB = 0x400, FE_RB = 0x800,
 	/* test 9: the game's buttons as CONTROLS has set the pad (fe_controls); the menus read the pad's own A / B */
 	FE_SHOT = 0x1000, FE_BOMB = 0x2000, FE_SPECIAL = 0x4000,
+	/* test 21 (user): CONTROLS' A+START = the game's START held with its SHOT (fe_controls): the secret commands */
+	FE_MSTART = 0x8000,
 };
 /* Test 9 (user: "controls can't be customized"; ibara360's CONTROLS page): the pad's buttons CONTROLS sets, as bits of
  * fe_controls' mask. The platform calls fe_controls once a display frame with the buttons down (LT / RT past half)
- * and ORs its FE_SHOT / FE_BOMB / FE_SPECIAL into the pad it hands fe_frame, so a replay holds them as played. */
+ * and ORs its FE_SHOT / FE_BOMB / FE_SPECIAL (A+START: FE_SHOT | FE_MSTART) into the pad it hands fe_frame, so a replay holds them as played. */
 enum { FE_K_A, FE_K_B, FE_K_X, FE_K_Y, FE_K_LB, FE_K_RB, FE_K_LT, FE_K_RT, FE_KEYS };
 uint16_t fe_controls(unsigned down);
 typedef struct {
@@ -84,7 +86,8 @@ enum { FE_CHASE, FE_ORIGINAL };                 /* MODE = index into progs[] */
 enum { FE_YOKO, FE_TATE_A, FE_TATE_B };          /* host menu SCREEN */
 enum { FE_V_GAME, FE_V_TITLE, FE_V_SPLASH, FE_V_BLACK, FE_V_WHITE };
 
-enum { FE_COLS = 30, FE_LINES = 40, FE_DISCS = 2, FE_HM_ROWS = 14, FE_HM_CHARS = 40, FE_HM_LINES = 6, FE_BOXES = 192 };
+/* test 21: FE_HM_ROWS 16 (OPTIONS' GADGETS page: GADGETS, the 14 panels, ALL ON) */
+enum { FE_COLS = 30, FE_LINES = 40, FE_DISCS = 2, FE_HM_ROWS = 16, FE_HM_CHARS = 40, FE_HM_LINES = 6, FE_BOXES = 192 };
 
 /* Test 9: every menu as ibara360 draws its own (user: "use similar grammar and menu sorting to the menus i used for
  * ibara360"): a box over the darkened picture, the title yellow ("BATRIDER  OPTIONS"), the rows with a yellow '>'
@@ -133,6 +136,7 @@ typedef struct {
 	int gadgets;               /* OPTIONS' GADGETS on */
 	int in_credit;             /* a credit (or its name entry) is running */
 	int chase_credit;          /* ... and it is CHASE! */
+	int original;              /* v0.20: the ORIGINAL program runs (16:9 GADGETS take the arcade layout) */
 	int invalid;               /* test 13: ... and its score is invalid (ibara360's red SCORE: SAVE REPLAY? red, "*") */
 	int rp_drop;               /* test 13: ... and it gets no replay (rp_why: the first reason) */
 	const char *rp_why;
@@ -156,6 +160,10 @@ typedef struct {
 	 * volume 0..256 (SFX, 0 with MUTE); fe_playback_input's sounds come out in the next fe_frame's */
 	unsigned se;
 	int se_vol;
+	/* test 21 (user): GADGETS per panel (GAD_P_ bits of gadgets.h; the GADGETS page), and the run is ADVANCE SPECIAL (in a
+	 * credit only: the secret bosses all count as met in its GADGETS' Secret bosses panel, except ENVY / BLUNT / SOBUT) */
+	unsigned gad_mask;
+	int special;
 } FeOut;
 
 /* Test 10: GENERAL SCREEN's picture (ibara360's PICTURE SIZE / ASPECT RATIO, its limits). Shapes = 16:9, 4:3, tate on

@@ -23,6 +23,7 @@
 !/tools/*.sh
 !/tools/release_readme.txt
 !/tools/mame_release/*
+!/tools/chase_xdelta/*
 !/tools/manual/Dockerfile
 !/tools/manual/build.py
 !/tools/manual/manual.css

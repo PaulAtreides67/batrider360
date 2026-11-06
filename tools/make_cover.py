@@ -120,9 +120,9 @@ d.rectangle((M, M + bh, M + bw - 1, M + bh + 3 * S), fill=RED)
 
 y = M + bh + 14 * S
 bf = font(int(9.6 * S), "Regular")
-para = ("Sixteen kills a step, eight steps, a second and a half to find the next one. "
-        "Fly forward and the timer is yours; hang back and it is not. And when the screen "
-        "fills with bullets, one button turns every one of them to gold.")
+para = ("Every 16 kills raise your multiplier, up to x8, and you have a second and a half to find the next "
+        "target. Fly forward and the timer is on your side; hang back and it isn’t. Medals fly to you, and when "
+        "the screen fills with bullets, one button turns them all into gold.")   # the manual's back page (v0.19)
 
 
 def wrap(text, f, width):
@@ -142,13 +142,12 @@ for ln in wrap(para, bf, bw):
     d.text((M, y), ln, font=bf, fill=(230, 232, 240))
     y += int(12.6 * S)
 y += 4 * S
-bullets = [  # the N64 box back's own five, then the 360 port's gadgets
-    "Chain kills sixteen at a time, up to x8 — and keep moving forward to hold it.",
-    "Medals fly to you. A Chase Break turns every bullet on the screen to gold.",
-    "Nine Batriders and nine guest riders; teams of three.",
-    "The original 1998 arcade game too, with its own settings and rankings.",
-    "Practice any of seven stages and eighteen bosses.",
-    "Gadgets beside the play field: rank, item and medal drops, boss timers and more.",
+bullets = [  # the rewritten manual's back page and Getting started, one point a line
+    "CHASE! and the original 1998 arcade game, each with its own high scores.",
+    "A difficulty that never gets out of hand: CHASE! keeps the rank between 50% and 75%.",
+    "Nine Batriders and nine guest riders from RAIZING’s earlier shooting games.",
+    "A training mode for every stage and boss, save states and replays.",
+    "The gadgets beside the game, showing everything the arcade machine knows.",
 ]
 for b in bullets:
     lines = wrap(b, bf, bw - 12 * S)
@@ -161,9 +160,10 @@ for b in bullets:
 # three screenshots from the N64 box back; they get the height left above the footer
 y += 6 * S
 lf = font(int(6.2 * S), "Regular")
-legal = ("ARMED POLICE BATRIDER © 1998 RAIZING / 8ing CO., LTD. CHASE! arranged by COIN-OP GAME STUDIO. "
-         "Xbox 360 version. Unofficial and non-commercial; not licensed or endorsed by the owners of the "
-         "game or of the system. All trademarks are the property of their owners.")
+legal = ("ARMED POLICE BATRIDER © 1998 RAIZING / 8ing CO., LTD.  CHASE! arranged by COIN-OP GAME STUDIO.  "
+         "Xbox 360 version.  Unofficial and non-commercial; not licensed or endorsed by the owners of the game or of "
+         "the system. Xbox 360 is a trademark of Microsoft. All trademarks are the property of their respective "
+         "owners.")   # the manual's back page
 legal_lines = wrap(legal, lf, bw)
 rh2 = 30 * S
 foot = rh2 + 5 * S + len(legal_lines) * int(8 * S)

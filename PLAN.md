@@ -449,3 +449,47 @@ line scroll are DMA'd from main RAM 0x200000-0x2033FF on writes to 0x500082 (eac
   out/artwork/batriderj = the GADGETS for BOTH games (user: "the gadgets for arcade batrider use my improved
   layout": gadgets.lua no longer refuses the stock program, view "GADGETS"; MAME-checked on stock and CHASE!),
   tools/mame_release (two .bat launchers with MAME=/ROMS= to set, README_MAME.txt). mkrelease.sh allows only that zip.
+- 2026-11-03 user's last-minute list -> test 20 (v0.20): (1) ORIGINAL program's 16:9 GADGETS = the arcade layout of
+  release/batrider_arcade_gadgets (tools/mkgadgets.py yoko_original() = screen 2, GAD_YOKO_ORIG; FeOut.original;
+  sprite tag O where sizes differ, sprite() asserts one size per name); (2) controller panel upright on 16:9
+  (input_frame_v: Baffo's input display stood up from its own edges/grid, stick above the buttons, 0.56 at 249,28
+  beside the charge bar; both 16:9 layouts; TATE unchanged); (3) ROTATION LEFT/RIGHT bug: xsdk/main.c draw() rewrote
+  the game quad only when its rectangle changed, and a centred picture has the same rectangle for LEFT and RIGHT ->
+  the game stayed turned the first way (menus/gadgets turned) -> also on a screen change; (4) back cover text from the
+  rewritten manual's back page (tools/make_cover.py <template>, template C:\New folder\xbox_cover_template_by_x_andy_
+  sixx_x_d538pv3-fullview.png). User additions: CHASE! medal gadget centred on the right column's axis (0.55) and
+  Boss Info / Secret bosses swapped (CHASE! 16:9). Harness work/t20/v (go/gy/gt ppm). Manual not updated for v0.20
+  (gadgets page picture + right-side order).
+- 2026-11-03 user "do both" + "stop the game from generating batrider360 log files": (a) MAME GADGETS synced:
+  batrider-chase tools/mame/mkgadgets_mame.py --original now takes this project's yoko_original() (O-tag sprites
+  renamed to Y; text filtered by sc.idx); out/artwork/batriderj, release/batrider_chase_mame(_share) and
+  release/batrider_arcade_gadgets artwork + zips rebuilt (non-artwork zip entries copied as they were); checked in
+  MAME (D:/mame, -snapview GADGETS) on CHASE! and stock ROMs. The v0.19 release folder left as it was. (b) manual:
+  upright input display, BOSS INFO before SECRET BOSSES, the ORIGINAL layout line, version 0.20, no log file (opt-in
+  batrider360_log_on.txt); new pictures work/gadgets_*.png from harness work/t20/v (BR_MODE chase/orig, b.txt =
+  work/stg6/s.txt, frame 2800); EN/JA 52 pages; manual.bin rebuilt. (c) xsdk/main.c log_file_off(): at main's start
+  xsdk_log_close() + remove("game:/batrider360.log") unless game:/batrider360_log_on.txt exists.
+- Test 20 STAGED 2026-11-03 deploy/test20x (xex md5 a7839842, new manual.bin/PDFs, batrider.zip). Awaiting
+  SUCCESS/FAILURE (the user's report has no log now unless batrider360_log_on.txt is put beside the .xex).
+- Test 21 (user todo list 2026-11-06, 27 items; Haiku helpers coded, lead reviewed; baseline = Codex 0.21 = this working
+  tree, copy work/base21): title palettes 64-105 + B VERSION line 25; DSWC 0xE4 (STAGE EDIT); CONTINUES row gone
+  (unlimited, invalid); idle rank factor 0x20F9CE = 0x100 at ORIGINAL credits; credit_invalid (continue, SAVE/LOAD STATE,
+  RESTART STAGE > 1, TRAINING: red + no replay + no name entry; QUIT no name entry; FULL RESTART fresh); no INVULNERABLE
+  row; STANDARD formation; DEBUG ATTRACT DEMO (next power on) + SERVICE MENU (DSW bit 0 at reset); CONTROLS A+START
+  (FE_MSTART); menusnd 0x2B toggle + 0x21 demo START, MUSIC TEST silence; OPTIONS > GADGETS page (gadmask, GAD_P_*);
+  MODE ADVANCE SPECIAL (course 4, 9 secret-boss hooks h_secret, state kept_bits bit 3); gadgets: STATUS Extend/Sp.Ext,
+  WEAPON Bomb gauge (flags bit 4), CHASE! compact, BGM bottom left, controller full height, B.HEART timer 0x960-count,
+  100.00, attract zeroed. Manual 0.21 EN/JA (60 pages; pictures not refreshed). Previews work/t21/preview.
+- Test 21 STAGED 2026-11-06 deploy/test21x (xex md5 916d890f). Awaiting SUCCESS/FAILURE.
+- Test 21 result 2026-11-06 (user fix list -> test 22): (1) QUIT TO TITLE showed the game's results = 0x13F2C's SPECIAL
+  COURSE ranking table (~300 frames, COURSE < 8): pause_close sets quit_req, h_after_game returns 0x1B22 after
+  rk_restore_snapshot (0x1B30 + 0x13F2C skipped); FULL RESTART / TRAINING showed none in the harness. (2) ADVANCE SPECIAL
+  skipped SELECT COURSE 0x134DC + STAGE EDIT 0x1304A (no tune 02, stage mask 0x20E6BA unset -> HIGH WAY first): h_course
+  now lets SELECT COURSE run, new hook h_course_pick at 0x13574 (its wait loop) takes ADVANCE (0x20FD4E = 4, 0x20E6BA = 0)
+  after 40 frames; tune 02 from frame 2759 as a normal credit, stage order = normal ADVANCE's (harness work/t22/a).
+  (3) OPTIONS GADGETS green line "A = EDIT". (4) GADGETS helps without "THE" (ibara style). (5) CONTROLS grey line gone.
+  (6) yoko_original() medal x 40 / count x 27 (centred on x 183). (7) STATUS "Sp.Extend", value on the row's second line
+  (user approved previews work/t22/b/preview). (8) TSUMUJI / HAYATE timer source 7 = (15 - attack count) x 60 (attacks
+  left; leaves at 15). Helpers' reports work/t22/a/REPORT.md, work/t22/b/REPORT.md.
+- Test 22 STAGED 2026-11-06 deploy/test22x (xex md5 2ffed98f; test 21's manual.bin/PDFs, not rebuilt for Sp.Extend).
+  Awaiting SUCCESS/FAILURE.
