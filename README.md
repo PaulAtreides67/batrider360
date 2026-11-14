@@ -109,12 +109,16 @@ What you need:
 - An Xbox 360 that runs unsigned `.xex` files (RGH / JTAG, started from a dashboard such as Aurora).
 - MAME's `batrider.zip` (the merged set, which includes `batriderj`), from your own board. It is **not** included.
 
+Use your **unpatched** ROM set. CHASE! is built into `batrider360.xex` and is applied when the game loads. Don't use the
+CHASE! xdelta patches for the 360: they are only for MAME on a PC (see [MAME (PC)](#mame-pc)), and a patched ROM fails
+the CRC check (dark red screen).
+
 Install:
 1. Copy `batrider360.xex`, `batrider360_manual.bin` and `batrider.zip` into the same folder, on the console's HDD or a
    FAT32 USB drive, e.g. `Hdd1:\Games\batrider360\`.
 2. Start `batrider360.xex` from your dashboard.
 3. The first start shows NOW LOADING while the ROM set is read, and creates the menu sounds file beside the `.xex`.
-   If the screen stays dark red, the ROM set was not found.
+   If the screen stays dark red, the ROM set was not found or did not pass the CRC check.
 
 Settings, rankings, save states, replays and the log are written beside the `.xex`.
 
@@ -123,7 +127,7 @@ Settings, rankings, save states, replays and the log are written beside the `.xe
 The `mame` folder in the release plays both games in MAME with the same GADGETS.
 - `artwork/batriderj/`: the GADGETS for MAME, one layout for both games.
 - `batrider_chase.bat` and `batrider_original.bat`: the launchers.
-- `chase_xdelta/`: CHASE! as four xdelta patches. No ROM data is included. Copy your `batrider.zip` next to
+- `chase_xdelta/` (PC only; the 360 doesn't need this): CHASE! as four xdelta patches. No ROM data is included. Copy your `batrider.zip` next to
   `make_batriderj.bat` and run it (it needs `xdelta3.exe`), then move the resulting `out\batriderj.zip` into `mame\roms\`.
 
 See `mame\README_MAME.txt` in the release for the details.
