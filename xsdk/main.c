@@ -2151,7 +2151,7 @@ static const char *main_at_name(void)
 int main(void)
 {
 	log_file_off();
-	xsdk_log_write("batrider360 version 0.28 (test 28): START RUN and HITBOX helps as ibara360's; test 27b: SCREEN COLOR OUTLINE = white edge lines on black (ibara360's Sobel), help lines (MODE, TRAINING, DIP SWITCHES, SECRET COMMANDS), DEBUG MENU without the cheats, GADGETS on OPTIONS, FILTER without SHARP; test 26's fault handler and stall detector kept"); /* test 27 (user) */
+	xsdk_log_write("batrider360 version 0.29 (test 29): no START jump to the title while booting; the name entry's background stays still; test 28: START RUN and HITBOX helps as ibara360's; test 27b: SCREEN COLOR OUTLINE; test 26's fault handler and stall detector kept"); /* test 27 (user) */
 	struct timespec boot_t0, t0;
 	clock_gettime(CLOCK_MONOTONIC, &boot_t0);
 	NTSTATUS st = xsdk_gpu_open();

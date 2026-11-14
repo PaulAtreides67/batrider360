@@ -1223,6 +1223,16 @@ static uint32_t h_power(void)
 /* 0x13F4E, "anyone to enter a name?": not for a credit whose score is not kept (spec 5.3). */
 static uint32_t h_name_entry(void)
 {
+	/* test 29 (user: the initials screen scrolls after a GAME OVER in a scrolling part of a stage): the stage's
+	 * scroll speed and target speed (0x2034C8 / 0x2034D0 long, the other axis 0x2034D4 / 0x2034D8 word; the
+	 * game's own reset at 0x6F68 clears them) were left running, and the entry's background follows that scroll
+	 * (harness work/t29/ne: 1 px a frame until its stop) */
+	br_wr16(0x2034C8, 0);
+	br_wr16(0x2034CA, 0);
+	br_wr16(0x2034D0, 0);
+	br_wr16(0x2034D2, 0);
+	br_wr16(0x2034D4, 0);
+	br_wr16(0x2034D8, 0);
 	if (not_kept) {
 		br_wr16(P1, 0);
 		br_wr16(P2, 0);
@@ -3791,7 +3801,9 @@ void fe_frame(const FePad *pad, FeOut *out)
 	} else {
 		/* boot, attract, demo: START -> the title; test 17 (hardware: the demo's music went on under the title): the
 		 * jump skips the demo's own end, so the music is stopped as the SOUND page's STOP does */
-		if (menu_input && (press & FE_START) && resetting < 0) {
+		/* test 29 (user, D:/obs/2026-11-14 04-44-05.mp4): no START while booting (the white boot screen, until h_splash):
+		 * the jump skipped the 68000's init (title logo layers missing, every credit black after) */
+		if (menu_input && (press & FE_START) && resetting < 0 && !booting) {
 			if (splash == SPL_WAIT)
 				splash = SPL_DONE;
 			goto_title();

@@ -606,6 +606,14 @@ static int fe_run(BrRoms *r, const char *od, long nframes, const char *script)
 		if (out.run)
 			br_run_frame();
 		fe_after_board_frame();
+		/* BR_SCROLL=<every>: the VDP's 8 scroll registers (BG x/y, FG x/y, TOP x/y, sprites x/y) */
+		if (getenv("BR_SCROLL") && fe_fr % atoi(getenv("BR_SCROLL")) == 0) {
+			const Vdp *v = br_vdp_snapshot();
+			printf("%6ld scroll", fe_fr);
+			for (int k = 0; k < 8; k++)
+				printf(" %04X", v->scrollx[k]);
+			printf("\n");
+		}
 		/* BR_HBDEBUG: the sprites (as vdp.c places them) that cover the hitbox disc's centre, with their priority */
 		if (getenv("BR_HBDEBUG") && out.job.ndisc && fe_fr % 50 == 0) {
 			const Vdp *v = br_vdp_snapshot();

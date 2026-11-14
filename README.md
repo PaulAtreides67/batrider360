@@ -10,7 +10,7 @@
 Press BACK during a run to open the pause menu. If the CONTINUE? screen appears, press START before the count
 reaches zero to carry on.**
 
-**Version 0.28** (November 2026)
+**Version 0.29** (November 2026)
 
 Armed Police Batrider (Raizing / 8ing, 1998) running natively on the Xbox 360: the arcade board emulated in an xsdk
 `.xex`, with **CHASE!** (the scoring mode from Coin-Op Game Studio's N64 version and its front end), the arcade's own
