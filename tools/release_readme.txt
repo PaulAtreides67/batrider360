@@ -16,13 +16,17 @@ WHAT YOU NEED
 -------------
 - An Xbox 360 that runs unsigned .xex files (RGH / JTAG, started from a dashboard such as Aurora).
 - MAME's batrider.zip (the merged set, MAME 0.2xx), from your own board. It is NOT included.
+- Use your UNPATCHED ROM set. CHASE! is built into batrider360.xex and is applied when the game loads. Do not use
+  the CHASE! xdelta patches (mame\chase_xdelta) for the 360: they are only for MAME on a PC, and a patched ROM fails
+  the 360's CRC check (the screen stays dark red).
 
 
 INSTALL
 -------
 1. Copy this folder to the console's HDD or a USB stick (FAT32), e.g. Hdd1:\Games\batrider360\.
 2. Put batrider.zip in the same folder as batrider360.xex (batriderj.zip, or roms\batrider.zip, also work).
-3. Start batrider360.xex from your dashboard.
+3. Start batrider360.xex from your dashboard. The first start shows NOW LOADING while the ROM set is read. If the
+   screen stays dark red, the ROM set was not found or did not pass the CRC check.
 
 Settings, rankings, save states, replays and the log (batrider360_*.txt / .bin, batrider360.log) are written beside
 the .xex.

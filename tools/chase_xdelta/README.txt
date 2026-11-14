@@ -4,6 +4,9 @@ ARMED POLICE BATRIDER CHASE! FOR MAME - xdelta patches
 The CHASE! hack as four small xdelta patches for MAME's Batrider program ROMs. No ROM data is included: you
 need your own MAME ROM set batrider.zip.
 
+These patches are for MAME on a PC only. The Xbox 360 version (batrider360.xex) does not need them: it has CHASE!
+built in and wants the unpatched batrider.zip.
+
 EASY WAY (Windows)
 1. Download xdelta3.exe (https://github.com/jmacd/xdelta-gpl/releases) and put it in this folder,
    renamed to xdelta3.exe.
