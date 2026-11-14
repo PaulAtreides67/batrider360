@@ -10,7 +10,9 @@ _Static_assert((int)MD_W == (int)FRONT_TEX_H && (int)MD_H == (int)FRONT_TEX_W, "
 
 static uint32_t *T;
 
-/* upright (x, y) = texture row x, column FRONT_TEX_W - 1 - y (as fe.c's texel) */
+/* upright (x, y) = texture row x, column FRONT_TEX_W - 1 - y (as fe.c's texel).
+ * test 25 (user): every menu texel is written with alpha 0x00 (game texels keep 0xFF); the xsdk quad shaders then
+ * draw a menu texel plain (no FILTER, SCREEN COLOR, OUTLINE, scanlines or brightness). */
 static inline uint32_t *at(int x, int y)
 {
 	return T + x * FRONT_TEX_W + (FRONT_TEX_W - 1 - y);
@@ -43,7 +45,7 @@ void md_fill(int x, int y, int w, int h, uint32_t argb)
 		return;
 	for (int i = 0; i < w; i++)
 		for (int j = 0; j < h; j++)
-			*at(x + i, y + j) = argb;
+			*at(x + i, y + j) = argb & 0x00FFFFFFu;   /* test 25 (user): alpha 0 = a menu texel */
 }
 
 void md_darken(int x, int y, int w, int h, int keep256)
@@ -53,7 +55,7 @@ void md_darken(int x, int y, int w, int h, int keep256)
 	for (int i = 0; i < w; i++)
 		for (int j = 0; j < h; j++) {
 			uint32_t *p = at(x + i, y + j);
-			*p = blend(0xFF000000u, *p, (unsigned)keep256);
+			*p = blend(0xFF000000u, *p, (unsigned)keep256) & 0x00FFFFFFu;   /* test 25 (user): alpha 0 */
 		}
 }
 
@@ -81,7 +83,7 @@ static void piece(int k, int x, int y, int cw, int ch)
 				continue;
 			const uint32_t s = (uint32_t)q[0] << 16 | (uint32_t)q[1] << 8 | q[2];
 			uint32_t *d = at(xx, yy);
-			*d = q[3] == 255 ? 0xFF000000u | s : blend(*d, s, q[3] + 1u);
+			*d = (q[3] == 255 ? s : blend(*d, s, q[3] + 1u)) & 0x00FFFFFFu;   /* test 25 (user): alpha 0 (blend reads RGB only) */
 		}
 	}
 }
@@ -190,7 +192,7 @@ void md_text(int x, int y, int half, int tint, const char *s)
 			for (int i = 0; i < n; i++) {
 				const int xx = x + i, v = row[2 * i / half];
 				if (v && xx >= 0 && xx < MD_W)
-					*at(xx, yy) = shade[tint][v & 15];
+					*at(xx, yy) = shade[tint][v & 15] & 0x00FFFFFFu;   /* test 25 (user): alpha 0 */
 			}
 		}
 	}

@@ -82,11 +82,12 @@ static uint32_t tramp_of[TRAMP_MAX_HOOKS];
 #define LOG(...) do { if (plat.log) plat.log(__VA_ARGS__); } while (0)
 
 /* ---- settings ---- */
-/* language 0 EN, 1 JA; smooth 0/1. Test 10 (user: ibara360's GENERAL SCREEN and SOUND): music / effects / attract
+/* language 0 EN, 1 JA; smooth/filter 0 NEAREST..4 LANCZOS. Test 10 (user: ibara360's GENERAL SCREEN and SOUND): music / effects / attract
  * volumes in percent (tens; test 9's eighths carried over), mute; bright = BRIGHTNESS percent (5% steps; test 8's 0..10
  * carried over); scan = SCANLINES on / off, strength = SCAN STRENGTH percent (test 8's LIGHT / STRONG = 35 / 60);
  * picture INTEGER / FULL / CUSTOM, aspect AUTO / 16:9 / 4:3, and CUSTOM's size, X / Y size (thousandths) and X / Y
- * position (720ths of the screen's height) per display shape (fe.h FE_SHAPES) */
+ * position (720ths of the screen's height) per display shape (fe.h FE_SHAPES).
+ * test 23: filter (key filter), color (key color), low_lag (key lowlag), flip (key flip), deadzone (key deadzone) */
 enum { BRIGHT_MIN = 50, BRIGHT_MAX = 150, STRENGTH_MIN = 5, STRENGTH_MAX = 100 };
 typedef struct {
 	int hitbox, music, effects, language, screen, gadgets, mode, bright, smooth, scan;
@@ -95,6 +96,8 @@ typedef struct {
 	int pic_size[FE_SHAPES], pic_sx[FE_SHAPES], pic_sy[FE_SHAPES], pic_x[FE_SHAPES], pic_y[FE_SHAPES];
 	int special;               /* test 21 (user): PLAY's MODE ADVANCE SPECIAL (host.mode is ORIGINAL then) */
 	int gad_mask;              /* test 21 (user): GADGETS per panel (GAD_P_ bits; GAD_P_ALL = all) */
+	/* test 23 */
+	int low_lag, color, flip, deadzone;
 } Host;
 /* test 14: cmd[] (test 8's button map until test 9's CONTROLS; the same place, so the replays' layout stays) = SECRET
  * COMMANDS: cmd[0] SHOT RATE (0 the game's, 1..8 = its autofire value 0..7), cmd[1] SCORE BREAKDOWN, cmd[2] CMD_SET |
@@ -102,9 +105,10 @@ typedef struct {
  * the old map { 0, 1, 2 }: no CMD_SET, every command the game's. */
 typedef struct { int continues, cmd[3], music_test, sound_test, gs[4]; } Options;
 enum { CMD_SET = 0x1000 };   /* (above the colours' 9 bits) */
-static const Host host_default = { 1, 100, 100, 0, FE_YOKO, 1, FE_CHASE, 100, 0, 0, 35, 100, 0, FE_PIC_FULL,
+/* test 25 (user): low_lag default ON (1); deadzone percent 0..95, default 50 */
+static const Host host_default = { 1, 100, 100, 0, FE_YOKO, 1, FE_CHASE, 100, FE_FILTER_NEAREST, 0, 35, 100, 0, FE_PIC_FULL, /* test 27 (user): FILTER without SHARP */
 	FE_ASPECT_AUTO, 1, { 1000, 1000, 1000, 1000 }, { 1000, 1000, 1000, 1000 }, { 1000, 1000, 1000, 1000 }, { 0 }, { 0 },
-	0, GAD_P_ALL };
+	0, GAD_P_ALL, 1, 0, 0, 50 };
 static const Options opt_default = { 3, { 0, 0, CMD_SET }, 0x01, 0x20, { 0, 0, 0, 0 } };
 static Host host;
 static int demo_on = 1;                 /* test 21: the ATTRACT DEMO this power on (fe_init); off = the title never times out */
@@ -128,6 +132,10 @@ static const Controls ctl_default = {
 	{ ACT_SHOT, ACT_BOMB, ACT_SPECIAL, ACT_OFF, ACT_OFF, ACT_OFF, ACT_OFF, ACT_AUTO }, 30 };
 static Controls ctl;
 static int af_t;                        /* display frames AUTO SHOT has been held */
+/* test 23: LT held hides the menu box; the stick dead zone (CONTROLS, test 25) */
+static int hide_menu;
+void fe_hide_menu(int on) { hide_menu = on; }
+int fe_stick_dead(void) { return 32767 * host.deadzone / 100; }
 
 uint16_t fe_controls(unsigned down)
 {
@@ -149,6 +157,14 @@ uint16_t fe_controls(unsigned down)
 		af_t = 0;
 	}
 	return o;
+}
+
+/* test 25 (user): the game buttons the A key is mapped to in CONTROLS (key 0 = A); AUTO SHOT -> FE_SHOT, as fe_controls.
+ * Not fe_controls (it advances the AUTO SHOT timer). */
+static uint16_t a_key_game_bits(void)
+{
+	static const uint16_t bit[ACTS] = { 0, FE_SHOT, FE_BOMB, FE_SPECIAL, FE_SHOT, FE_SHOT | FE_MSTART };
+	return bit[ctl.key[FE_K_A]];
 }
 
 /* ---- state (spec 0.5's fe struct, the 360's names) ---- */
@@ -403,13 +419,14 @@ static void snd_pump(void)
 /* ---- files ---- */
 static void save_host(void)
 {
-	char b[768];
+	/* test 23: enlarged for the new keys (lowlag, color, flip, deadzone, filter); test 25: deadpct, ll25 */
+	char b[1024];
 	int n = snprintf(b, sizeof b, "hitbox=%d|vol_music=%d|vol_sfx=%d|attract=%d|mute=%d|language=%d|screen=%d|"
-		"gadgets=%d|mode=%d|brightness=%d|smooth=%d|scanlines=%d|strength=%d|picture=%d|aspect=%d|demo=%d|"
-		"special=%d|gadmask=%d|", host.hitbox,
+		"gadgets=%d|mode=%d|brightness=%d|filter=%d|scanlines=%d|strength=%d|picture=%d|aspect=%d|demo=%d|"
+		"special=%d|gadmask=%d|lowlag=%d|color=%d|flip=%d|deadpct=%d|ll25=%d|", host.hitbox,
 		host.music, host.effects, host.attract, host.mute, host.language, host.screen, host.gadgets, host.mode,
 		host.bright, host.smooth, host.scan, host.strength, host.picture, host.aspect, host.demo, host.special,
-		host.gad_mask);
+		host.gad_mask, host.low_lag, host.color, host.flip, host.deadzone, 1);
 	for (int k = 0; k < FE_SHAPES; k++)
 		n += snprintf(b + n, sizeof b - n, "size%d=%d|xsize%d=%d|ysize%d=%d|xpos%d=%d|ypos%d=%d|", k, host.pic_size[k],
 			k, host.pic_sx[k], k, host.pic_sy[k], k, host.pic_x[k], k, host.pic_y[k]);
@@ -459,7 +476,7 @@ static int field(const char *s, const char *key, int def, int lo, int hi)
 
 static void load_settings(void)
 {
-	char b[768];
+	char b[1024];
 	host = host_default;
 	opt = opt_default;
 	ctl = ctl_default;
@@ -475,7 +492,14 @@ static void load_settings(void)
 		host.mute = field(b, "mute", 0, 0, 1);
 		host.language = field(b, "language", 0, 0, 1);
 		host.bright = field(b, "brightness", 50 + field(b, "bright", 5, 0, 10) * 10, BRIGHT_MIN, BRIGHT_MAX) / 5 * 5;
-		host.smooth = field(b, "smooth", 0, 0, 1);
+		/* test 23: filter 0..4; if missing, the old smooth key: 0 -> NEAREST, 1 -> BILINEAR */
+		{
+			const int old_s = field(b, "smooth", 0, 0, 1);
+			const int def_f = old_s ? FE_FILTER_BILINEAR : FE_FILTER_NEAREST; /* test 27 (user): no SHARP */
+			host.smooth = strstr(b, "filter=") ? field(b, "filter", def_f, 0, 4) : def_f;
+			if (host.smooth == FE_FILTER_SHARP)
+				host.smooth = FE_FILTER_NEAREST; /* test 27 (user): FILTER without SHARP */
+		}
 		host.scan = field(b, "scanlines", sc != 0, 0, 1);
 		host.strength = field(b, "strength", sc == 2 ? 60 : 35, STRENGTH_MIN, STRENGTH_MAX) / 5 * 5;
 		host.picture = field(b, "picture", FE_PIC_FULL, FE_PIC_INTEGER, FE_PIC_CUSTOM);
@@ -494,6 +518,7 @@ static void load_settings(void)
 			host.pic_y[k] = field(b, key, 0, -FE_PIC_POS_MAX, FE_PIC_POS_MAX);
 		}
 		host.screen = field(b, "screen", FE_YOKO, 0, 2);
+		host.flip = host.screen == FE_YOKO ? field(b, "flip", 0, 0, 1) : 0; /* review: UPSIDE DOWN is OFF's only */
 		host.gadgets = field(b, "gadgets", 1, 0, 1);
 		host.mode = field(b, "mode", FE_CHASE, 0, 1);
 		host.demo = field(b, "demo", 1, 0, 1);
@@ -502,6 +527,21 @@ static void load_settings(void)
 		if (host.special)
 			host.mode = FE_ORIGINAL;
 		host.gad_mask = field(b, "gadmask", GAD_P_ALL, 0, GAD_P_ALL);
+		/* test 23 */
+		host.low_lag = field(b, "lowlag", 0, 0, 1);
+		host.color = field(b, "color", 0, 0, 5);
+		/* test 25 (user): deadpct percent 0..95; old deadzone index 0..3 -> 10/25/50/75, missing -> 50 */
+		if (strstr(b, "deadpct="))
+			host.deadzone = field(b, "deadpct", 50, 0, 95);
+		else {
+			static const int old_dead[4] = { 10, 25, 50, 75 };
+			host.deadzone = old_dead[field(b, "deadzone", 2, 0, 3)];
+		}
+		/* test 25 (user): LOW LATENCY on once (tests 23/24 wrote lowlag=0 by default) */
+		if (!strstr(b, "ll25=")) {
+			host.low_lag = 1;
+			LOG("fe: LOW LATENCY on (once, test 25 default)");
+		}
 	}
 	n = plat.load ? plat.load("options.txt", b, sizeof b - 1) : -1;
 	if (n > 0) {
@@ -1043,6 +1083,11 @@ static uint32_t h_after_game(void)
 	if (restart_req) {
 		restart_req = 0;
 		restore_team = team_captured;
+		/* test 25 (user): TRAINING's stage watch starts again with the restarted stage (the stage byte reads 0 while
+		 * it reloads, which tr_frame took for a stage clear: the TRAINING page came back instead of the stage) */
+		tr_rider = tr_started = tr_bank = tr_cleared = tr_play_t = tr_powered = 0;
+		tr_stage0 = -1;
+		tr_custom_t = 0;
 		if (!restore_team)
 			veil = 0;
 		LOG("fe: RESTART (team %s)", restore_team ? "restored" : "chosen again");
@@ -1099,6 +1144,18 @@ static void team_capture(void)
 	LOG("fe: team %04X %04X %04X %04X", team[0], team[1], team[2], team[3]);
 }
 
+/* test 25 (user: white / black cars at a TRAINING start, D:/obs/2026-11-13 13-50-22.mp4): the game loads the stage's
+ * sprite palettes (the cars' too) through the pointer at 0x20E9C0, which the select screens' exit leaves on the unfaded
+ * copy 0x20E9C8 that the stage's fade-in brings up. A start that skips them (team SAME) found it on palette RAM (left
+ * so by the title), so the fade-in overwrote the loads from the copy: the title flash's white, or black after a MODE
+ * change's board reset. Harness work/t25/w (o7/o9 vs x7/x9). */
+enum { PAL_DST = 0x20E9C0, PAL_COPY_BASE = 0x20E9C8 };
+
+static void stage_palettes(void)
+{
+	wr32(PAL_DST, PAL_COPY_BASE);
+}
+
 static uint32_t h_setup(void)
 {
 	if (!restore_team)
@@ -1107,8 +1164,9 @@ static uint32_t h_setup(void)
 	for (int i = 0; i < 2 * PSTRUCT; i++)
 		br_wr8(P1 + i, team_ram[i]);
 	br_wr8(IN_PLAY, 0xFF);
+	stage_palettes();                   /* test 25 (user): the cars' colours, as the skipped select screens load them */
 	veil = VEIL_AFTER;                  /* the old select screen's tiles show ~10 frames before the stage's fade-in */
-	LOG("fe: team put back (%04X %04X %04X %04X), A6 %06X", team[0], team[1], team[2], team[3],
+	LOG("fe: team put back (%04X %04X %04X %04X), A6 %06X, stage palettes in", team[0], team[1], team[2], team[3],
 		(unsigned)br_reg(M68K_REG_A6));
 	br_set_reg(M68K_REG_A5, rd32(br_reg(M68K_REG_A5)));
 	br_set_reg(M68K_REG_A6, P1);
@@ -1468,9 +1526,10 @@ static void draw_title_page(void)
 {
 	static const char *const names[TM_ROWS] = { "PLAY", "TRAINING", "LOAD STATE", "REPLAY DATA", "OPTIONS", "EXIT" };
 	/* (test 18: two lines of 18 letters at the plain menu's 2x; the user's PLAY line, the others cut to fit) */
-	static const char *const helps[TM_ROWS] = { "START A RUN", "PRACTICE A STAGE\nOR A BOSS FIGHT",
-		"CONTINUE FROM A\nSAVE STATE", "WATCH RECORDED\nREPLAYS", "SCREEN, GADGETS,\nSOUND, CONTROLS",
-		"BACK TO THE\nDASHBOARD" };
+	/* test 25 (user): English help lines in ibara360's style */
+	static const char *const helps[TM_ROWS] = { "START A RUN", "PRACTICE AND\nIMPROVE YOUR SCORE",
+		"CONTINUE FROM A\nSAVE STATE", "WATCH RECORDED\nREPLAYS", "SCREEN, GADGETS,\nCONTROLS, SOUND",
+		"BACK TO THE\nDASHBOARD" }; /* test 27 (user): GADGETS (18 letters a line) */
 	if (launch_t < 0 && exit_t < 0 && !ovl) {
 		m_begin(168, 0, "%s", "");
 		J->hm_plain = 1;
@@ -1489,6 +1548,16 @@ static void draw_title_page(void)
 /* test 21 (user): CONTINUES is gone from the page (unlimited continues; opt.continues stays in the file, unused) */
 enum { PL_START, PL_MODE, PL_DIPS, PL_ROWS };
 
+/* test 27 (user): MODE help per mode (special = 1 on PLAY, 0 on TRAINING) */
+static const char *mode_help(int special)
+{
+	if (host.mode == FE_CHASE)
+		return "ROMHACK DEVELOPED FOR N64\nAND PS VITA, OCTOBER 2026";
+	if (host.mode == FE_ORIGINAL && !(special && host.special))
+		return "VERSION B,\nFEBRUARY 13, 1998";
+	return "ADVANCE COURSE, EVERY SECRET\nBOSS'S CONDITION MET";
+}
+
 static void play_build(void)
 {
 	const int dips = host.mode == FE_ORIGINAL, starting = start_due || switch_due || resetting >= 0;
@@ -1500,11 +1569,12 @@ static void play_build(void)
 	FeRow *r = m_row("DIP SWITCHES", dips && gs_any() ? "CHANGED" : NULL, opt_cur == PL_DIPS, !dips, 0);
 	if (dips && gs_any() && opt_cur != PL_DIPS)
 		r->value_c = FE_C_RED;
+	/* test 27 (user): help lines, per-mode MODE help */
 	static const char *const helps[PL_ROWS] = { "PLAY WITH THE SETTINGS BELOW",
-		"CHASE!, THE ORIGINAL GAME OR\nADVANCE SPECIAL (SEE BELOW)", "DIFFICULTY, TIMER, LIVES,\nBONUS LIFE" };
+		"", "DIFFICULTY, TIMER, LIVES\nAND BONUS LIFE" };
 	m_help(FE_C_CYAN, opt_cur == PL_START && starting ? "CHANGING THE MODE..." :
-		opt_cur == PL_DIPS && !dips ? "THE ORIGINAL GAME'S ONLY" :
-		opt_cur == PL_MODE && host.special ? "ADVANCE COURSE, EVERY SECRET\nBOSS'S CONDITION MET" : helps[opt_cur]);
+		opt_cur == PL_DIPS && !dips ? "ORIGINAL GAME ONLY" :
+		opt_cur == PL_MODE ? mode_help(1) : helps[opt_cur]);
 	m_line(FE_C_GREEN, "UP/DOWN ROW, LEFT/RIGHT SET");
 	m_line(FE_C_GREEN, "%s", opt_cur == PL_START ? "A = CONFIRM" : opt_cur == PL_DIPS ? "A = OPEN" : "A = NEXT VALUE");
 	m_line(FE_C_GREEN, "B / BACK = MENU");
@@ -1702,15 +1772,17 @@ static void tr_build(void)
 		if (i == TR_DIPS && v[i][0] && tr_cur != i)
 			r->value_c = FE_C_RED;
 	}
-	static const char *const helps[TR_ROWS] = { "PLAY WITH THE SETTINGS BELOW", "CHASE! OR THE ORIGINAL GAME",
-		"TEAM, RIDERS, FORMATION, LIVES,\nBOMBS, SHOT AND OPTION POWER", "THE STAGE TO TRAIN ON",
-		"OFF = FROM THE STAGE'S START\nOR STRAIGHT TO ONE OF ITS BOSSES", "STARTING MEDAL VALUE",
-		"DEFAULT = THE GAME'S OWN\nOR HELD AT A PERCENTAGE (LB/RB 10%)",
-		"NO DAMAGE", "THE TEAM NEVER RUNS OUT", "THE BOMBS NEVER RUN OUT", "SLOW THE GAME DOWN\n(THE MUSIC KEEPS ITS SPEED)",
-		"OFF, THE RIDERS' HITBOX,\nOR EVERY HITBOX", "DIFFICULTY, TIMER, LIVES,\nBONUS LIFE" };
+	/* test 27 (user): TRAINING page helps (ibara360's wording); TR_MODE picked by mode_help(0) */
+	static const char *const helps[TR_ROWS] = { "PLAY WITH THE SETTINGS BELOW\nNO SCORES, INITIALS OR REPLAYS", "",
+		"CHANGE TEAM, RIDERS AND\nSTARTING LIVES, BOMBS, POWER", "CHANGE STAGE",
+		"SKIP TO ONE OF THE STAGE'S\nBOSSES (OFF = STAGE START)", "STARTING MEDAL VALUE",
+		"DEFAULT = NATURAL RANK INCREASE\n% = LOCKED (LB/RB 10%)",
+		"TOGGLE INVINCIBILITY", "TOGGLE INFINITE LIVES", "TOGGLE INFINITE BOMBS", "CHANGE GAME SPEED\n(THE MUSIC KEEPS ITS SPEED)",
+		"PLAYER = THE SHIP'S HITBOX\nALL = PLAYER/ENEMY/BULLET HITBOXES", "DIFFICULTY, TIMER, LIVES\nAND BONUS LIFE" };
 	m_help(FE_C_CYAN, tr_cur == TR_START && starting ? "CHANGING THE MODE..." :
-		tr_cur == TR_DIPS && host.mode != FE_ORIGINAL ? "THE ORIGINAL GAME'S ONLY" :
-		tr_cur == TR_RANK && host.mode == FE_CHASE ? "DEFAULT = THE GAME'S OWN, OR HELD\nAT 51-76% (CHASE!'S OWN LIMITS)" :
+		tr_cur == TR_DIPS && host.mode != FE_ORIGINAL ? "ORIGINAL GAME ONLY" :
+		tr_cur == TR_MODE ? mode_help(0) :
+		tr_cur == TR_RANK && host.mode == FE_CHASE ? "DEFAULT = NATURAL RANK INCREASE\n% = LOCKED AT 51-76% IN CHASE!" :
 		helps[tr_cur]);
 	m_line(FE_C_GREEN, "UP/DOWN ROW, LEFT/RIGHT SET");
 	m_line(FE_C_GREEN, "%s", tr_cur == TR_DIPS || tr_cur == TR_PLAYER ? "A = OPEN, START = PLAY" : "START = PLAY");
@@ -1762,24 +1834,25 @@ static void player_build(void)
 			r->value_c = FE_C_DIM;
 	}
 	/* (test 18: SHOT and OPTION POWER at the run's first rider start only, h_power) */
+	/* test 27 (user): PLAYER EDIT helps */
 	static const char *const helps[PR_ROWS] = { "", "", "", "", "", "", "",
-		"GAREGGA SHIPS ONLY",
-		"LIVES AT THE START", "BOMBS AT EACH RIDER'S START", "40 FRAGMENTS MAKE A BOMB\n(AT EACH RIDER'S START)",
-		"SHOT POWER AT THE START", "NONE, OR THE OPTIONS' LEVEL" };
-	static const char *const team_helps[TT_N] = { "THE GAME'S SELECT TYPE SCREEN",
-		"THE LAST TEAM FLOWN", "STRAIGHT TO SELECT TEAM", "STRAIGHT TO TEAM EDIT", "STRAIGHT TO RANDOM EDIT",
-		"STRAIGHT TO SELECT PLAYER", "THE RIDERS BELOW" };
+		"STARTING FORMATION\n(GAREGGA SHIPS ONLY)",
+		"STARTING LIVES", "STARTING BOMBS (EACH RIDER)", "STARTING BOMB FRAGMENTS\n(40 FRAGMENTS = 1 BOMB)",
+		"STARTING SHOT POWER LEVEL", "STARTING OPTIONS\n(NONE OR AN OPTION LEVEL)" };
+	static const char *const team_helps[TT_N] = { "GAME'S SELECT TYPE SCREEN",
+		"LAST TEAM USED", "SKIP TO SELECT TEAM", "SKIP TO TEAM EDIT", "SKIP TO RANDOM EDIT",
+		"SKIP TO SELECT PLAYER", "RIDERS CHOSEN BELOW" };
 	if (cur == PR_TEAM)
-		m_help(FE_C_CYAN, tr_solo() ? "THE RIDER BELOW FOR EVERY LIFE\n(THE GAME'S SELECT PLAYER)" : team_helps[team]);
+		m_help(FE_C_CYAN, tr_solo() ? "ONE RIDER FOR EVERY LIFE\n(GAME'S SELECT PLAYER)" : team_helps[team]);
 	else if (sp && cur == PR_RIDER)
-		m_help(FE_C_CYAN, "CHOOSE = THE GAME'S SCREEN,\nOR THIS RIDER FOR EVERY LIFE");
+		m_help(FE_C_CYAN, "CHOOSE = GAME'S SCREEN, OR\nONE RIDER FOR EVERY LIFE");
 	else if (cur >= PR_RIDER && cur <= PR_TYPE3 && ((cur - PR_RIDER) & 1))
 		m_help(FE_C_CYAN, custom ? "COLOURS AND SPEED: A NORMAL,\nB SLOWER, C SLOWEST, D FASTEST" :
 			"COLOURS AND SPEED (A-D)\n(SETS TEAM TO CUSTOM)");
 	else if (cur >= PR_RIDER && cur <= PR_TYPE3)
-		m_help(FE_C_CYAN, custom ? "THE TEAM'S RIDERS IN ORDER" : "THE TEAM'S RIDERS IN ORDER\n(SETS TEAM TO CUSTOM)");
+		m_help(FE_C_CYAN, custom ? "TEAM'S RIDERS IN ORDER" : "TEAM'S RIDERS IN ORDER\n(SETS TEAM TO CUSTOM)");
 	else if (cur == PR_LIVES && host.mode == FE_ORIGINAL)
-		m_help(FE_C_CYAN, "LIVES AT THE START\n(4 AT MOST IN THE ORIGINAL GAME)");
+		m_help(FE_C_CYAN, "STARTING LIVES\n(4 AT MOST IN ORIGINAL GAME)");
 	else
 		m_help(FE_C_CYAN, helps[cur]);
 	m_line(FE_C_GREEN, "%s", cur == PR_FRAGS ? "LEFT/RIGHT 1, LB/RB 10" : "LEFT/RIGHT CHANGE");
@@ -1972,7 +2045,7 @@ static void tr_frame(void)
 	const int st = br_rd8(STAGE_NO) & 0x7F;
 	if (tr_stage0 <= 0)
 		tr_stage0 = st;
-	else if (!tr_cleared && st != tr_stage0) {
+	else if (!tr_cleared && st && st != tr_stage0) {
 		tr_cleared = 1;
 		br_wr8(CONT_COUNT, 0xFF);
 		LOG("fe: TRAINING: the stage cleared (board frame %u): the run ends", (unsigned)br_frame_count());
@@ -2125,7 +2198,7 @@ static void tr_input(int up, int down, int left, int right, uint16_t press)
 }
 
 /* ---- OPTIONS and its pages (over the title or the pause menu) ---- */
-enum { O_SCREEN, O_GADGETS, O_CONTROLS, O_COMMANDS, O_SOUND, O_MANUAL, O_DEBUG, O_LANG, O_IDS };
+enum { O_SCREEN, O_GADGETS, O_CONTROLS, O_COMMANDS, O_SOUND, O_MANUAL, O_DEBUG, O_LOWLAG, O_LANG, O_IDS };
 
 /* the rows there are now: DEBUG MENU outside a credit (as ibara360's pause OPTIONS has none) */
 static int opt_rows(int *id)
@@ -2139,8 +2212,8 @@ static int opt_rows(int *id)
 
 static void options_build(void)
 {
-	static const char *const names[O_IDS] = { "GENERAL SCREEN", "GADGETS", "CONTROLS", "SECRET COMMANDS", "SOUND",
-		"MANUAL", "DEBUG MENU", "LANGUAGE" };
+	static const char *const names[O_IDS] = { "GENERAL SCREEN", "GADGETS", "CONTROLS", "SECRET COMMANDS",
+		"SOUND", "MANUAL", "DEBUG MENU", "LOW LATENCY", "LANGUAGE" };
 	int id[O_IDS];
 	const int n = opt_rows(id);
 	int *cur = &ov_cur[OV_OPTIONS];
@@ -2152,9 +2225,8 @@ static void options_build(void)
 		m_begin(184, 16, "%s  OPTIONS", game_word(prog_now));
 	for (int i = 0; i < n; i++) {
 		const int r = id[i], sel = i == *cur;
-		if (r == O_GADGETS)
-			m_row(names[r], host.gadgets ? "ON" : "OFF", sel, 0, 1)->value_c =
-				host.gadgets && gadgets_off_why()[0] && !sel ? FE_C_DIM : sel ? FE_C_YELLOW : FE_C_GREEN;
+		if (r == O_LOWLAG)
+			m_row(names[r], host.low_lag ? "ON" : "OFF", sel, 0, 1);
 		else if (r == O_LANG)
 			m_row(names[r], host.language ? "JAPANESE" : "ENGLISH", sel, in_credit(), 1);
 		else
@@ -2163,25 +2235,29 @@ static void options_build(void)
 	const char *help = "";
 	switch (id[*cur]) {
 	case O_SCREEN: help = "CUSTOMIZE GAME SCREEN"; break;
-	case O_GADGETS: help = "ORIGINAL WORK BY BAF,\nOLIFANTE AND DUBS"; break;
+	case O_GADGETS: help = "ORIGINAL WORK BY BAF,\nOLIFANTE AND DUBS"; break; /* test 27 (user) */
 	case O_CONTROLS: help = "CUSTOMIZE CONTROLS"; break;
 	/* (test 15: lines of at most 27 letters, or the page misses 1.5x in OPTIONS' box and drops to 1x) */
-	case O_COMMANDS: help = "BULLET COLOURS, SHOT RATE,\nSCORE BREAKDOWN"; break;
+	/* test 27 (user): OPTIONS' SECRET COMMANDS help */
+	case O_COMMANDS: help = "BULLET COLORS, AUTOFIRE,\nSCORE BREAKDOWN"; break;
 	case O_SOUND: help = in_credit() ? "VOLUMES, MUTE" : "VOLUMES, MUTE, SOUND TEST"; break;
 	case O_MANUAL:
 		help = !man_pages[host.language] ? "NO BATRIDER360_MANUAL.BIN\nBESIDE THE XEX" :
 			host.language ? "THE JAPANESE MANUAL" : "THE ENGLISH MANUAL";
 		break;
-	case O_DEBUG: help = "HITBOX, LIVES, BOMBS,\nRANKINGS, DEFAULTS"; break;
+	case O_DEBUG: help = "ATTRACT DEMO, SERVICE MENU,\nRANKINGS, DEFAULTS"; break; /* test 27 (user) */
+	/* test 25 (user): LOW LATENCY in OPTIONS, allowed in a credit */
+	case O_LOWLAG: help = "UP TO 2 FRAMES LESS LAG\nCAUSES SCREEN TEARING"; break;
 	case O_LANG: help = in_credit() ? "NOT DURING A CREDIT" : "THE GAME'S TEXTS AND\nTHE MANUAL"; break;
 	}
 	m_help(FE_C_CYAN, help);
+	/* test 27 review: why GADGETS don't show now (was GENERAL SCREEN's line) */
 	if (id[*cur] == O_GADGETS && host.gadgets && gadgets_off_why()[0])
 		m_line(FE_C_DIM, "%s", gadgets_off_why());
-	if (id[*cur] == O_GADGETS)
-		m_line(FE_C_GREEN, "A = EDIT");   /* test 21: the GADGETS page; test 22 (user): "A = EDIT" (the long line dropped the page to 1x) */
+	if (id[*cur] == O_LOWLAG || id[*cur] == O_LANG)
+		m_line(FE_C_GREEN, "LEFT/RIGHT CHANGE");
 	else
-		m_line(FE_C_GREEN, "%s", id[*cur] == O_LANG ? "LEFT/RIGHT CHANGE" : "A = CONFIRM");
+		m_line(FE_C_GREEN, "A = CONFIRM");
 	m_back();
 }
 
@@ -2202,20 +2278,16 @@ static void options_input(const FePad *pad)
 	const int a = press & FE_A, any = a || (d & (FE_LEFT | FE_RIGHT));
 	switch (id[*cur]) {
 	case O_SCREEN: if (a) { ov_cur[OV_SCREEN] = 0; ovl_open(OV_SCREEN); } break;
+	/* test 27 (user): GADGETS back on the OPTIONS page */
+	case O_GADGETS: if (a) { ov_cur[OV_GADGETS] = 0; ovl_open(OV_GADGETS); } break;
 	case O_CONTROLS: if (a) { ov_cur[OV_CONTROLS] = 0; ovl_open(OV_CONTROLS); } break;
 	case O_COMMANDS: if (a) { ov_cur[OV_COMMANDS] = 0; ovl_open(OV_COMMANDS); } break;
 	case O_SOUND: if (a) { ov_cur[OV_SOUND] = 0; ovl_open(OV_SOUND); } break;
 	case O_DEBUG: if (a) { ov_cur[OV_DEBUG] = 0; rk_both = 0; ovl_open(OV_DEBUG); } break;
 	case O_MANUAL: if (a) open_manual(); break;
-	case O_GADGETS:
-		/* test 21 (user): A opens the GADGETS page (every panel); LEFT / RIGHT is the master switch as before */
-		if (a) {
-			ov_cur[OV_GADGETS] = 0;
-			ovl_open(OV_GADGETS);
-		} else if (d & (FE_LEFT | FE_RIGHT)) {
-			host.gadgets = !host.gadgets;
-			host_dirty = 1;
-		}
+	/* test 25 (user): LOW LATENCY, toggle, allowed in a credit */
+	case O_LOWLAG:
+		if (any) { host.low_lag = !host.low_lag; host_dirty = 1; }
 		break;
 	case O_LANG:
 		/* not in a credit: the program's text routine changes (a replay holds the LANGUAGE it began with) */
@@ -2261,10 +2333,11 @@ static void commands_build(void)
 		"SCORE BREAKDOWN" };
 	for (int i = 0; i < SC_ROWS; i++)
 		m_row(names[i], v[i], cur == i, i == SC_RATE && in_credit(), 1);
-	static const char *const helps[SC_ROWS] = { "NORMAL BULLETS, DEFAULT = BLUE\n(START + RIGHT IN PLAY)",
-		"BALL BULLETS, DEFAULT = ORANGE\n(START + LEFT IN PLAY)", "MISSILES, DEFAULT = PINK\n(START + DOWN IN PLAY)",
-		"YOUR AUTOFIRE, SHOTS A SECOND\n(START + A / C IN PLAY)", "EACH SCORE ADDED, LISTED ON\nTHE LEFT (START + B IN PLAY)" };
-	m_help(FE_C_CYAN, cur == SC_RATE && in_credit() ? "NOT DURING A CREDIT\n(START + A / C IN PLAY)" : helps[cur]);
+	/* test 27 (user): SECRET COMMANDS helps */
+	static const char *const helps[SC_ROWS] = { "CHANGE NORMAL BULLET COLOR\nIN PLAY: START + RIGHT",
+		"CHANGE BALL BULLET COLOR\nIN PLAY: START + LEFT", "CHANGE MISSILE COLOR\nIN PLAY: START + DOWN",
+		"CHANGE AUTOFIRE SPEED\nIN PLAY: START + A / C", "SHOW EACH SCORE GAINED\nIN PLAY: START + B" };
+	m_help(FE_C_CYAN, cur == SC_RATE && in_credit() ? "NOT DURING A CREDIT\nIN PLAY: START + A / C" : helps[cur]);
 	m_line(FE_C_GREEN, "LEFT/RIGHT CHANGE");
 	m_back();
 }
@@ -2326,10 +2399,10 @@ static void commands_frame(void)
  * picture resizing"): ibara360's rows in its order: PICTURE SIZE (INTEGER / FULL / CUSTOM), CUSTOM's SIZE, X SIZE,
  * Y SIZE, X POSITION, Y POSITION (kept per display shape; a change makes PICTURE SIZE CUSTOM; LEFT / RIGHT held
  * repeats, faster after a second; A = the row's default), ROTATION, SCANLINES, SCAN STRENGTH, BRIGHTNESS (5% steps),
- * SMOOTHING, ASPECT RATIO (AUTO = the console's). */
-enum { GS_PICTURE, GS_SIZE, GS_XSIZE, GS_YSIZE, GS_XPOS, GS_YPOS, GS_ROT, GS_SCAN, GS_STRENGTH, GS_BRIGHT, GS_SMOOTH,
-	GS_ASPECT, GS_ROWS };
-static const char *const rot_names[3] = { "OFF", "LEFT", "RIGHT" };
+ * SMOOTHING, ASPECT RATIO (AUTO = the console's). test 25: LOW LATENCY moved to OPTIONS, GADGETS added last. */
+enum { GS_PICTURE, GS_SIZE, GS_XSIZE, GS_YSIZE, GS_XPOS, GS_YPOS, GS_ROT, GS_SCAN, GS_STRENGTH, GS_BRIGHT, GS_FILTER,
+	GS_COLOR, GS_ASPECT, GS_ROWS }; /* test 27 (user): GADGETS back on OPTIONS */
+static const char *const rot_names[4] = { "OFF", "LEFT", "RIGHT", "UPSIDE DOWN" };
 static const char *const pic_names[3] = { "INTEGER", "FULL", "CUSTOM" };
 enum { PIC_REPEAT = 20, PIC_FAST = 60 };
 static int disp_wide = 1;               /* the console's display shape (fe_display) */
@@ -2384,6 +2457,8 @@ static int *pic_val(int row, int *lo, int *hi, int *step, int *fast, int *def)
 
 static void screen_build(void)
 {
+	static const char *const filter_names[5] = { "NEAREST", "SHARP", "BILINEAR", "BICUBIC", "LANCZOS" };
+	static const char *const color_names[6] = { "STANDARD", "FLAT", "MONOTONE", "SEPIA", "OUTLINE", "NEGATIVE" };
 	char v[GS_ROWS][28];
 	const int cur = ov_cur[OV_SCREEN], sh = pic_shape();
 	if (paused)
@@ -2396,15 +2471,18 @@ static void screen_build(void)
 		snprintf(v[GS_SIZE + i], sizeof v[0], "%d.%d%%", k[i][sh] / 10, k[i][sh] % 10);
 	snprintf(v[GS_XPOS], sizeof v[0], "%+d", host.pic_x[sh]);
 	snprintf(v[GS_YPOS], sizeof v[0], "%+d", host.pic_y[sh]);
-	snprintf(v[GS_ROT], sizeof v[0], "%s", rot_names[host.screen]);
+	/* test 23: UPSIDE DOWN = YOKO + flip */
+	snprintf(v[GS_ROT], sizeof v[0], "%s", rot_names[host.flip ? 3 : host.screen]);
 	snprintf(v[GS_SCAN], sizeof v[0], "%s", host.scan ? "ON" : "OFF");
 	snprintf(v[GS_STRENGTH], sizeof v[0], "%d%%", host.strength);
 	snprintf(v[GS_BRIGHT], sizeof v[0], "%d%%", host.bright);
-	snprintf(v[GS_SMOOTH], sizeof v[0], "%s", host.smooth ? "ON" : "OFF");
+	snprintf(v[GS_FILTER], sizeof v[0], "%s", filter_names[host.smooth]);
+	snprintf(v[GS_COLOR], sizeof v[0], "%s", color_names[host.color]);
 	snprintf(v[GS_ASPECT], sizeof v[0], "%s", host.aspect == FE_ASPECT_4_3 ? "4:3" : host.aspect == FE_ASPECT_16_9 ?
 		"16:9" : disp_wide ? "AUTO (16:9)" : "AUTO (4:3)");
 	static const char *const names[GS_ROWS] = { "PICTURE SIZE", "SIZE", "X SIZE", "Y SIZE", "X POSITION",
-		"Y POSITION", "ROTATION", "SCANLINES", "SCAN STRENGTH", "BRIGHTNESS", "SMOOTHING", "ASPECT RATIO" };
+		"Y POSITION", "ROTATION", "SCANLINES", "SCAN STRENGTH", "BRIGHTNESS", "FILTER", "SCREEN COLOR",
+		"ASPECT RATIO" };
 	for (int i = 0; i < GS_ROWS; i++) {
 		FeRow *r = m_row(names[i], v[i], cur == i, 0, 1);
 		if (i >= GS_SIZE && i <= GS_YPOS && host.picture != FE_PIC_CUSTOM && cur != i)
@@ -2412,16 +2490,18 @@ static void screen_build(void)
 		if (i == GS_STRENGTH && !host.scan && cur != i)
 			r->value_c = FE_C_DIM;
 	}
-	static const char *const rot_help[3] = { "ROTATE THE GAME WINDOW\nOFF = UPRIGHT TV",
-		"ROTATE THE GAME WINDOW\nTV'S TOP EDGE ON YOUR LEFT", "ROTATE THE GAME WINDOW\nTV'S TOP EDGE ON YOUR RIGHT" };
+	static const char *const rot_help[4] = { "ROTATE THE GAME WINDOW\nOFF = UPRIGHT TV",
+		"ROTATE THE GAME WINDOW\nTV'S TOP EDGE ON YOUR LEFT", "ROTATE THE GAME WINDOW\nTV'S TOP EDGE ON YOUR RIGHT",
+		"ROTATE THE GAME WINDOW\nWHOLE SCREEN UPSIDE DOWN" };
+	/* test 25 (user): English help lines in ibara360's style */
 	static const char *const helps[GS_ROWS] = { "INTEGER = SHARP, FULL = FULL HEIGHT\nCUSTOM = MANUALLY ADJUST",
-		"PICTURE SIZE\nA = DEFAULT", "PICTURE WIDTH\nA = DEFAULT", "PICTURE HEIGHT\nA = DEFAULT",
-		"PICTURE PLACE, LEFT OR RIGHT\nA = CENTRE", "PICTURE PLACE, UP OR DOWN\nA = CENTRE", NULL,
-		"RASTER SCANNING PATTERN", "SCANLINES INTENSITY", "CHANGE BRIGHTNESS\nA = RESET", "SOFT BLENDS THE PIXELS",
+		"CUSTOM SCREEN ZOOM RATE\nA = RESET", "CUSTOM HORIZONTAL ZOOM RATE\nA = RESET",
+		"CUSTOM VERTICAL ZOOM RATE\nA = RESET", "CUSTOM HORIZONTAL PLACEMENT\nA = RESET",
+		"CUSTOM VERTICAL PLACEMENT\nA = RESET", NULL,
+		"RASTER SCANNING PATTERN", "SCANLINES INTENSITY", "CHANGE BRIGHTNESS\nA = RESET",
+		"SCALING OF THE GAME PICTURE\nNEAREST = SHARP PIXELS", "COLOR STYLE OF THE PICTURE\nMENUS KEEP THEIR COLORS",
 		"ADJUST ASPECT RATIO,\nAUTO = CONSOLE'S ASPECT RATIO" };
-	m_help(FE_C_CYAN, cur == GS_ROT ? rot_help[host.screen] : helps[cur]);
-	if (host.gadgets && gadgets_off_why()[0])
-		m_line(FE_C_DIM, "GADGETS %s", gadgets_off_why());
+	m_help(FE_C_CYAN, cur == GS_ROT ? rot_help[host.flip ? 3 : host.screen] : helps[cur]);
 	m_line(FE_C_GREEN, "LEFT/RIGHT CHANGE");
 	m_back();
 }
@@ -2472,7 +2552,14 @@ static void screen_input(const FePad *pad)
 		return;
 	switch (cur) {
 	case GS_PICTURE: host.picture = (host.picture + 3 + step) % 3; break;
-	case GS_ROT: host.screen = (host.screen + 3 + step) % 3; break;
+	case GS_ROT: {
+		/* test 23: OFF/LEFT/RIGHT/UPSIDE DOWN; UPSIDE DOWN = YOKO + flip, others flip 0 */
+		int r = host.flip ? 3 : host.screen;
+		r = (r + 4 + step) % 4;
+		if (r == 3) { host.screen = FE_YOKO; host.flip = 1; }
+		else { host.screen = r; host.flip = 0; }
+		break;
+	}
 	case GS_SCAN: host.scan = !host.scan; break;
 	case GS_STRENGTH:
 		host.strength = a ? 35 : host.strength + 5 * step;
@@ -2483,7 +2570,16 @@ static void screen_input(const FePad *pad)
 		host.bright = a ? 100 : host.bright + 5 * step;
 		host.bright = host.bright < BRIGHT_MIN ? BRIGHT_MIN : host.bright > BRIGHT_MAX ? BRIGHT_MAX : host.bright;
 		break;
-	case GS_SMOOTH: host.smooth = !host.smooth; break;
+	case GS_FILTER: {
+		/* test 27 (user): NEAREST, BILINEAR, BICUBIC, LANCZOS (no SHARP) */
+		int f = host.smooth;
+		do {
+			f = (f + 5 + step) % 5;
+		} while (f == FE_FILTER_SHARP);
+		host.smooth = f;
+		break;
+	}
+	case GS_COLOR: host.color = (host.color + 6 + step) % 6; break;
 	case GS_ASPECT: host.aspect = (host.aspect + 3 + step) % 3; break;
 	}
 	host_dirty = 1;
@@ -2555,8 +2651,8 @@ static void gadgets_input(const FePad *pad)
 	LOG("fe: GADGETS %s, panels %04X", host.gadgets ? "on" : "off", (unsigned)host.gad_mask);
 }
 
-/* CONTROLS (test 9): A B X Y LB RB LT RT, AUTOFIRE, DEFAULTS */
-enum { CT_AUTOFIRE = FE_KEYS, CT_DEFAULTS, CT_ROWS };
+/* CONTROLS (test 9): A B X Y LB RB LT RT, STICK DEADZONE, AUTOFIRE, DEFAULTS */
+enum { CT_DEADZONE = FE_KEYS, CT_AUTOFIRE, CT_DEFAULTS, CT_ROWS };
 
 static int af_index(void)
 {
@@ -2571,19 +2667,24 @@ static void controls_build(void)
 	char v[16], h[2 * FE_HM_CHARS];
 	const int cur = ov_cur[OV_CONTROLS], p = 60 / ctl.af_hz;
 	if (paused)
-		m_begin(228, 10, "PAUSE  CONTROLS");
+		m_begin(228, 16, "PAUSE  CONTROLS");   /* test 25: value column 16 (STICK DEADZONE's 14 letters) */
 	else
-		m_begin(228, 10, "%s  CONTROLS", game_word(prog_now));
+		m_begin(228, 16, "%s  CONTROLS", game_word(prog_now));
 	for (int k = 0; k < FE_KEYS; k++) {
 		FeRow *r = m_row(key_names[k], act_names[ctl.key[k]], cur == k, 0, 0);
 		if (ctl.key[k] == ACT_OFF && cur != k)
 			r->value_c = FE_C_DIM;
 	}
+	/* test 25 (user): STICK DEADZONE 0..95%, 1% steps */
+	snprintf(v, sizeof v, "%d%%", host.deadzone);
+	m_row("STICK DEADZONE", v, cur == CT_DEADZONE, 0, 0);
 	snprintf(v, sizeof v, "%d HZ", ctl.af_hz);
 	m_row("AUTOFIRE", v, cur == CT_AUTOFIRE, 0, 0);
 	m_row("DEFAULTS", NULL, cur == CT_DEFAULTS, 0, 0);
 	if (ov_msg[0])
 		snprintf(h, sizeof h, "%s", ov_msg);
+	else if (cur == CT_DEADZONE)
+		snprintf(h, sizeof h, "STICK MOVEMENT IGNORED\nAROUND THE CENTER");
 	else if (cur == CT_AUTOFIRE)
 		snprintf(h, sizeof h, "SHOT DOWN %d, UP %d FRAMES", p / 2, p - p / 2);
 	else if (cur == CT_DEFAULTS)
@@ -2593,6 +2694,8 @@ static void controls_build(void)
 	else
 		snprintf(h, sizeof h, "LEFT/RIGHT: SELECT FUNCTION");
 	m_help(FE_C_CYAN, h);
+	if (cur == CT_DEADZONE)
+		m_line(FE_C_GREEN, "LEFT/RIGHT CHANGE");
 	/* test 22 (user): the grey "BACK = PAUSE, START = THE GAME'S" line is gone */
 	m_back();
 }
@@ -2604,9 +2707,32 @@ static void controls_input(const FePad *pad)
 		ovl_back();
 		return;
 	}
-	if (ov_move(OV_CONTROLS, d, CT_ROWS))
+	if (ov_move(OV_CONTROLS, d, CT_ROWS)) {
+		pic_held = 0;
 		return;
+	}
 	const int cur = ov_cur[OV_CONTROLS], a = press & FE_A;
+	if (cur == CT_DEADZONE) {
+		/* test 25 (user): -1/+1, held repeats after PIC_REPEAT (no fast step); A = 50% */
+		const int was = host.deadzone, lr = (pad->held & (FE_LEFT | FE_RIGHT)) != 0;
+		int delta = 0;
+		pic_held = lr ? pic_held + 1 : 0;
+		if (a)
+			host.deadzone = 50;
+		else if (press & (FE_LEFT | FE_RIGHT))
+			delta = press & FE_RIGHT ? 1 : -1;
+		else if (lr && pic_held > PIC_REPEAT)
+			delta = pad->held & FE_RIGHT ? 1 : -1;
+		host.deadzone += delta;
+		if (host.deadzone < 0) host.deadzone = 0;
+		if (host.deadzone > 95) host.deadzone = 95;
+		if (host.deadzone != was)
+			host_dirty = 1;
+		if (a || delta)
+			LOG("fe: CONTROLS STICK DEADZONE");
+		return;
+	}
+	pic_held = 0;
 	const int step = d & FE_LEFT ? -1 : (d & FE_RIGHT) || a ? 1 : 0;
 	if (!step)
 		return;
@@ -2617,6 +2743,8 @@ static void controls_input(const FePad *pad)
 		ctl.af_hz = af_rates[(af_index() + AF_RATES - step) % AF_RATES];
 	} else if (step > 0) {
 		memcpy(ctl.key, ctl_default.key, sizeof ctl.key);
+		host.deadzone = 50; /* test 25 (user): DEFAULTS puts it back to 50 */
+		host_dirty = 1;
 		snprintf(ov_msg, sizeof ov_msg, "DEFAULT BUTTONS RESTORED");
 	} else {
 		return;
@@ -2726,10 +2854,9 @@ static void sound_input(const FePad *pad)
 	}
 }
 
-/* DEBUG MENU (outside a credit): HITBOX, INFINITE LIVES, INFINITE BOMBS (test 16), INVINCIBILITY (test 17),
- * INITIALIZE RANKINGS (this MODE's or both), DEFAULT SETTINGS */
-/* test 21 (user): ATTRACT DEMO and SERVICE MENU sit before INITIALIZE RANKINGS */
-enum { DB_HITBOX, DB_LIVES, DB_BOMBS, DB_INV, DB_DEMO, DB_SERVICE, DB_RANKS, DB_DEFAULTS, DB_ROWS };
+/* DEBUG MENU (outside a credit): ATTRACT DEMO, SERVICE MENU, INITIALIZE RANKINGS, DEFAULT SETTINGS */
+/* test 27 (user): the cheats (HITBOX, INFINITE LIVES, INFINITE BOMBS, INVINCIBILITY) removed */
+enum { DB_DEMO, DB_SERVICE, DB_RANKS, DB_DEFAULTS, DB_ROWS };
 
 static void rk_init(int both)
 {
@@ -2765,10 +2892,6 @@ static void debug_build(void)
 {
 	const int cur = ov_cur[OV_DEBUG];
 	m_begin(228, 21, "%s  DEBUG MENU", game_word(prog_now));
-	m_row("HITBOX", hitbox_names[host.hitbox], cur == DB_HITBOX, 0, 1);
-	m_row("INFINITE LIVES", db_lives ? "ON" : "OFF", cur == DB_LIVES, 0, 1);
-	m_row("INFINITE BOMBS", db_bombs ? "ON" : "OFF", cur == DB_BOMBS, 0, 1);
-	m_row("INVINCIBILITY", db_inv ? "ON" : "OFF", cur == DB_INV, 0, 1);
 	m_row("ATTRACT DEMO", host.demo ? "ON" : "OFF", cur == DB_DEMO, 0, 1);
 	FeRow *r = m_row("SERVICE MENU", NULL, cur == DB_SERVICE, 0, 0);
 	if (ov_armed == DB_SERVICE)
@@ -2784,11 +2907,7 @@ static void debug_build(void)
 	else if (ov_msg[0])
 		m_help(FE_C_CYAN, ov_msg);
 	else
-		m_help(FE_C_CYAN, cur == DB_HITBOX ? "PLAYER = THE RIDERS' HITBOXES\nALL = THE ENEMIES' AND BULLETS' TOO" :
-			cur == DB_LIVES ? "THE TEAM NEVER RUNS OUT\n(INVALIDATES SCORE)" :
-			cur == DB_BOMBS ? "THE BOMBS NEVER RUN OUT\n(INVALIDATES SCORE)" :
-			cur == DB_INV ? "NO DAMAGE\n(INVALIDATES SCORE)" :
-			cur == DB_DEMO ? "ENABLE/DISABLE THE ATTRACT DEMO\nONLY FROM THE NEXT POWER ON" :
+		m_help(FE_C_CYAN, cur == DB_DEMO ? "ENABLE/DISABLE THE ATTRACT DEMO\nONLY FROM THE NEXT POWER ON" :
 			cur == DB_SERVICE ? "THE ARCADE'S TEST MODE\nTHE PAD DRIVES IT" :
 			cur == DB_RANKS ? "CLEAR THE HIGH SCORE TABLES\nOF THIS MODE OR OF BOTH" :
 			"EVERY OPTION, DIP SWITCH AND\nBUTTON BACK TO ITS DEFAULT");
@@ -2829,22 +2948,6 @@ static void debug_input(const FePad *pad)
 		return;
 	const int lr = d & (FE_LEFT | FE_RIGHT);
 	switch (cur) {
-	case DB_HITBOX:
-		if (lr || a) {
-			host.hitbox = (host.hitbox + (d & FE_LEFT ? HITBOX_MODES - 1 : 1)) % HITBOX_MODES;
-			host_dirty = 1;
-		}
-		break;
-	case DB_LIVES:
-	case DB_BOMBS:
-	case DB_INV:
-		if (lr || a) {
-			int *v = cur == DB_LIVES ? &db_lives : cur == DB_BOMBS ? &db_bombs : &db_inv;
-			*v = !*v;
-			LOG("fe: DEBUG %s %s", cur == DB_LIVES ? "INFINITE LIVES" : cur == DB_BOMBS ? "INFINITE BOMBS" :
-				"INVINCIBILITY", *v ? "ON" : "OFF");
-		}
-		break;
 	case DB_DEMO:
 		if (lr || a) {
 			host.demo = !host.demo;
@@ -2876,7 +2979,8 @@ enum { DIP_DEFAULT = 4, DIP_ROWS };
 
 static void dips_build(void)
 {
-	static const char *const helps[DIP_ROWS] = { "THE ARCADE'S DIFFICULTY", "THE ARCADE'S TIMER SETTING",
+	/* test 27 (user): DIP SWITCHES helps, no leading "THE" */
+	static const char *const helps[DIP_ROWS] = { "ARCADE DIFFICULTY SETTING", "ARCADE TIMER SETTING",
 		"CHANGE STARTING LIVES", "CHANGE REQUIRED SCORE FOR\nGETTING MORE LIVES", "A = REVERT TO INITIAL SETTINGS" };
 	const int cur = ov_cur[OV_DIPS];
 	m_begin(228, 16, "%s  DIP SWITCHES", game_word(FE_ORIGINAL));
@@ -3276,10 +3380,11 @@ static void pause_build(void)
 		if (pause_armed && i == pause_cur)
 			r->name_c = FE_C_RED;
 	}
+	/* test 25 (user): OPTIONS help in ibara360's style */
 	static const char *const helps[PS_ROWS] = { "RESUME GAME", "FULL RESTART FROM STAGE 1\nWITH THE SAME TEAM",
 		"SAVE POSITION\n(INVALIDATES SCORE)", "LOAD A SAVED POSITION\n(INVALIDATES SCORE)",
 		"SCREEN, GADGETS, CONTROLS,\nSOUND, MANUAL", "INVALID SCORE, NO RANKING\nAND NO REPLAY ONCE IT IS ON",
-		"RETURN TO THE TITLE", "", "RETURN TO THE TITLE" };   /* test 13: ibara360's score words */
+		"RETURN TO THE TITLE", "", "RETURN TO THE TITLE" };   /* test 13: ibara360's score words; test 27 (user): GADGETS */
 	char h[2 * FE_HM_CHARS];
 	if (pause_cur == PS_STAGE) {
 		if (pick < 0)
@@ -3291,8 +3396,9 @@ static void pause_build(void)
 		else
 			snprintf(h, sizeof h, "RESTART FROM STAGE %d'S START\n(INVALIDATES SCORE)", rs_stage);
 	} else {
-		snprintf(h, sizeof h, "%s", pause_cur == PS_RESTART && practice ? "RESTART THE TRAINING STAGE" :
-			pause_cur == PS_QUIT && practice ? "RETURN TO THE TRAINING PAGE" : helps[pause_cur]);
+		/* test 27 (user): training pause help lines */
+		snprintf(h, sizeof h, "%s", pause_cur == PS_RESTART && practice ? "RESTART TRAINING STAGE" :
+			pause_cur == PS_QUIT && practice ? "QUIT TO TRAINING MENU" : helps[pause_cur]);
 	}
 	if (pause_armed)
 		m_help(FE_C_RED, pause_cur == PS_QUIT || pause_cur == PS_QTITLE ? "QUIT? A = YES, B = NO" :
@@ -3306,7 +3412,12 @@ static void pause_close(int choice)
 {
 	paused = 0;
 	pause_armed = 0;
-	swallow = pad_press;            /* test 10: the B / A closing the box is no BOMB / SHOT (held ones go on) */
+	/* test 25 (user): a plain RESUME with A lets A's own game button (SHOT by default) through as held, as ibara360's
+	 * test 109; B / BACK / START and their game buttons stay swallowed */
+	if (choice == 0 && (pad_press & FE_A))
+		swallow = pad_press & ~(uint16_t)(FE_A | a_key_game_bits());
+	else
+		swallow = pad_press;            /* test 10: the B / A closing the box is no BOMB / SHOT (held ones go on) */
 	if (choice == 1) {
 		restart_req = 1;
 		veil = -1;
@@ -3713,6 +3824,14 @@ fields:
 		out->man_page = man_page;
 		out->man_lang = host.language;
 	}
+	/* test 23: hold LT to hide the menu box (not the manual page view) */
+	if (hide_menu && !out->manual && j->hm) {
+		j->hm = 0;
+		j->hm_n = 0;
+		j->hm_nl = 0;
+		j->hm_help[0] = 0;
+		j->pic = NULL;
+	}
 	out->req = req_kind;
 	out->req_arg = req_arg;
 	out->invalid = red;
@@ -3722,8 +3841,12 @@ fields:
 	req_kind = FE_REQ_NONE;
 	apply_volumes();
 	out->bright = host.bright;
-	out->smooth = host.smooth;
+	out->smooth = host.smooth;         /* test 23: FILTER */
 	out->scan = host.scan ? host.strength : 0;
+	out->low_lag = host.low_lag;
+	out->color = host.color;
+	out->flip = host.flip;
+	out->dead = fe_stick_dead();
 	out->wide = aspect_wide();
 	out->picture = host.picture;
 	{
@@ -3787,7 +3910,7 @@ static void hb_put(uint32_t a, int px, int py, int cam, int kind)
 static void hitbox_read(void)
 {
 	hb_ndisc = hb_nbox = 0;
-	if (!host.hitbox || !in_credit() || br_rd8(ATTRACT) >= 0x40)
+	if (!host.hitbox || !in_credit() || br_rd8(ATTRACT) >= 0x40 || !practice) /* test 27 (user): HITBOX is TRAINING's only */
 		return;
 	const int cam = br_rd16(CAMERA) & 0xFF80;
 	const uint32_t players[2] = { P1, P2 };
@@ -4087,6 +4210,13 @@ static void hm_draw5(uint32_t *tex, const FeVideoJob *job)
 				hm_fill(tex, px + ux, py + uy, px + ux + 1, py + uy + 1, rgb, 0);
 			}
 	}
+	/* test 25 (user): the box's texels get alpha 0 (a menu: drawn plain by every xsdk shader), as menudraw.c's */
+	for (int uy = by; uy < by + h; uy++)
+		for (int ux = bx; ux < bx + w; ux++) {
+			uint32_t *t = texel(tex, ux, uy);
+			for (int k = 0; k < 4; k++)
+				t[(k >> 1) * FRONT_TEX_W + (k & 1)] &= 0x00FFFFFFu;
+		}
 }
 
 /* test 8: a replay's speed and time across the bottom (test 9: the 5x7 font) */
@@ -4094,6 +4224,13 @@ static void banner_draw5(uint32_t *tex, const char *s)
 {
 	hm_fill(tex, 0, BR_W - 16, BR_H, BR_W - 4, 0, 1);
 	text5(tex, (BR_H - 6 * (int)strlen(s)) / 2, BR_W - 13, s, m_rgb[FE_C_YELLOW]);
+	/* test 25 (user): the band's texels get alpha 0 (a menu: drawn plain by every xsdk shader) */
+	for (int uy = BR_W - 16; uy < BR_W - 4; uy++)
+		for (int ux = 0; ux < BR_H; ux++) {
+			uint32_t *t = texel(tex, ux, uy);
+			for (int k = 0; k < 4; k++)
+				t[(k >> 1) * FRONT_TEX_W + (k & 1)] &= 0x00FFFFFFu;
+		}
 }
 
 /* Test 11 (user: "redesign the menus using the gadgets borders and font"): the box is a GADGETS panel (menudraw.h):
@@ -4603,4 +4740,16 @@ void fe_playback_decorate(FeOut *out, const char *speed, uint32_t frame, uint32_
 		pb_banner--;
 		snprintf(j->banner, FE_HM_CHARS, "REPLAY %s  %s / %s  BACK = PAUSE", speed, t[0], t[1]);
 	}
+}
+
+/* test 26: the front end's state for the stall detector and the fault handler (read from another thread: racy, for
+ * the log only) */
+const char *fe_diag_line(void)
+{
+	static char s[200];
+	snprintf(s, sizeof s, "fe: phase %d pulse %d launch_t %d active %d page %d in_credit %d practice %d veil %d "
+		"paused %d resetting %d switch_due %d start_due %d; 68000 PC %06X, board frame %u, attract %02X",
+		phase, pulse, launch_t, active, page, in_credit(), practice, veil, paused, resetting, switch_due, start_due,
+		(unsigned)(br_reg(M68K_REG_PC) & 0xFFFFFF), (unsigned)br_frame_count(), br_rd8(ATTRACT));
+	return s;
 }

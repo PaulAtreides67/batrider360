@@ -16,7 +16,9 @@ set(THIRD_SOURCES ${TP}/musashi/m68kcpu.c ${GEN}/m68kops.c ${TP}/musashi/softflo
 	${TP}/zlib/zutil.c)
 set(CXX_SOURCES ${ROOT}/core/ym.cpp ${TP}/ymfm/src/ymfm_opm.cpp)
 
-add_executable(batrider360 main.c ${CORE_SOURCES} ${THIRD_SOURCES} ${CXX_SOURCES})
+# test 23: xsdk's present (ibara360's copy) for LOW LATENCY tearing; built with xsdk's private headers
+add_executable(batrider360 main.c xsdk_present.c ${CORE_SOURCES} ${THIRD_SOURCES} ${CXX_SOURCES})
+set_source_files_properties(xsdk_present.c PROPERTIES INCLUDE_DIRECTORIES "${XSDK_ROOT}/src" COMPILE_OPTIONS "-w")
 set_target_properties(batrider360 PROPERTIES C_STANDARD 17 C_EXTENSIONS ON CXX_STANDARD 17)
 target_include_directories(batrider360 PRIVATE ${ROOT}/core ${TP}/musashi ${GEN} ${TP}/z80 ${TP}/ymfm/src ${TP}/zlib)
 target_compile_definitions(batrider360 PRIVATE "MUSASHI_CNF=\"m68kconf_br.h\"")
@@ -25,5 +27,6 @@ set_source_files_properties(main.c ${CORE_SOURCES} PROPERTIES COMPILE_OPTIONS "-
 set_source_files_properties(${THIRD_SOURCES} ${CXX_SOURCES} PROPERTIES COMPILE_OPTIONS "-w")
 # Test 3: every log line through main.c's ring to its own thread (__wrap_xsdk_log_write).
 target_link_options(batrider360 PRIVATE -Wl,--wrap=xsdk_log_write)
-xsdk_add_shaders(batrider360 quad.vert quad.frag)
+# test 24: one pixel shader a FILTER (quad_*.frag) + quad.frag for the canvas and the manual
+xsdk_add_shaders(batrider360 quad.vert quad.frag quad_sharp.frag quad_near.frag quad_bilin.frag quad_cubic.frag quad_lanc.frag)
 xsdk_add_xex(batrider360)

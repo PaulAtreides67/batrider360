@@ -13,6 +13,7 @@
 !/xsdk/build.sh
 !/xsdk/quad.vert
 !/xsdk/quad.frag
+!/xsdk/quad_*.frag
 !/build/gen/chase_patch.h
 !/build/gen/front_assets.h
 !/build/gen/gadgets_art.h

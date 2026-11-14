@@ -493,3 +493,14 @@ line scroll are DMA'd from main RAM 0x200000-0x2033FF on writes to 0x500082 (eac
   left; leaves at 15). Helpers' reports work/t22/a/REPORT.md, work/t22/b/REPORT.md.
 - Test 22 STAGED 2026-11-06 deploy/test22x (xex md5 2ffed98f; test 21's manual.bin/PDFs, not rebuilt for Sp.Extend).
   Awaiting SUCCESS/FAILURE.
+- Test 23 FAILURE 2026-11-13 (user + recording D:/obs/2026-11-13 11-09-53.mp4): the whole game and the Guide lag; the
+  recording shows ~5-17 distinct frames a second on the title with LOW LATENCY OFF, FILTER SHARP, COLOR STANDARD. Cause:
+  test 23's single quad.frag (all 5 FILTERs + 6 SCREEN COLORs) - xsdk's compiler runs both arms of every data branch
+  and unrolls loops, so every pixel of every quad (1280x720 canvas, game, manual) ran 16-tap bicubic + Lanczos with
+  sin() + outline taps: ~1100 lines of microcode, GPU-bound, the Guide starved with it. Test 24 (Opus coded): one
+  pixel shader a FILTER (quad_sharp/near/bilin/cubic/lanc.frag, separable weights once an axis, all in main: xsdk's
+  compiler takes no function calls or reassigned locals) + quad.frag (texture x brightness) for canvas/manual; SCREEN
+  COLOR = a matrix + offset from main.c color_matrix(), OUTLINE = look.a.z; set_look sends only the shader's push
+  registers; LOW LATENCY wait: 14.0 ms deadline, low SMT priority + yield every ~1 ms.
+- Test 24 STAGED 2026-11-13 deploy/test24x (xex md5 3a8c32f6; test 23's manual + batrider.zip; batrider360_log_on.txt
+  included for the frame stats incl. 'low latency: N of M frames late'). Awaiting SUCCESS/FAILURE.

@@ -83,6 +83,7 @@ enum {
 };
 
 enum { FE_CHASE, FE_ORIGINAL };                 /* MODE = index into progs[] */
+#define FE_REPLAY_SPECIAL 2              /* test 25 (user): a replay's kind: ADVANCE SPECIAL, played with progs[FE_ORIGINAL]; never index progs[] / slots[] / rankings with it */
 enum { FE_YOKO, FE_TATE_A, FE_TATE_B };          /* host menu SCREEN */
 enum { FE_V_GAME, FE_V_TITLE, FE_V_SPLASH, FE_V_BLACK, FE_V_WHITE };
 
@@ -149,13 +150,15 @@ typedef struct {
 	int req, req_arg;          /* FE_REQ_* for the main loop */
 	int manual;                /* the manual is shown (instead of the game): page man_page (from 0) in man_lang */
 	int man_page, man_lang;    /* (YOKO shows man_page and the next as a spread) */
-	int smooth;                /* SMOOTHING 0/1 */
+	int smooth;                /* test 23: FILTER 0 NEAREST .. 4 LANCZOS (replaces SMOOTHING) */
 	/* test 10 (ibara360's GENERAL SCREEN): BRIGHTNESS percent (100 = as it is), the scanlines' darkness percent (0 =
 	 * none), the display's shape (wide: 16:9, else 4:3, ASPECT RATIO with AUTO resolved) and where the game goes:
 	 * picture FE_PIC_*, and for FE_PIC_CUSTOM the shape's size, X / Y size (thousandths) and X / Y position (720ths
 	 * of the screen's height, as the player sees the game: right, down) */
 	int bright, scan, wide;
 	int picture, pic_size, pic_sx, pic_sy, pic_x, pic_y;
+	/* test 23: LOW LATENCY (fewer frames of lag, may tear), SCREEN COLOR 0..5, UPSIDE DOWN, STICK DEADZONE threshold */
+	int low_lag, color, flip, dead;
 	/* test 11: the menu sounds started this frame (1 << MS_* of menusnd.h; the host mixes them, menusnd_mix) and their
 	 * volume 0..256 (SFX, 0 with MUTE); fe_playback_input's sounds come out in the next fe_frame's */
 	unsigned se;
@@ -170,10 +173,17 @@ typedef struct {
  * 16:9, tate on 4:3 (each keeps its own CUSTOM picture). GADGETS show on 16:9 with INTEGER or FULL only. */
 enum { FE_PIC_INTEGER, FE_PIC_FULL, FE_PIC_CUSTOM };
 enum { FE_ASPECT_AUTO, FE_ASPECT_16_9, FE_ASPECT_4_3 };
+/* test 23: FILTER (replaces SMOOTHING): how the game picture is scaled (FeOut.smooth / host.smooth) */
+enum { FE_FILTER_NEAREST, FE_FILTER_SHARP, FE_FILTER_BILINEAR, FE_FILTER_BICUBIC, FE_FILTER_LANCZOS };
 enum { FE_SHAPES = 4, FE_PIC_SIZE_MIN = 300, FE_PIC_SIZE_MAX = 3000, FE_PIC_STRETCH_MIN = 500, FE_PIC_STRETCH_MAX = 2000,
 	FE_PIC_POS_MAX = 2000 };
 /* The console's own display shape (main.c, before fe_init: ASPECT RATIO's AUTO); 1 = 16:9 */
 void fe_display(int wide);
+/* test 23: hold LT to hide the menu box (called every frame before fe_frame) */
+void fe_hide_menu(int on);
+/* test 23: the stick dead zone threshold (0..32767), from STICK DEADZONE in OPTIONS */
+int fe_stick_dead(void);
+const char *fe_diag_line(void);   /* test 26: front-end state for the stall/fault log (any thread) */
 
 /* progs[FE_CHASE], progs[FE_ORIGINAL]: the two programs (progpatch_make); hooks are written into both. Call after
  * br_init. Loads the files, sets the program of the saved MODE, resets the board. 0 = ok, -1 = a hook site or the

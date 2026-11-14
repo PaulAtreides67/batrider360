@@ -119,6 +119,6 @@ void front_fade(uint32_t *tex, int level)
 		const uint32_t c = tex[i];
 		const uint32_t rb = ((c & 0xFF00FF) * (uint32_t)level >> 8) & 0xFF00FF;
 		const uint32_t g = ((c & 0x00FF00) * (uint32_t)level >> 8) & 0x00FF00;
-		tex[i] = 0xFF000000u | rb | g;
+		tex[i] = (c & 0xFF000000u) | rb | g;   /* test 25 (user): keeps a menu texel's alpha 0 (NOW LOADING) */
 	}
 }

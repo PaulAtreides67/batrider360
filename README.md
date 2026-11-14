@@ -10,7 +10,7 @@
 Press BACK during a run to open the pause menu. If the CONTINUE? screen appears, press START before the count
 reaches zero to carry on.**
 
-**Version 0.22** (November 2026)
+**Version 0.28** (November 2026)
 
 Armed Police Batrider (Raizing / 8ing, 1998) running natively on the Xbox 360: the arcade board emulated in an xsdk
 `.xex`, with **CHASE!** (the scoring mode from Coin-Op Game Studio's N64 version and its front end), the arcade's own
@@ -39,14 +39,18 @@ Chase Break that trades your multiplier for a screen full of medals, and a diffi
 ### Picture and GADGETS
 - **GADGETS** side panels: status, weapon, rank bar, medals, stage progress, controller and CHASE! panels, in a 16:9
   layout based on Baffo's Batrider MAME artwork.
-- **ROTATION**: OFF (the game in the middle, gadgets on both sides), or LEFT / RIGHT for a display turned on its side.
-- Picture size, aspect ratio and scanline strength are set in **OPTIONS > GENERAL SCREEN**.
+- **ROTATION**: OFF (the game in the middle, gadgets on both sides), LEFT / RIGHT for a display turned on its side,
+  or UPSIDE DOWN.
+- **OPTIONS > GENERAL SCREEN**: picture size and position, aspect ratio, scanlines, brightness, **FILTER** (NEAREST,
+  BILINEAR, BICUBIC, LANCZOS) and **SCREEN COLOR** (STANDARD, FLAT, MONOTONE, SEPIA, OUTLINE, NEGATIVE).
+- **LOW LATENCY** (OPTIONS): up to two frames less input lag, at the cost of some screen tearing.
 
 ### Menus
 - **Title menu**: PLAY, TRAINING, LOAD STATE, REPLAY DATA, OPTIONS, EXIT.
 - **Pause menu** (BACK during a run): save and load states, the controls help page, the manual, and restarting the stage.
-- **OPTIONS**: GENERAL SCREEN, GADGETS, CONTROLS, SOUND, DEBUG MENU and MANUAL.
-- **CONTROLS**: every button can be remapped, and the AUTO SHOT / AUTOFIRE rate is set here.
+- **OPTIONS**: GENERAL SCREEN, GADGETS, CONTROLS, SECRET COMMANDS, SOUND, MANUAL, DEBUG MENU, LOW LATENCY and
+  LANGUAGE. Every row has a help line.
+- **CONTROLS**: every button can be remapped; the AUTO SHOT / AUTOFIRE rate and the stick deadzone are set here.
 - **Menu sounds** are made from the game's own sound effects the first time you start the game.
 
 ### TRAINING

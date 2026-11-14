@@ -55,7 +55,7 @@
 <div class="kicker">A.D. 2014 — N.Y. Manhattan</div>
 <h1 id="start">Getting started</h1>
 <p class="lead">Copy three files to your console, start the game, and press START.</p>
-<p>ARMED POLICE BATRIDER is a 1998 arcade shooting game by RAIZING. <b style="color:var(--navy)">CHASE!</b> is a new mode for it made by COIN-OP GAME STUDIO. It adds a chain to build, medals that fly to your ship, and a difficulty that never gets out of hand. This Xbox 360 version (<b>version 0.21</b>) contains both CHASE! and the original arcade game, plus a training mode, save states, replays, and information panels (the “gadgets”) beside the game screen.</p>
+<p>ARMED POLICE BATRIDER is a 1998 arcade shooting game by RAIZING. <b style="color:var(--navy)">CHASE!</b> is a new mode for it made by COIN-OP GAME STUDIO. It adds a chain to build, medals that fly to your ship, and a difficulty that never gets out of hand. This Xbox 360 version (<b>version 0.28</b>) contains both CHASE! and the original arcade game, plus a training mode, save states, replays, and information panels (the “gadgets”) beside the game screen.</p>
 
 <h2>What you need</h2>
 <ul>
@@ -76,13 +76,14 @@
 	<tr><td class="k">OFF</td><td>Normal (horizontal)</td><td>The game in the middle of the screen, with the <b>gadgets</b> on both sides (page <span class="pg" data-to="gadgets"></span>). This is the default.</td></tr>
 	<tr><td class="k">LEFT</td><td>Turned on its side, with its top edge on your <b>left</b></td><td>The game fills the whole screen, with the gadgets in strips above and below it.</td></tr>
 	<tr><td class="k">RIGHT</td><td>Turned on its side, with its top edge on your <b>right</b></td><td>The same, turned the other way.</td></tr>
+		<tr><td class="k">UPSIDE DOWN</td><td>Normal (horizontal), but turned upside down</td><td>The whole screen turned half round, for a TV that is mounted the other way up.</td></tr>
 	</tbody>
 </table>
 <div class="row" style="justify-content:center">
 	<figure style="flex:0 0 47%"><div class="slot" data-file="work/gadgets_yoko_chase.png" data-ar="16/9" data-label="ROTATION OFF, CHASE!"></div><figcaption><b>ROTATION OFF:</b> a normal TV, with the gadgets beside the game.</figcaption></figure>
 	<figure style="flex:0 0 15%"><div class="slot" data-file="work/gadgets_tate_chase.png" data-ar="9/16" data-label="ROTATION LEFT / RIGHT"></div><figcaption><b>LEFT / RIGHT</b>, shown upright.</figcaption></figure>
 </div>
-<p>With either setting, the game and its menus appear the right way up, as in the pictures in this manual.</p>
+
 <div class="caution"><span class="lbl">CAUTION</span><p>Not every TV is designed to be stood on its side. Only turn a display or mount that is made for it, never cover its vents, and never turn it while it is switched on.</p></div>
 
 <h1 id="controls" class="newpage first">Controls</h1>
@@ -94,6 +95,7 @@
 	<tr><td><span class="b bb">B</span></td><td><b>BOMB</b>. In menus: go back.</td></tr>
 	<tr><td><span class="b x">X</span></td><td><b>SPECIAL</b>: changes the formation of your options (Battle Garegga guest riders only). In CHASE! it also sets off the Chase Break. On the save state and replay pages: delete.</td></tr>
 	<tr><td>RT</td><td><b>AUTO SHOT</b>: fires automatically while held.</td></tr>
+	<tr><td>LT</td><td>In menus: hold to hide the menu and see the game picture behind it. In play, LT is off by default (set it in CONTROLS).</td></tr>
 	<tr><td><span class="b bk">BACK</span></td><td>During a stage: open the <b>pause menu</b>. In menus: go back. During a replay: pause the replay.</td></tr>
 	<tr><td><span class="b st">START</span></td><td>On the opening screens: skip to the title. On the PLAY and TRAINING pages: start playing. During play: the arcade game’s own START button, used for its secret commands (page <span class="pg" data-to="commands"></span>). In OPTIONS: close all pages at once.</td></tr>
 	<tr><td><span class="b lb">LB</span> / <span class="b rb">RB</span></td><td>During a replay: slower / faster. On some menu rows: change the value in bigger steps. In the on-screen manual: previous / next page.</td></tr>
@@ -123,7 +125,7 @@
 <p>PLAY opens a page with three rows. Press left and right (or <span class="b a">A</span>) to change a value. Press <span class="b st">START</span> on any row to start playing, or <span class="b bb">B</span> / <span class="b bk">BACK</span> to return to the title menu.</p>
 <table class="plain">
 	<tbody>
-	<tr><td style="width:40%">START RUN</td><td>Start a run of the selected MODE.</td></tr>
+	<tr><td style="width:40%">START RUN</td><td>Play with the settings below.</td></tr>
 	<tr><td>MODE</td><td>CHASE!, ORIGINAL or ADVANCE SPECIAL (see below).</td></tr>
 		<tr><td>DIP SWITCHES</td><td>Settings for the original game (page <span class="pg" data-to="settings"></span>). Greyed out in CHASE!. Shows CHANGED in red when they differ from the defaults.</td></tr>
 	</tbody>
@@ -270,7 +272,7 @@
 <h2 id="hitbox" class="newpage" style="margin-top:6mm">The hitbox</h2>
 <figure class="fr w40"><img class="shot" src="art/hitbox.png" alt=""></figure>
 <p>The white dot inside a red ring is your ship’s <b>hitbox</b>: the only part of the ship that can be hit. Bullets can pass over the rest of the ship without harming you. The hitbox is drawn at the same layer as your ship, so anything drawn on top of your ship also covers it.</p>
-<p>The <b>HITBOX</b> setting (on the TRAINING page and in OPTIONS &gt; DEBUG MENU) controls what is shown in both games: <b>OFF</b>, <b>PLAYER</b> (your ship’s hitbox; the default) or <b>ALL</b>.</p>
+<p>The <b>HITBOX</b> setting (on the TRAINING page) controls what is shown during TRAINING runs in both games: CHASE! and the original. <b>OFF</b>, <b>PLAYER</b> (your ship’s hitbox; the default) or <b>ALL</b> (player, enemy and bullet hitboxes).</p>
 <div class="clear"></div>
 <figure class="fl w40"><img class="shot" src="art/hitbox_all.png" alt=""><figcaption>HITBOX ALL.</figcaption></figure>
 <p><b>ALL</b> also shows every collision box the game checks:</p>
@@ -403,7 +405,7 @@
 <section class="s-menus newpage tight">
 <h1 id="original" class="first">The original game</h1>
 <p class="lead">When MODE is set to ORIGINAL or ADVANCE SPECIAL, START RUN plays ARMED POLICE BATRIDER exactly as it plays in the arcade.</p>
-<p>None of the CHASE! rules apply: there is no chain, no medal magnet and no Chase Break, and the rank has no limit. The game uses the arcade’s default settings (NORMAL difficulty, three lives, and an extend item every 1,500,000 points) unless you change them with the <b>DIP switches</b> (page <span class="pg" data-to="settings"></span>). It is set to free play, and the screen looks exactly like the arcade original (no CHASE tag). The hitbox and the gadgets work in both games (page <span class="pg" data-to="gadgets"></span>).</p>
+<p>None of the CHASE! rules apply: there is no chain, no medal magnet and no Chase Break, and the rank has no limit. The game uses the arcade’s default settings (NORMAL difficulty, three lives, and an extend item every 1,500,000 points) unless you change them with the <b>DIP switches</b> (page <span class="pg" data-to="settings"></span>). It is set to free play, and the screen looks exactly like the arcade original (no CHASE tag). The gadgets work in both games (page <span class="pg" data-to="gadgets"></span>), and the hitbox can be shown during TRAINING runs.</p>
 <p>The games share everything outside of play: the menus, the pause menu, TRAINING, save states and replays. CHASE! and ORIGINAL keep their own high score tables. ADVANCE SPECIAL scores go in the ORIGINAL tables (page <span class="pg" data-to="mode"></span>).</p>
 
 <h1 id="training" style="margin-top:6mm">Training</h1>
@@ -413,7 +415,7 @@
 <div class="clear"></div>
 <table class="menu long">
 	<tbody>
-	<tr><td>START RUN</td><td>Start playing with the settings below.</td></tr>
+	<tr><td>START RUN</td><td>Play with the settings below. No scores, initials or replays.</td></tr>
 	<tr><td>MODE<small>CHASE! / ORIGINAL / ADVANCE SPECIAL</small></td><td>Which game to practise. This is the same setting as on the PLAY page.</td></tr>
 	<tr><td>PLAYER EDIT</td><td>Press <span class="b a">A</span> to open the PLAYER EDIT page: team, riders, formation, lives, bombs and power (see below).</td></tr>
 	<tr><td>STAGE</td><td>M.CITY, AIRPORT, SKY HIGH, S.SYSTEM, HIGH WAY, Z.CITY, BUILDING, or EXTRA BOSSES.</td></tr>
@@ -472,7 +474,7 @@
 <table class="plain">
 	<tbody>
 	<tr><td style="width:44%">RESUME</td><td>Continue the run.</td></tr>
-	<tr><td>RESTART</td><td>Restart the training stage from the beginning, with the same team.</td></tr>
+	<tr><td>RESTART</td><td>Start the training stage again at once, with the same settings. The TRAINING page does not come back.</td></tr>
 	<tr><td>OPTIONS</td><td>Open OPTIONS (page <span class="pg" data-to="options"></span>).</td></tr>
 	<tr><td>QUIT TO TRAINING</td><td>Return to the TRAINING page.</td></tr>
 	<tr><td>QUIT TO TITLE</td><td>Return to the title menu.</td></tr>
@@ -486,19 +488,20 @@
 <section class="s-menus newpage">
 <h1 id="options" class="first">Options</h1>
 <figure class="fl w48"><img class="shot" src="art/options.png" alt=""><figcaption>OPTIONS, opened from the title menu.</figcaption></figure>
-<p>You can open OPTIONS from the title menu or from the pause menu. Press up and down to choose a row, and <span class="b a">A</span> to open a page; press left and right to change GADGETS and LANGUAGE. <span class="b bb">B</span> / <span class="b bk">BACK</span> goes back one page, and <span class="b st">START</span> closes all pages at once. Your changes are saved automatically (page <span class="pg" data-to="keeps"></span>).</p>
+<p>You can open OPTIONS from the title menu or from the pause menu. Press up and down to choose a row, and <span class="b a">A</span> to open a page; press left and right to change LOW LATENCY and LANGUAGE. <span class="b bb">B</span> / <span class="b bk">BACK</span> goes back one page, and <span class="b st">START</span> closes all pages at once. Your changes are saved automatically (page <span class="pg" data-to="keeps"></span>).</p>
 <p>Each page shows its name at the top, then its rows, a help line for the selected row, and the buttons you can use.</p>
 <div class="clear"></div>
 <table class="plain">
 	<tbody>
-	<tr><td style="width:34%">GENERAL SCREEN</td><td>Picture size, position, rotation, scanlines, brightness and aspect ratio (page <span class="pg" data-to="genscreen"></span>).</td></tr>
-	<tr><td>GADGETS<small>ON / OFF</small></td><td>The information panels beside the game (page <span class="pg" data-to="gadgets"></span>). LEFT or RIGHT turns them all on or off. A opens the GADGETS page, where each panel can be chosen (page <span class="pg" data-to="gadgetpanels"></span>). They need a 16:9 screen and PICTURE SIZE set to INTEGER or FULL; if they can’t be shown, a line under the menu says why.</td></tr>
-	<tr><td>CONTROLS</td><td>Button layout (page <span class="pg" data-to="ctlpage"></span>).</td></tr>
+	<tr><td style="width:34%">GENERAL SCREEN</td><td>Picture size, position, rotation, scanlines, brightness, filter, screen colour and aspect ratio (page <span class="pg" data-to="genscreen"></span>).</td></tr>
+	<tr><td>GADGETS</td><td>Turn the information panels beside the game on or off, and choose which panels show (page <span class="pg" data-to="gadgetpanels"></span>). When the gadgets are on but cannot show (on a 4:3 screen, or when PICTURE SIZE is CUSTOM), a dim line under this row’s help says why.</td></tr>
+		<tr><td>CONTROLS</td><td>Button layout (page <span class="pg" data-to="ctlpage"></span>).</td></tr>
 	<tr><td>SECRET COMMANDS</td><td>The arcade game’s hidden START commands (page <span class="pg" data-to="commands"></span>).</td></tr>
 	<tr><td>SOUND</td><td>Volume and sound tests (page <span class="pg" data-to="sound"></span>).</td></tr>
 	<tr><td>MANUAL</td><td>This manual, on the screen (page <span class="pg" data-to="manualpage"></span>).</td></tr>
-	<tr><td>DEBUG MENU</td><td>Hitboxes, cheats, the attract demo, the arcade’s service menu, high score reset and default settings. Only available from the title menu (page <span class="pg" data-to="debug"></span>).</td></tr>
-	<tr><td>LANGUAGE<small>ENGLISH / JAPANESE</small></td><td>Can only be changed outside a run (page <span class="pg" data-to="language"></span>).</td></tr>
+	<tr><td>DEBUG MENU</td><td>The attract demo, the arcade’s service menu, high score reset and default settings. Only available from the title menu (page <span class="pg" data-to="debug"></span>).</td></tr>
+	<tr><td>LOW LATENCY<small>ON / OFF</small></td><td>Up to two frames less input lag, so the game reacts sooner. The picture can tear: a thin horizontal line where two frames meet. OFF stops the tearing. ON by default.</td></tr>
+		<tr><td>LANGUAGE<small>ENGLISH / JAPANESE</small></td><td>Can only be changed outside a run (page <span class="pg" data-to="language"></span>).</td></tr>
 	</tbody>
 </table>
 
@@ -513,11 +516,12 @@
 	<tr><td style="width:34%">PICTURE SIZE</td><td><b>INTEGER</b>: the largest size that keeps every pixel sharp. <b>FULL</b> (default): the full height of the screen. <b>CUSTOM</b>: set by the five rows below.</td></tr>
 	<tr><td>SIZE<br>X SIZE, Y SIZE</td><td>Custom overall size, width and height. <span class="b a">A</span> resets to 100%.</td></tr>
 	<tr><td>X / Y POSITION</td><td>Custom position. <span class="b a">A</span> resets to the centre.</td></tr>
-	<tr><td>ROTATION</td><td>OFF, LEFT or RIGHT, depending on how your display is set up (page <span class="pg" data-to="screen"></span>).</td></tr>
+	<tr><td>ROTATION</td><td>OFF, LEFT, RIGHT or UPSIDE DOWN, depending on how your display is set up (page <span class="pg" data-to="screen"></span>).</td></tr>
 	<tr><td>SCANLINES</td><td>OFF / ON: dark lines between the picture’s lines, like an arcade monitor.</td></tr>
 	<tr><td>SCAN STRENGTH</td><td>How dark the scanlines are: 5% to 100% (35% by default).</td></tr>
 	<tr><td>BRIGHTNESS</td><td>50% to 150% in 5% steps. 100% is the original brightness. <span class="b a">A</span> resets to 100%.</td></tr>
-	<tr><td>SMOOTHING</td><td>OFF shows sharp pixels; ON smooths them.</td></tr>
+	<tr><td>FILTER<small>NEAREST / BILINEAR / BICUBIC / LANCZOS</small></td><td>How the game picture is scaled. NEAREST (default) gives sharp pixel edges. BILINEAR, BICUBIC and LANCZOS are smoother scalers.</td></tr>
+		<tr><td>SCREEN COLOR<small>STANDARD / FLAT / MONOTONE / SEPIA / OUTLINE / NEGATIVE</small></td><td>The colour style of the game picture. STANDARD is the normal look. OUTLINE draws the picture as white edge lines on black. The menus keep their own colours.</td></tr>
 	<tr><td>ASPECT RATIO</td><td>AUTO (follows the console’s setting), 16:9 or 4:3.</td></tr>
 	</tbody>
 </table>
@@ -536,7 +540,8 @@
 		<tr><td>A+START</td><td>Presses the arcade game’s SHOT and START together, for its secret START commands (page <span class="pg" data-to="commands"></span>). You do not need to hold START.</td></tr>
 	</tbody>
 </table>
-<p>More than one button can have the same job. <b>AUTOFIRE</b> sets the AUTO SHOT rate: 30, 20, 15, 12 or 10 shots per second. <b>DEFAULTS</b> restores the original layout: A SHOT, B BOMB, X SPECIAL, RT AUTO SHOT, and the rest OFF. START and BACK cannot be changed: BACK always pauses, and START is always the arcade game’s START button.</p>
+<p><b>STICK DEADZONE</b> (0% to 95%, in steps of 1%; 50% by default) sets how far the left stick must move before it counts. Movement close to the centre is ignored, so a stick that drifts does not move your ship. Press <span class="b a">A</span> to set it back to 50%.</p>
+<p>More than one button can have the same job. <b>AUTOFIRE</b> sets the AUTO SHOT rate: 30, 20, 15, 12 or 10 shots per second. <b>DEFAULTS</b> restores the original layout: A SHOT, B BOMB, X SPECIAL, RT AUTO SHOT, and the rest OFF. It also sets STICK DEADZONE back to 50%. START and BACK cannot be changed: BACK always pauses, and START is always the arcade game’s START button.</p>
 <div class="clear"></div>
 
 <h2 id="commands" class="newpage" style="margin-top:0">SECRET COMMANDS</h2>
@@ -579,8 +584,6 @@
 <h2 id="debug">DEBUG MENU</h2>
 <figure class="fr w48"><img class="shot" src="art/debug.png" alt=""><figcaption>DEBUG MENU.</figcaption></figure>
 <p>Only available in OPTIONS from the title menu.</p>
-<h3>HITBOX <span class="val">OFF / PLAYER / ALL</span></h3><p>Which hitboxes are shown (page <span class="pg" data-to="hitbox"></span>). This is the same setting as on the TRAINING page.</p>
-<h3>INFINITE LIVES · INFINITE BOMBS · INVINCIBILITY <span class="val">OFF / ON</span></h3><p>Cheats for normal runs: you never run out of lives, your bomb stock stays full, or your ship cannot be hit. While any of them is on, your score is <b>invalid</b>: it is not entered in the high score tables and no replay is saved (page <span class="pg" data-to="valid"></span>). They stay on until you turn them off or quit the game.</p>
 <h3>ATTRACT DEMO <span class="val">ON / OFF</span></h3><p>Whether the title screen runs the game’s demo. The change takes effect from the next power-on. OFF means the title never runs the demo.</p>
 <h3>SERVICE MENU</h3><p>Press <span class="b a">A</span>, then <span class="b a">A</span> again, to open the arcade’s own test mode. The pad drives it. To leave it, use its GAME MODE item: hold <span class="b st">START</span> on it. Its ROM check page reports the program as changed. This is normal: the port patches the program.</p>
 <h3>INITIALIZE RANKINGS <span class="val">THIS MODE / BOTH MODES</span></h3><p>Erases high scores. Use left and right to choose which, then press <span class="b a">A</span>: CONFIRM? appears in red. Press <span class="b a">A</span> again to erase, or <span class="b bb">B</span> to cancel.</p>
@@ -636,7 +639,7 @@
 <p style="margin-top:2mm">Confirmations are answered with <span class="b a">A</span> (YES) or <span class="b bb">B</span> (NO). RESTART STAGE on stage 1 keeps your score valid and starts a new replay from that point. On any later stage, it makes your score invalid: no initials, so no ranking entry, and no replay (page <span class="pg" data-to="valid"></span>).</p>
 <div class="row" style="margin-top:2mm;align-items:center">
 	<figure style="flex:0 0 46%"><img class="shot" src="art/pause_invuln.png" alt=""><figcaption>The pause menu.</figcaption></figure>
-	<div class="caution" style="flex:1"><span class="lbl">CAUTION</span><p><b>Continuing, saving or loading a state, restarting a stage after stage 1, and using a DEBUG MENU cheat make your score invalid as soon as you do it.</b> Turning a cheat off again does not undo this. You will not be able to enter your name, the high score tables are not changed, and no replay is saved.</p></div>
+	<div class="caution" style="flex:1"><span class="lbl">CAUTION</span><p><b>Continuing, saving or loading a state, and restarting a stage after stage 1 make your score invalid as soon as you do it.</b> You will not be able to enter your name, the high score tables are not changed, and no replay is saved.</p></div>
 </div>
 <h2 id="endcredit">The end of a run</h2>
 <div class="row" style="margin-top:2mm;justify-content:center">
@@ -657,7 +660,6 @@
 	<tr><td>DIP switches not at their defaults</td><td>Invalid</td><td>Name entry as usual. You can still save a replay.</td></tr>
 	<tr><td>SAVE STATE or LOAD STATE during a run</td><td>Invalid</td><td>No initials, so no ranking entry. No replay.</td></tr>
 	<tr><td>RESTART STAGE after stage 1</td><td>Invalid</td><td>No initials, so no ranking entry. No replay.</td></tr>
-		<tr><td>A DEBUG MENU cheat on</td><td>Invalid</td><td>No name entry, high scores unchanged, no replay.</td></tr>
 	<tr><td>TRAINING</td><td>Invalid</td><td>Never entered, no replay.</td></tr>
 	<tr><td>RESTART STAGE on stage 1</td><td>Unchanged</td><td>A new replay starts from the beginning of the stage.</td></tr>
 	<tr><td>FULL RESTART</td><td>New run</td><td>Valid again. A new replay starts.</td></tr>
@@ -681,9 +683,9 @@
 
 <h1 id="replays" style="margin-top:7mm">Replays</h1>
 <p class="lead">Every run is recorded from the start. Save the good ones.</p>
-<p>At the end of a run the game asks <b>SAVE REPLAY?</b> and shows the MODE, the stage reached, the score and how long the run lasted. Press <span class="b a">A</span> to save it or <span class="b bb">B</span> to discard it. Runs shorter than ten seconds are not offered, and neither are runs that cannot be saved as replays (page <span class="pg" data-to="valid"></span>). Up to thirty replays are kept; when all thirty slots are full, the oldest replay is replaced.</p>
+<p>At the end of a run the game asks <b>SAVE REPLAY?</b> and shows the MODE (CHASE!, ORIGINAL or ADVANCE SPECIAL), the stage reached, the score and how long the run lasted. Press <span class="b a">A</span> to save it or <span class="b bb">B</span> to discard it. Runs shorter than ten seconds are not offered, and neither are runs that cannot be saved as replays (page <span class="pg" data-to="valid"></span>). Up to thirty replays are kept; when all thirty slots are full, the oldest replay is replaced.</p>
 <h2>REPLAY DATA</h2>
-<p>REPLAY DATA on the title menu lists your replays, newest first, twelve per page, with the number of slots used at the top. Each row shows the MODE (CHA or ORG), the stage reached, the score and the length. Rows with an invalid score are red and marked with a *. Press <span class="b a">A</span> to watch a replay, or <span class="b x">X</span> to delete it (after confirmation).</p>
+<p>REPLAY DATA on the title menu lists your replays, newest first, twelve per page, with the number of slots used at the top. Each row shows the MODE (ADV for ADVANCE SPECIAL, CHA for CHASE! or ORG for ORIGINAL), the stage reached, the score and the length. Rows with an invalid score are red and marked with a *. Press <span class="b a">A</span> to watch a replay, or <span class="b x">X</span> to delete it (after confirmation).</p>
 <h2>Watching a replay</h2>
 <table class="plain">
 	<tbody>
@@ -711,7 +713,7 @@
 <section class="s-host newpage tight" style="page:gad">
 <h1 id="gadgets" class="first">The gadgets</h1>
 <p class="lead">A vertical game on a widescreen TV leaves empty space on both sides. This version fills that space with information panels that update as you play.</p>
-<p>The gadgets show information the arcade game tracks but never displays: the rank, the next items to drop, the conditions for the secret bosses, and more. In the attract screens and the demo, the panels show zeros or dashes. They are based on <b>Baffo’s Batrider layout for MAME</b> (version 0.4: design by baf, Lua by Olifante &amp; DUBS, rank start bar by Miquel), with new panels for CHASE! drawn in the same style. Turn them off with OPTIONS &gt; <b>GADGETS</b>, or choose which panels show (page <span class="pg" data-to="gadgetpanels"></span>). They are also hidden on a 4:3 screen and when PICTURE SIZE is CUSTOM.</p>
+<p>The gadgets show information the arcade game tracks but never displays: the rank, the next items to drop, the conditions for the secret bosses, and more. In the attract screens and the demo, the panels show zeros or dashes. They are based on <b>Baffo’s Batrider layout for MAME</b> (version 0.4: design by baf, Lua by Olifante &amp; DUBS, rank start bar by Miquel), with new panels for CHASE! drawn in the same style. Turn them off in OPTIONS &gt; <b>GADGETS</b>, or choose which panels show (page <span class="pg" data-to="gadgetpanels"></span>). They are also hidden on a 4:3 screen and when PICTURE SIZE is CUSTOM.</p>
 <figure><div class="slot" data-file="work/gadgets_yoko_chase.png" data-ar="16/9" data-label="ROTATION OFF, CHASE!"></div><figcaption><b>ROTATION OFF, a CHASE! run.</b> Left of the game: the rider panels, STATUS, WEAPON and the CHASE! panels at the bottom. Right: the rank, items, medals, boss information, secret bosses and stage scores.</figcaption></figure>
 <h2>Left side</h2>
 <table class="menu">
@@ -744,15 +746,6 @@
 	<tr><td>STAGES</td><td>Your score in each stage, in the order you played them, and the TOTAL. Shown in red when the score is invalid (page <span class="pg" data-to="valid"></span>).</td></tr>
 	</tbody>
 </table>
-<h2 id="gadgetpanels">Choosing panels</h2>
-<p>In OPTIONS &gt; GADGETS, left and right turn all the gadgets on or off. Press <span class="b a">A</span> to open the GADGETS page. Its first row is the master GADGETS ON / OFF. Below it, each panel has its own ON / OFF row. ALL ON turns every panel on at once.</p>
-<table class="plain">
-	<tbody>
-	<tr><td style="width:40%">GADGETS</td><td>ON / OFF for all the panels.</td></tr>
-	<tr><td>CURRENT PLAYER, CONTROLLER, SHOT CHARGE, STATUS, WEAPON, MUSIC, RANK BAR, ITEM DROPS, ITEM COUNT, MEDAL, BOSS INFO, SECRET BOSSES, STAGES, CHASE!</td><td>ON / OFF for each panel.</td></tr>
-	<tr><td>ALL ON</td><td>Turns every panel on.</td></tr>
-	</tbody>
-</table>
 <h2>The original game, and rotated displays</h2>
 <p>The original game has no chain, so MEDAL and ITEM COUNT move to the bottom left, in place of the CHASE! panels.</p>
 <div class="row" style="justify-content:center">
@@ -760,6 +753,16 @@
 	<figure style="flex:0 0 13.3%"><div class="slot" data-file="work/gadgets_tate_chase.png" data-ar="9/16" data-label="ROTATION LEFT / RIGHT, CHASE!"></div><figcaption><b>Rotated.</b></figcaption></figure>
 </div>
 <p>On a rotated display, the gadgets sit above and below the game, without SECRET BOSSES and STAGES.</p>
+<h2 id="gadgetpanels">Choosing panels</h2>
+<p>Press <span class="b a">A</span> on the GADGETS row in OPTIONS to open the GADGETS page. Its first row is the master GADGETS ON / OFF. Below it, each panel has its own ON / OFF row. ALL ON turns every panel on at once.</p>
+<figure class="fr w28"><img class="shot" src="art/gadgets_page.png" alt=""><figcaption>The GADGETS page.</figcaption></figure>
+<table class="plain">
+	<tbody>
+	<tr><td style="width:40%">GADGETS</td><td>ON / OFF for all the panels.</td></tr>
+	<tr><td>CURRENT PLAYER, CONTROLLER, SHOT CHARGE, STATUS, WEAPON, MUSIC, RANK BAR, ITEM DROPS, ITEM COUNT, MEDAL, BOSS INFO, SECRET BOSSES, STAGES, CHASE!</td><td>ON / OFF for each panel.</td></tr>
+	<tr><td>ALL ON</td><td>Turns every panel on.</td></tr>
+	</tbody>
+</table>
 </section>
 
 <!-- ============================================================ REFERENCE -->
@@ -770,7 +773,7 @@
 <table>
 	<thead><tr><th style="width:62%">What is saved</th><th>When</th></tr></thead>
 	<tbody>
-	<tr><td style="font-weight:400">Screen and sound settings, GADGETS and its panels, LANGUAGE, HITBOX and MODE (<span class="file">batrider360_host.txt</span>)</td><td>When you leave a page or menu after changing something</td></tr>
+	<tr><td style="font-weight:400">Screen and sound settings, GADGETS and its panels, LOW LATENCY, STICK DEADZONE, LANGUAGE, HITBOX and MODE (<span class="file">batrider360_host.txt</span>)</td><td>When you leave a page or menu after changing something</td></tr>
 	<tr><td style="font-weight:400">CONTROLS, SECRET COMMANDS, DIP switches and the sound test numbers (<span class="file">batrider360_options.txt</span>)</td><td>Same as above</td></tr>
 	<tr><td style="font-weight:400">High score tables for CHASE! and ORIGINAL (ADVANCE SPECIAL scores go in the ORIGINAL tables), top five of each (<span class="file">batrider360_rankings_chase.bin</span>, <span class="file">_original.bin</span>)</td><td>When they change</td></tr>
 	<tr><td style="font-weight:400">Save states, ten for each MODE (<span class="file">batrider360_state_c01</span> … <span class="file">_c10</span> and <span class="file">_o01</span> … <span class="file">_o10</span>)</td><td>When you save or delete one (page <span class="pg" data-to="states"></span>)</td></tr>
@@ -778,7 +781,7 @@
 	<tr><td style="font-weight:400">Menu sounds, created from the ROM set (<span class="file">batrider360_menusnd.bin</span>)</td><td>The first time you start the game</td></tr>
 	</tbody>
 </table>
-<p>TRAINING and DEBUG MENU cheat settings are not saved: they last until you quit the game. No log file is written. For a test report, put an empty file named <span class="file">batrider360_log_on.txt</span> next to <span class="file">batrider360.xex</span>, and the game writes its log, <span class="file">batrider360.log</span>.</p>
+<p>TRAINING settings are not saved: they last until you quit the game. No log file is written. For a test report, put an empty file named <span class="file">batrider360_log_on.txt</span> next to <span class="file">batrider360.xex</span>, and the game writes its log, <span class="file">batrider360.log</span>.</p>
 <div class="note"><span class="lbl">NOTE</span><p>Your files stay with the game: copy the whole folder and your scores and settings come with it. Delete them and the game starts fresh. The folder must be on a drive the console can write to.</p></div>
 <p>One file is not created by the game: <span class="file">batrider360_manual.bin</span>, which contains the on-screen manual. It comes with the release; keep it in the same folder as <span class="file">batrider360.xex</span>.</p>
 <h2>When high scores are saved</h2>
@@ -796,8 +799,10 @@
 	<tr><td>The screen stays dark red after starting</td><td>The ROM set was not found. Put MAME’s merged <span class="file">batrider.zip</span> in the same folder as <span class="file">batrider360.xex</span>. Press BACK to return to the dashboard.</td></tr>
 	<tr><td>The game is lying on its side</td><td>ROTATION in GENERAL SCREEN is set to LEFT or RIGHT, which is for a display turned on its side. For a normal TV, set it to OFF (page <span class="pg" data-to="screen"></span>).</td></tr>
 	<tr><td>There are panels on both sides of the game</td><td>Those are the gadgets (page <span class="pg" data-to="gadgets"></span>). Set OPTIONS &gt; GADGETS to OFF to hide them.</td></tr>
-	<tr><td>The gadgets don’t appear</td><td>They need GADGETS ON, a 16:9 screen (ASPECT RATIO) and PICTURE SIZE set to INTEGER or FULL. The OPTIONS page tells you what is missing.</td></tr>
-	<tr><td>The picture is too small, too large or off-centre</td><td>In GENERAL SCREEN, set PICTURE SIZE to FULL, or press <span class="b a">A</span> on each CUSTOM row to reset it (page <span class="pg" data-to="genscreen"></span>).</td></tr>
+	<tr><td>The gadgets don’t appear</td><td>They need GADGETS ON (OPTIONS &gt; GADGETS), a 16:9 screen (ASPECT RATIO) and PICTURE SIZE set to INTEGER or FULL. When the gadgets are on but cannot show, a dim line under the GADGETS row’s help in OPTIONS says why.</td></tr>
+	<tr><td>A line tears across the picture</td><td>That is LOW LATENCY, which is ON by default. Set it to OFF in OPTIONS for a steady picture, with up to two frames more input lag.</td></tr>
+		<tr><td>The ship drifts, or the stick is slow to respond</td><td>Set STICK DEADZONE in CONTROLS (page <span class="pg" data-to="ctlpage"></span>): higher if the stick drifts when you let go, lower if it responds late to small movements.</td></tr>
+		<tr><td>The picture is too small, too large or off-centre</td><td>In GENERAL SCREEN, set PICTURE SIZE to FULL, or press <span class="b a">A</span> on each CUSTOM row to reset it (page <span class="pg" data-to="genscreen"></span>).</td></tr>
 	<tr><td>Settings or scores are not saved</td><td>The game saves its files next to the .xex, so the folder must be on a drive the console can write to (page <span class="pg" data-to="keeps"></span>).</td></tr>
 	<tr><td>The score at the top or the TIME on the selection screens is cut off</td><td>Your TV is cropping the edges of the picture (overscan). Set the TV to show the whole picture; this setting is often called Just Scan, Full Pixel or Screen Fit.</td></tr>
 	<tr><td>There is no INSERT COIN on the title screen</td><td>That is normal: both games are set to free play.</td></tr>
@@ -807,8 +812,8 @@
 	<tr><td>The bullets are a different colour, or numbers scroll down the left of the screen</td><td>A secret command is on. Hold START and press the same direction or button during play, or set it back to DEFAULT / OFF in OPTIONS (page <span class="pg" data-to="commands"></span>).</td></tr>
 	<tr><td>SPECIAL didn’t set off a Chase Break</td><td>You need x4 or higher (the amber C) and something on screen to convert: bullets or small enemies. It also can’t be used during the five seconds after the previous one.</td></tr>
 	<tr><td>A button does nothing during play</td><td>It is set to OFF or to another job in CONTROLS. Choose DEFAULTS to restore the original layout (page <span class="pg" data-to="ctlpage"></span>).</td></tr>
-	<tr><td>My score is red</td><td>The run used a continue, a save state, a load, a RESTART STAGE after stage 1, a DEBUG MENU cheat, or changed DIP switches. A TRAINING run is also red (page <span class="pg" data-to="valid"></span>).</td></tr>
-	<tr><td>I couldn’t enter my name</td><td>You continued, saved or loaded a state, restarted after stage 1, quit to the title, had a DEBUG MENU cheat on, or it was a training run (page <span class="pg" data-to="valid"></span>).</td></tr>
+	<tr><td>My score is red</td><td>The run used a continue, a save state, a load, a RESTART STAGE after stage 1, or changed DIP switches. A TRAINING run is also red (page <span class="pg" data-to="valid"></span>).</td></tr>
+	<tr><td>I couldn’t enter my name</td><td>You continued, saved or loaded a state, restarted after stage 1, quit to the title, or it was a training run (page <span class="pg" data-to="valid"></span>).</td></tr>
 	<tr><td>START RUN plays the other game</td><td>START RUN plays the game set by MODE on the PLAY page: CHASE! or ORIGINAL (page <span class="pg" data-to="mode"></span>).</td></tr>
 	<tr><td>My high scores are gone</td><td>Each MODE has its own high score tables. Check that MODE is set to the game you played.</td></tr>
 	<tr><td>The selection screens are in Japanese</td><td>OPTIONS &gt; LANGUAGE is set to JAPANESE. Change it to ENGLISH outside a run.</td></tr>
@@ -818,9 +823,9 @@
 	<tr><td>MANUAL is greyed out</td><td>Put <span class="file">batrider360_manual.bin</span> from the release in the same folder as <span class="file">batrider360.xex</span>.</td></tr>
 	<tr><td>The game doesn’t move after loading a state</td><td>It is waiting in the pause menu. Choose RESUME (page <span class="pg" data-to="states"></span>).</td></tr>
 	<tr><td>A save state or replay won’t load</td><td>It was made with a different version of batrider360.</td></tr>
-	<tr><td>The game didn’t ask SAVE REPLAY?</td><td>Runs under ten seconds are not offered, and neither are runs that continued, used a save state, restarted after stage 1, were quit to the title, were TRAINING runs, or had a DEBUG MENU cheat on (page <span class="pg" data-to="valid"></span>).</td></tr>
+	<tr><td>The game didn’t ask SAVE REPLAY?</td><td>Runs under ten seconds are not offered, and neither are runs that continued, used a save state, restarted after stage 1, were quit to the title, or were TRAINING runs (page <span class="pg" data-to="valid"></span>).</td></tr>
 	<tr><td>An old replay has disappeared</td><td>Thirty replays are kept; when they are full, the oldest is replaced by the newest.</td></tr>
-	<tr><td>The picture is blurry, too dark or too bright</td><td>In GENERAL SCREEN, check SMOOTHING (OFF for sharp pixels) and BRIGHTNESS (100% is the original).</td></tr>
+	<tr><td>The picture is blurry, too dark or too bright</td><td>In GENERAL SCREEN, check FILTER (NEAREST gives sharp pixels), SCREEN COLOR (STANDARD is the normal look) and BRIGHTNESS (100% is the original).</td></tr>
 	<tr><td>How do I get back to the dashboard?</td><td>Choose EXIT, the last row of the title menu.</td></tr>
 	</tbody>
 </table>
@@ -830,7 +835,7 @@
 <div class="credits">
 	<div><div class="k">Original game</div><div class="v">ARMED POLICE BATRIDER<br>© 1998 RAIZING / 8ing CO., LTD.</div></div>
 	<div><div class="k">CHASE! arrangement</div><div class="v">COIN-OP GAME STUDIO</div></div>
-	<div><div class="k">Xbox 360 version 0.21</div><div class="v">Unofficial; made with Claude for personal use</div></div>
+	<div><div class="k">Xbox 360 version 0.28</div><div class="v">Unofficial; made with Claude for personal use</div></div>
 	<div><div class="k">Gadgets</div><div class="v">Based on Baffo’s Batrider layout for MAME, v0.4: design by baf, Lua by Olifante &amp; DUBS, rank start bar by Miquel</div></div>
 	<div><div class="k">68000 emulation</div><div class="v">Musashi by Karl Stenerud (MIT license)</div></div>
 	<div><div class="k">Z80 emulation</div><div class="v">superzazu/z80 (MIT license)</div></div>
@@ -865,7 +870,7 @@
 		</div>
 	</div>
 	<div class="logos"><img class="coin" src="art/coinop.png" alt=""><img class="rz" src="art/raizing_8ing.png" alt=""></div>
-	<div class="legal">ARMED POLICE BATRIDER © 1998 RAIZING / 8ing CO., LTD.  CHASE! arranged by COIN-OP GAME STUDIO.  Xbox 360 version 0.21.  Unofficial and non-commercial; not licensed or endorsed by the owners of the game or of the system. Xbox 360 is a trademark of Microsoft. All trademarks are the property of their respective owners.</div>
+	<div class="legal">ARMED POLICE BATRIDER © 1998 RAIZING / 8ing CO., LTD.  CHASE! arranged by COIN-OP GAME STUDIO.  Xbox 360 version 0.28.  Unofficial and non-commercial; not licensed or endorsed by the owners of the game or of the system. Xbox 360 is a trademark of Microsoft. All trademarks are the property of their respective owners.</div>
 </div>
 
 </body>

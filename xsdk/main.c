@@ -89,6 +89,9 @@
 #include "vdp.h"
 #include "xsdk/gpu.h"
 #include "xsdk/kernel.h"
+
+/* test 23: LOW LATENCY tearing (xsdk_present.c in this directory) */
+void xsdk_present_set_tear(bool on);
 #include "xsdk/log.h"
 #include "xsdk/present.h"
 #include "xsdk/shader.h"
@@ -141,7 +144,23 @@ static const XsdkVertexElement layout[] = {
 	{ .usage = XSDK_USAGE_TEXCOORD, .format = XSDK_VERTEX_FLOAT2, .offset_bytes = UV_OFFSET_BYTES },
 };
 
-static XsdkShader vs, ps;
+static XsdkShader vs;
+// test 24 (lag fix): a pixel shader for the canvas and the manual (quad.frag) and one for each FILTER of the game
+// picture, in FE_FILTER_* order (test 23's single shader ran every filter for every pixel: 5-15 frames a second).
+enum { FRAG_PLAIN = 5, FRAGS };
+typedef struct {
+	const XsdkBuiltShader *built;
+	uint32_t push, push_regs, sampler;
+	XsdkShader ps;
+} Frag;
+static Frag frags[FRAGS] = {
+	[FE_FILTER_NEAREST] = { &quad_near_frag, QUAD_NEAR_FRAG_PUSH, QUAD_NEAR_FRAG_PUSH_REGISTERS, QUAD_NEAR_FRAG_SAMPLER_0_0 },
+	[FE_FILTER_SHARP] = { &quad_sharp_frag, QUAD_SHARP_FRAG_PUSH, QUAD_SHARP_FRAG_PUSH_REGISTERS, QUAD_SHARP_FRAG_SAMPLER_0_0 },
+	[FE_FILTER_BILINEAR] = { &quad_bilin_frag, QUAD_BILIN_FRAG_PUSH, QUAD_BILIN_FRAG_PUSH_REGISTERS, QUAD_BILIN_FRAG_SAMPLER_0_0 },
+	[FE_FILTER_BICUBIC] = { &quad_cubic_frag, QUAD_CUBIC_FRAG_PUSH, QUAD_CUBIC_FRAG_PUSH_REGISTERS, QUAD_CUBIC_FRAG_SAMPLER_0_0 },
+	[FE_FILTER_LANCZOS] = { &quad_lanc_frag, QUAD_LANC_FRAG_PUSH, QUAD_LANC_FRAG_PUSH_REGISTERS, QUAD_LANC_FRAG_SAMPLER_0_0 },
+	[FRAG_PLAIN] = { &quad_frag, QUAD_FRAG_PUSH, QUAD_FRAG_PUSH_REGISTERS, QUAD_FRAG_SAMPLER_0_0 },
+};
 static XsdkTexture tex[TEXTURES];
 static XsdkSamplerState samp;
 enum { CANVAS_W = 1280, CANVAS_H = 720, CANVAS_BUFFERS = 3 };
@@ -227,6 +246,11 @@ static uint32_t tb_us(uint64_t ticks)
 	return (uint32_t)(ticks * 1000000 / TIMEBASE_HZ);
 }
 
+static uint64_t tb_from_us(uint32_t us)
+{
+	return (uint64_t)us * TIMEBASE_HZ / 1000000;
+}
+
 // A worker takes job n when kick reaches n and sets done to n when it has finished it. Test 5: a worker with a wake
 // event sleeps on it between jobs instead of spinning (test 4: the idle gadget worker's spin on hardware thread 3 took
 // half of core 1 from the video thread, 9 -> 17 ms a frame); without one (the video thread, alone on its core) it
@@ -237,6 +261,9 @@ typedef struct {
 	uint32_t us, max_us;                 // the worker's time on its jobs since the last stats line
 	void (*job)(uint32_t n);
 	HANDLE wake;                         // 0 = spin
+	/* test 26: the worker's state for the stall detector */
+	volatile uint32_t in_job;
+	volatile uint64_t job_tb;
 } Worker;
 
 static void wait_for(volatile uint32_t *word, uint32_t value)
@@ -269,12 +296,16 @@ static uint32_t worker_main(void *context)
 		else
 			wait_for(&w->kick, n + 1);
 		n++;
+		/* test 26: the worker's state for the stall detector */
+		w->job_tb = tb_read();
+		w->in_job = 1;
 		const uint64_t t = tb_read();
 		w->job(n);
 		const uint32_t us = tb_us(tb_read() - t);
 		w->us += us;
 		if (us > w->max_us)
 			w->max_us = us;
+		w->in_job = 0;
 		__atomic_store_n(&w->done, n, __ATOMIC_RELEASE);
 	}
 	return 0;
@@ -353,6 +384,9 @@ static void log_drain(void)
 	}
 	spin_unlock(&log_drain_word);
 }
+
+/* test 26: stall detector (defined after the workers) */
+static void stall_check(void);
 
 // ---- saved files (test 4: options, host settings, rankings) ----
 // The front end hands a file over and goes on; the log thread writes it (a write to the HDD can take a second, test
@@ -631,6 +665,7 @@ static uint32_t log_main(void *context)
 		save_drain();
 		big_drain();
 		man_service();
+		stall_check();
 		xsdk_thread_sleep(LOG_SLEEP_MS);
 	}
 	return 0;
@@ -656,6 +691,84 @@ static void stop_log_thread(void)
 	log_drain();
 	save_drain();                        // a file the front end handed over in the last frames
 	big_drain();
+}
+
+// ---- test 26: CPU faults ----
+/* test 26: the fault handler (ibara360's, proven on the console): log the fault and end the title */
+enum { ORDINAL_SET_HANDLER = 0x36D, PCR_STACK_BASE = 0x70, PCR_STACK_END = 0x74 };
+typedef uint32_t (*SetHandler)(uint32_t first, uint32_t handler);
+static volatile uint32_t in_fault;
+/* test 26: where the main loop is, for the stall detector and the fault handler */
+static volatile uint32_t dbg_at, dbg_frame;
+static const char *main_at_name(void);
+static uint32_t hw_thread(void)
+{
+	return xsdk_thread_hardware_thread();   /* test 26 review: as ibara360's my_thread (no mfspr PIR in user mode) */
+}
+
+static uint32_t pcr_word(unsigned off)
+{
+	uint32_t r13;
+	__asm__ volatile("mr %0, 13" : "=r"(r13));
+	return *(volatile uint32_t *)(uintptr_t)(r13 + off);
+}
+
+static int32_t fault_handler(uint32_t first, uint32_t second, uint32_t third, uint32_t fourth)
+{
+	const uint32_t *ptrs = (const uint32_t *)(uintptr_t)first;
+	const uint32_t *rec, *ctx;
+	uint32_t base = pcr_word(PCR_STACK_BASE), end = pcr_word(PCR_STACK_END), lo, hi, fp, k;
+
+	(void)second;
+	(void)third;
+	(void)fourth;
+	if (__atomic_exchange_n(&in_fault, 1, __ATOMIC_ACQUIRE))
+		return 0; /* a fault inside the handler passes on */
+	/* test 26: get the ring's pending lines into the file first */
+	__atomic_store_n(&log_async, false, __ATOMIC_RELEASE);
+	/* test 26 review: a lock held by this very thread (the fault inside a ring copy or a drain) never comes free:
+	 * wait ~50 ms for another holder, then drain only if both locks are free */
+	for (int i = 0; i < 50 && (log_drain_word || log_lock_word); i++)
+		xsdk_thread_sleep(1);
+	if (!log_drain_word && !log_lock_word)
+		log_drain();
+	rec =(const uint32_t *)(uintptr_t)ptrs[0];
+	ctx = (const uint32_t *)(uintptr_t)ptrs[1];
+	__real_xsdk_log_write("FAULT: code %08X at %08X, %u parameters %08X %08X, hardware thread %u", (unsigned)rec[0],
+		(unsigned)rec[3], (unsigned)rec[4], (unsigned)rec[5], (unsigned)rec[6], (unsigned)hw_thread());
+	__real_xsdk_log_write("FAULT: IAR %08X LR %08X R1 %08X R3 %08X R4 %08X R5 %08X R31 %08X CR %08X", (unsigned)ctx[2],
+		(unsigned)ctx[3], (unsigned)ctx[6 + 2 * 1 + 1], (unsigned)ctx[6 + 2 * 3 + 1],
+		(unsigned)ctx[6 + 2 * 4 + 1], (unsigned)ctx[6 + 2 * 5 + 1], (unsigned)ctx[6 + 2 * 31 + 1],
+		(unsigned)ctx[0x118 / 4]);
+	__real_xsdk_log_write("FAULT: main loop at %s (frame %u); %s", main_at_name(), (unsigned)dbg_frame, fe_diag_line());
+	lo = base < end ? base : end;
+	hi = base < end ? end : base;
+	fp = ctx[6 + 2 * 1 + 1];
+	for (k = 0; k < 16 && fp >= lo && fp + 8 <= hi; k++) {
+		const uint32_t next = *(const volatile uint32_t *)(uintptr_t)fp;
+		if (next < lo || next + 8 > hi || next <= fp)
+			break;
+		__real_xsdk_log_write("FAULT: frame %u at %08X returns to %08X", (unsigned)k, (unsigned)fp,
+			(unsigned)*(const volatile uint32_t *)(uintptr_t)(next + 4));
+		fp = next;
+	}
+	__real_xsdk_log_write("FAULT: ending the title (the console goes back to the dashboard)");
+	XamLoaderTerminateTitle();
+	return 0;
+}
+
+static void fault_init(void)
+{
+	HANDLE kernel = 0;
+	SetHandler set = NULL;
+
+	if (XexGetModuleHandle("xboxkrnl.exe", &kernel) != 0 ||
+	    XexGetProcedureAddress(kernel, ORDINAL_SET_HANDLER, (void **)&set) < 0 || !set) {
+		xsdk_log_write("faults: no RtlSetVectoredExceptionHandler, a fault ends the title unlogged");
+		return;
+	}
+	set((uint32_t)(uintptr_t)fault_handler, (uint32_t)(uintptr_t)fault_handler);
+	xsdk_log_write("faults: handler set");
 }
 
 static bool start_worker(Worker *w, void (*job)(uint32_t), uint32_t hardware_thread, const char *name, bool sleeps)
@@ -891,7 +1004,8 @@ static bool make_video(void)
 {
 	NTSTATUS st = xsdk_shader_load(&vs, quad_vert.container, quad_vert.container_bytes);
 	if (NT_SUCCESS(st))
-		st = xsdk_shader_load(&ps, quad_frag.container, quad_frag.container_bytes);
+		for (int f = 0; f < FRAGS && NT_SUCCESS(st); f++)
+			st = xsdk_shader_load(&frags[f].ps, frags[f].built->container, frags[f].built->container_bytes);
 	if (NT_SUCCESS(st))
 		st = xsdk_shader_set_vertex_layout(&vs, layout, sizeof layout / sizeof layout[0], (const uint32_t[]){ STRIDE_BYTES });
 	if (!NT_SUCCESS(st)) {
@@ -1020,19 +1134,95 @@ static void gadget_job(uint32_t n)
 
 static Worker video, sound, gadget;
 
+/* test 26: a main loop that has not moved for STALL_MS: one report, then again every STALL_REPEAT_MS (at most
+ * STALL_REPORTS times), so the 68000 PC and the workers' state show whether anything still moves */
+enum { STALL_MS = 2000, STALL_REPEAT_MS = 3000, STALL_REPORTS = 5 };
+static void stall_check(void)
+{
+	static uint32_t seen_frame = UINT32_MAX, reports;
+	static uint64_t seen_tb, next_tb;
+	const uint32_t f = dbg_frame;
+	const uint64_t now = tb_read();
+	if (f != seen_frame) {
+		if (reports)
+			__real_xsdk_log_write("stall: the main loop moves again (frame %u)", (unsigned)f);
+		seen_frame = f;
+		seen_tb = now;
+		next_tb = now + tb_from_us(STALL_MS * 1000u);
+		reports = 0;
+		return;
+	}
+	if (now < next_tb || reports >= STALL_REPORTS)
+		return;
+	reports++;
+	next_tb = now + tb_from_us(STALL_REPEAT_MS * 1000u);
+	__real_xsdk_log_write("stall %u: main loop stuck %u ms at %s (frame %u)", (unsigned)reports,
+		(unsigned)(tb_us(now - seen_tb) / 1000), main_at_name(), (unsigned)f);
+	__real_xsdk_log_write("stall %u: video kick %u done %u in job %u (%u ms); sound kick %u done %u in job %u (%u ms); "
+		"gadget kick %u done %u in job %u (%u ms)", (unsigned)reports,
+		(unsigned)video.kick, (unsigned)video.done, (unsigned)video.in_job,
+		video.in_job ? (unsigned)(tb_us(now - video.job_tb) / 1000) : 0u,
+		(unsigned)sound.kick, (unsigned)sound.done, (unsigned)sound.in_job,
+		sound.in_job ? (unsigned)(tb_us(now - sound.job_tb) / 1000) : 0u,
+		(unsigned)gadget.kick, (unsigned)gadget.done, (unsigned)gadget.in_job,
+		gadget.in_job ? (unsigned)(tb_us(now - gadget.job_tb) / 1000) : 0u);
+	__real_xsdk_log_write("stall %u: %s", (unsigned)reports, fe_diag_line());  
+}
+
 static uint64_t board_clock(void)
 {
 	return tb_read();
 }
 
-// Test 8: the host menu's look for the next draws (quad.frag): brightness, and for the game alone the scanlines
-// (between the board's 240 lines, across the texture's v) and the soft blend of the doubled texels. Test 10:
-// BRIGHTNESS in percent (100 = x1), SCAN STRENGTH in percent (100 = black between the lines; 0 = none).
-static void set_look(int bright, int scan, int soft)
+// test 24: SCREEN COLOR as a matrix (rows r, g, b, each with its offset in w) the game's shaders apply; OUTLINE is the
+// identity plus the shaders' edge darkening (look.a.z). The same colours as test 23's shader worked out per pixel.
+static void color_matrix(int color, float m[12])
 {
-	const float c[8] = { (float)bright / 100.0f, (float)scan / 100.0f, soft ? 1.0f : 0.0f, (float)BR_H,
-		soft ? 1.0f / TEX_W : 0.0f, soft ? 1.0f / TEX_H : 0.0f, 0.0f, 0.0f };
-	xsdk_gpu_set_pixel_constants(QUAD_FRAG_PUSH, c, 2);
+	static const float L[3] = { 0.299f, 0.587f, 0.114f };
+	static const float sepia[9] = { 0.393f, 0.769f, 0.189f, 0.349f, 0.686f, 0.168f, 0.272f, 0.534f, 0.131f };
+	for (int r = 0; r < 3; r++) {
+		for (int c = 0; c < 3; c++) {
+			const float id = r == c ? 1.0f : 0.0f;
+			float v;
+			switch (color) {
+			case 1: v = 0.9f * (0.25f * L[c] + 0.75f * id); break;   // FLAT: mix(L, rgb, 0.75) * 0.9 + 0.04
+			case 2: v = L[c]; break;                                  // MONOTONE
+			case 3: v = sepia[r * 3 + c]; break;                      // SEPIA
+			case 5: v = -id; break;                                   // NEGATIVE: 1 - rgb
+			default: v = id; break;                                   // STANDARD, OUTLINE
+			}
+			m[r * 4 + c] = v;
+		}
+		m[r * 4 + 3] = color == 1 ? 0.04f : color == 5 ? 1.0f : 0.0f;
+	}
+}
+
+// The look for the next draws, as push constants of shader f (main's frags; each .frag has the same block, but only
+// the registers it uses are sent, so its literals after them stay): look.a = (brightness, scan depth, OUTLINE 0/1, the
+// board's lines), look.b = (1/BR_W, 1/BR_H, BR_W, BR_H) for the game texture's board grid, then SCREEN COLOR's matrix.
+// Test 10: BRIGHTNESS in percent (100 = x1), SCAN STRENGTH in percent (100 = black between the lines; 0 = none).
+static void set_look(const Frag *f, int bright, int scan, int color)
+{
+	float c[20] = { (float)bright / 100.0f, (float)scan / 100.0f, color == 4 ? 1.0f : 0.0f, (float)BR_H,
+		1.0f / BR_W, 1.0f / BR_H, (float)BR_W, (float)BR_H };
+	color_matrix(color, c + 8);
+	const uint32_t regs = f->push_regs < 5 ? f->push_regs : 5;
+	if (regs)
+		xsdk_gpu_set_pixel_constants(f->push, c, regs);
+}
+
+// test 24: shader f for the next draws, its literals and its look
+static float turn[4] = { 1.0f, 0.0f, 0.0f, 0.0f };  // test 23: UPSIDE DOWN (quad.vert's turn.t.x = -1)
+
+static const Frag *use_frag(int f, int bright, int scan, int color)
+{
+	const Frag *const fr = &frags[f];
+	xsdk_gpu_set_shaders(&vs, &fr->ps);
+	xsdk_gpu_set_vertex_constants(QUAD_VERT_PUSH, turn, 1);
+	xsdk_built_shader_set_literals(&quad_vert);
+	xsdk_built_shader_set_literals(fr->built);
+	set_look(fr, bright, scan, color);
+	return fr;
 }
 
 // The gadget canvas (canvas: NULL = none, GADGETS off or nothing drawn yet), then the game texture t over it; or
@@ -1056,27 +1246,29 @@ static void draw(const FeOut *o, const XsdkTexture *canvas, int t, const XsdkTex
 		last_screen = screen;
 	}
 	xsdk_gpu_set_target(width, height);
-	xsdk_gpu_set_shaders(&vs, &ps);
-	xsdk_built_shader_set_literals(&quad_vert);
-	xsdk_built_shader_set_literals(&quad_frag);
+	// test 23: UPSIDE DOWN turns the whole frame half round (quad.vert's turn.t.x; use_frag sets it)
+	turn[0] = o->flip ? -1.0f : 1.0f;
 	if (o->manual) {
-		set_look(100, 0, 0);
+		const Frag *const fr = use_frag(FRAG_PLAIN, 100, 0, 0);
 		if (page) {
-			xsdk_gpu_set_texture(QUAD_FRAG_SAMPLER_0_0, page, &samp);
+			xsdk_gpu_set_texture(fr->sampler, page, &samp);
 			xsdk_gpu_set_vertices(0, xsdk_gpu_address(mquads[o->wide != 0][screen]), QUAD_VERTICES * STRIDE_BYTES);
 			xsdk_gpu_draw(XSDK_PRIMITIVE_TRIANGLE_LIST, QUAD_VERTICES);
 		}
 		xsdk_gpu_resolve(address, width, height, CLEAR_ARGB);
 		return;
 	}
-	set_look(o->bright, 0, 0);
 	if (canvas) {
-		xsdk_gpu_set_texture(QUAD_FRAG_SAMPLER_0_0, canvas, &samp);
+		const Frag *const fr = use_frag(FRAG_PLAIN, o->bright, 0, 0);
+		xsdk_gpu_set_texture(fr->sampler, canvas, &samp);
 		xsdk_gpu_set_vertices(0, xsdk_gpu_address(quads[screen]), QUAD_VERTICES * STRIDE_BYTES);
 		xsdk_gpu_draw(XSDK_PRIMITIVE_TRIANGLE_LIST, QUAD_VERTICES);
 	}
-	set_look(o->bright, o->scan, o->smooth);
-	xsdk_gpu_set_texture(QUAD_FRAG_SAMPLER_0_0, &tex[t], &samp);
+	// test 25 (user): the menus are drawn into this texture with alpha 0 (core/menudraw.c), and every shader draws
+	// those texels plain, so FILTER and SCREEN COLOR never touch a menu and the picture keeps its look while a menu shows
+	const int filter = o->smooth < 0 || o->smooth > FE_FILTER_LANCZOS ? FE_FILTER_NEAREST : o->smooth; /* test 27 (user): FILTER without SHARP */
+	const Frag *const fr = use_frag(filter, o->bright, o->scan, o->color);
+	xsdk_gpu_set_texture(fr->sampler, &tex[t], &samp);
 	xsdk_gpu_set_vertices(0, xsdk_gpu_address(gquads[gq]), QUAD_VERTICES * STRIDE_BYTES);
 	xsdk_gpu_draw(XSDK_PRIMITIVE_TRIANGLE_LIST, QUAD_VERTICES);
 	xsdk_gpu_resolve(address, width, height, CLEAR_ARGB);
@@ -1240,7 +1432,8 @@ static int plat_replay(int i, FeReplayInfo *r)
 	if (k >= 0 && r) {
 		char t[12];
 		mmss(t, sizeof t, rpi[k].frames);
-		snprintf(r->text, sizeof r->text, "%s ST%u %9u%s %6s", rpi[k].mode == FE_CHASE ? "CHA" : "ORG",
+		snprintf(r->text, sizeof r->text, "%s ST%u %9u%s %6s",
+			rpi[k].mode == FE_CHASE ? "CHA" : rpi[k].mode == FE_REPLAY_SPECIAL ? "ADV" : "ORG",
 			(unsigned)rpi[k].stage, (unsigned)rpi[k].score, rpi[k].red ? "*" : " ", t);
 		r->red = rpi[k].red;
 	}
@@ -1648,18 +1841,20 @@ static uint16_t pad_buttons(INPUT_GAMEPAD *g)
 	return 0;
 }
 
-// The pad as the front end's bits: the d-pad or the stick past its dead zone (half travel; test 1c: signed tests).
+// The pad as the front end's bits: the d-pad or the stick past its dead zone (test 23: STICK DEADZONE from OPTIONS,
+// fe_stick_dead(); test 1c: signed tests).
 static uint16_t fe_bits(const INPUT_GAMEPAD *g)
 {
 	const uint16_t b = g->buttons;
+	const int dead = fe_stick_dead();
 	uint16_t f = 0;
-	if (b & INPUT_GAMEPAD_DPAD_UP || g->thumb_ly > STICK_DEAD_ZONE)
+	if (b & INPUT_GAMEPAD_DPAD_UP || g->thumb_ly > dead)
 		f |= FE_UP;
-	if (b & INPUT_GAMEPAD_DPAD_DOWN || g->thumb_ly < -STICK_DEAD_ZONE)
+	if (b & INPUT_GAMEPAD_DPAD_DOWN || g->thumb_ly < -dead)
 		f |= FE_DOWN;
-	if (b & INPUT_GAMEPAD_DPAD_LEFT || g->thumb_lx < -STICK_DEAD_ZONE)
+	if (b & INPUT_GAMEPAD_DPAD_LEFT || g->thumb_lx < -dead)
 		f |= FE_LEFT;
-	if (b & INPUT_GAMEPAD_DPAD_RIGHT || g->thumb_lx > STICK_DEAD_ZONE)
+	if (b & INPUT_GAMEPAD_DPAD_RIGHT || g->thumb_lx > dead)
 		f |= FE_RIGHT;
 	static const struct { uint16_t xinput, fe; } map[] = {
 		{ INPUT_GAMEPAD_A, FE_A }, { INPUT_GAMEPAD_B, FE_B }, { INPUT_GAMEPAD_X, FE_X }, { INPUT_GAMEPAD_Y, FE_Y },
@@ -1941,10 +2136,22 @@ static void log_file_off(void)
 	(void)remove("game:/batrider360.log");
 }
 
+/* test 26: where the main loop is, for the stall detector and the fault handler */
+enum { AT_TOP, AT_PAD, AT_BOARD, AT_AFTER_BOARD, AT_SOUND_HAND, AT_SNAP_WAIT, AT_SNAP, AT_REQUEST, AT_VIDEO_WAIT,
+	AT_LOWLAG, AT_GADGET, AT_DRAW, AT_PRESENT, AT_STATS, AT_N };
+static const char *main_at_name(void)
+{
+	static const char *const names[AT_N] = { "loop top", "pad", "board step", "after board", "sound hand-over",
+		"wait for sound (states/replays)", "state/replay save or load", "request", "wait for video",
+		"low latency wait", "gadget hand-over", "draw", "present", "stats" };
+	const uint32_t a = dbg_at;
+	return a < AT_N ? names[a] : "?";
+}
+
 int main(void)
 {
 	log_file_off();
-	xsdk_log_write("batrider360 version 0.20 (test 20): arcade GADGETS layout for ORIGINAL, upright controller panel, centred medal panel, Boss Info / Secret bosses swapped, ROTATION LEFT / RIGHT fix");
+	xsdk_log_write("batrider360 version 0.28 (test 28): START RUN and HITBOX helps as ibara360's; test 27b: SCREEN COLOR OUTLINE = white edge lines on black (ibara360's Sobel), help lines (MODE, TRAINING, DIP SWITCHES, SECRET COMMANDS), DEBUG MENU without the cheats, GADGETS on OPTIONS, FILTER without SHARP; test 26's fault handler and stall detector kept"); /* test 27 (user) */
 	struct timespec boot_t0, t0;
 	clock_gettime(CLOCK_MONOTONIC, &boot_t0);
 	NTSTATUS st = xsdk_gpu_open();
@@ -2050,6 +2257,8 @@ int main(void)
 		return 1;
 	}
 	sound_on = start_audio();
+	/* test 26: log a fault and where the main loop stopped */
+	fault_init();
 	start_log_thread();
 	br_set_split(1);
 	br_set_clock(board_clock);
@@ -2072,8 +2281,13 @@ int main(void)
 	for (int k = 0; k < CANVAS_BUFFERS; k++)
 		gjob_drawn[k] = -1;
 	static FeOut shown;                     // what this frame shows: the front end's last frame (+ a replay's banner)
+	/* test 23: LOW LATENCY - show job n's texture when it is ready in time (may tear), else n - 1 */
+	uint64_t prev_present_tb = 0;
+	uint32_t lowlag_late = 0, lowlag_total = 0;
 	uint64_t loop_t = tb_read();
 	for (uint32_t frame = 0;; frame++) {
+		/* test 26: loop checkpoints for the stall detector */
+		dbg_frame = frame; dbg_at = AT_TOP;
 		uint64_t t = tb_read();
 		const uint32_t loop = tb_us(t - loop_t);
 		if (frame > 1 && loop > loop_max) {
@@ -2081,8 +2295,11 @@ int main(void)
 			loop_frame = frame;
 		}
 		loop_t = t;
+		dbg_at = AT_PAD;
 		INPUT_GAMEPAD g;
 		pad_buttons(&g);
+		// test 23: hold LT to hide the menu box (fe_frame's jobs drop it; the game picture shows under it)
+		fe_hide_menu(g.left_trigger > 30);
 		const uint16_t bits = fe_bits(&g) | game_bits(&g);
 		const FePad pad = { bits, (uint16_t)(bits & ~last_bits) };
 		last_bits = bits;
@@ -2100,6 +2317,8 @@ int main(void)
 		const char *pb_over = NULL;
 		bool pb_restart = false;
 		fe_set_restart(playing ? 0 : stage_have, playing || state_slot < 0 ? 0 : state_gen);
+		/* test 26: loop checkpoints for the stall detector */
+		dbg_at = AT_BOARD;
 		if (playing) {
 			const int act = fe_playback_input(&pad);
 			sjob_se[sjob_set] |= fe_menu_sounds_take();
@@ -2126,6 +2345,7 @@ int main(void)
 			board_step(&pad);
 			shown = out;
 		}
+		dbg_at = AT_AFTER_BOARD;
 		{
 			// test 6: the Music panel follows the sound side, which plays on while the 68000 is held
 			char title[24];
@@ -2145,6 +2365,8 @@ int main(void)
 		}
 
 		// the workers' job n is this frame (job 0 never runs)
+		/* test 26: loop checkpoint for the stall detector */
+		dbg_at = AT_SOUND_HAND;
 		hand_over(&sound, n, &swait);
 
 		// ---- test 8: replays and states, between frames ----
@@ -2161,7 +2383,7 @@ int main(void)
 			}
 			rec_gone = out.in_credit ? 0 : rec_gone + 1;
 			if (recording && out.in_credit) {
-				rec_mode = out.chase_credit ? FE_CHASE : FE_ORIGINAL;
+				rec_mode = out.chase_credit ? FE_CHASE : out.special ? FE_REPLAY_SPECIAL : FE_ORIGINAL;
 				if (gstate.stage_no > 0)
 					rec_stage = (uint32_t)gstate.stage_no;
 				rec_score = gstate.p[0].score;
@@ -2174,7 +2396,8 @@ int main(void)
 				if (rec.frames >= 600) {
 					char l[3][32], tm[12];
 					mmss(tm, sizeof tm, rec.frames);
-					snprintf(l[0], sizeof l[0], "%s  STAGE %u", rec_mode == FE_CHASE ? "CHASE!" : "ORIGINAL",
+					snprintf(l[0], sizeof l[0], "%s  STAGE %u",
+						rec_mode == FE_CHASE ? "CHASE!" : rec_mode == FE_REPLAY_SPECIAL ? "ADVANCE SPECIAL" : "ORIGINAL",
 						(unsigned)rec_stage);
 					snprintf(l[1], sizeof l[1], "SCORE %u%s", (unsigned)rec_score, rec_red ? "*" : "");
 					snprintf(l[2], sizeof l[2], "TIME %s%s", tm, rec.full ? " (CUT)" : "");
@@ -2197,7 +2420,10 @@ int main(void)
 			}
 		}
 		if (rec_begin || pb_over || pb_restart || out.req || stage_take) {
+			/* test 26: loop checkpoints for the stall detector */
+			dbg_at = AT_SNAP_WAIT;
 			timed_wait(&sound.done, n, &swait);
+			dbg_at = AT_SNAP;
 			if (pb_restart) {
 				replay_restart();
 			} else if (pb_over) {
@@ -2220,18 +2446,53 @@ int main(void)
 			}
 			if (out.req == FE_REQ_EXIT)
 				break;                       // test 14: the title's EXIT (the BACK + START hold is gone)
+			dbg_at = AT_REQUEST;
 			do_request(out.req, out.req_arg);
 			out.req = FE_REQ_NONE;
 		}
 
+		/* test 26: loop checkpoint for the stall detector */
+		dbg_at = AT_VIDEO_WAIT;
 		timed_wait(&video.done, n - 1, &vwait);
 		memcpy(&vjob, shown.vsrc, sizeof vjob);
 		fjob = shown.job;
 		// job n - 1's texture is done (its done count was just waited for): drawn while job n is made
 		hand_over(&video, n, &vwait);
+		/* test 23: LOW LATENCY - wait for job n only until ~2 ms before the next vblank */
+		int show_tex_n = (int)((n - 1) % TEXTURES);
+		if (shown.low_lag) {
+			/* test 26: loop checkpoint for the stall detector */
+			dbg_at = AT_LOWLAG;
+			// test 24: 14.0 ms (was 14.7) leaves the draw and the GPU ~2.7 ms before the vblank; the spin runs at low
+			// SMT priority and yields every ~1 ms, as wait_for
+			const uint64_t deadline_tb = prev_present_tb ? prev_present_tb + tb_from_us(14000) : 0;
+			bool ready = (int32_t)(__atomic_load_n(&video.done, __ATOMIC_ACQUIRE) - n) >= 0;
+			if (!ready && deadline_tb) {
+				uint64_t last = tb_read();
+				__asm__ volatile("or 1,1,1");
+				while (tb_read() < deadline_tb) {
+					if ((int32_t)(__atomic_load_n(&video.done, __ATOMIC_ACQUIRE) - n) >= 0) { ready = true; break; }
+					if (tb_read() - last >= YIELD_TICKS) {
+						NtYieldExecution();
+						__asm__ volatile("or 1,1,1");
+						last = tb_read();
+					}
+				}
+				__asm__ volatile("or 2,2,2");
+			}
+			if (!ready)
+				ready = __atomic_load_n(&video.done, __ATOMIC_ACQUIRE) >= n;
+			lowlag_total++;
+			if (ready)
+				show_tex_n = (int)(n % TEXTURES);
+			else
+				lowlag_late++;
+		}
 		// the gadget thread's last job finished: the next one (otherwise it goes on and this frame's numbers wait).
 		// Test 5: only when the canvas would change: other numbers, screen shape, CHASE! panels, GADGETS on / off,
 		// or P1's full shot charge (its bar flashes every drawn frame).
+		/* test 26: loop checkpoint for the stall detector */
+		dbg_at = AT_GADGET;
 		const uint32_t gdone = __atomic_load_n(&gadget.done, __ATOMIC_ACQUIRE);
 		const int gon = shown.gadgets != 0, gshape = shown.screen != SCREEN_YOKO;
 		const bool gchanged = gon != glast_on || (gon && (gshape != (glast_screen != SCREEN_YOKO) ||
@@ -2253,17 +2514,22 @@ int main(void)
 			gskipped++;
 		}
 
+		/* test 23: tearing (LOW LATENCY) paces like vsync but resolves into the buffer on screen */
+		xsdk_present_set_tear(shown.low_lag != 0);
 		t = tb_read();
 		uint32_t address;
+		/* test 26: loop checkpoint for the stall detector */
+		dbg_at = AT_PRESENT;
 		st = xsdk_present_begin(&address, BEGIN_TIMEOUT_MS);
 		if (!NT_SUCCESS(st)) {
 			xsdk_log_write("xsdk_present_begin failed: 0x%08X", (unsigned)st);
 			break;
 		}
-		wait_us += tb_us(tb_read() - t);
+		prev_present_tb = tb_read();
+		wait_us += tb_us(prev_present_tb - t);
 		t = tb_read();
 		if (n > 1) {
-			XsdkTexture *tx = &tex[(n - 1) % TEXTURES];
+			XsdkTexture *tx = &tex[show_tex_n];
 			xsdk_gpu_invalidate(tx->address, tx->size_bytes);
 			// the newest finished canvas, if it was drawn for a canvas of the same shape as the screen now (a SCREEN
 			// change between YOKO and TATE shows the game at once and its gadgets a job later; none while GADGETS is off)
@@ -2285,7 +2551,9 @@ int main(void)
 					xsdk_gpu_invalidate(page->address, page->size_bytes);
 				}
 			}
-			draw(&shown, cv, (int)((n - 1) % TEXTURES), page, address, width, height);
+			/* test 26: loop checkpoint for the stall detector */
+			dbg_at = AT_DRAW;
+			draw(&shown, cv, show_tex_n, page, address, width, height);
 		} else {
 			xsdk_gpu_set_target(width, height);
 			xsdk_gpu_resolve(address, width, height, CLEAR_ARGB);
@@ -2293,13 +2561,15 @@ int main(void)
 		xsdk_present_end();
 		draw_us += tb_us(tb_read() - t);
 
+		/* test 26: loop checkpoint for the stall detector */
+		dbg_at = AT_STATS;
 		if ((frame + 1) % STATS_EVERY == 0) {
 			t = tb_read();
 			BrProfile pr;
 			br_profile_take(&pr);
 			xsdk_log_write("frame %u: board %u us avg (max %u; 68000 %u, Z80 %u, OKI+YM timers %u), %u frames over 16 ms; "
 				"video thread %u us (max %u), sound thread %u us (max %u), gadget thread %u us (max %u), waits for them "
-				"%u / %u / %u us; draw %u us, present wait %u us; sound queue %u, underruns %u, overruns %u",
+				"%u / %u / %u us; draw %u us, present wait %u us; sound queue %u, underruns %u, overruns %u; low latency: %u of %u frames late",
 				(unsigned)(frame + 1), (unsigned)(ss.emu_us / STATS_EVERY), (unsigned)ss.emu_max,
 				(unsigned)(tb_us(pr.m68k) / STATS_EVERY), (unsigned)(tb_us(pr.z80) / STATS_EVERY),
 				(unsigned)(tb_us(pr.sound) / STATS_EVERY), (unsigned)ss.slow,
@@ -2307,7 +2577,8 @@ int main(void)
 				(unsigned)sound.max_us, (unsigned)(gadget.us / STATS_EVERY), (unsigned)gadget.max_us,
 				(unsigned)(vwait / STATS_EVERY), (unsigned)(swait / STATS_EVERY), (unsigned)(gwait / STATS_EVERY),
 				(unsigned)(draw_us / STATS_EVERY), (unsigned)(wait_us / STATS_EVERY),
-				(unsigned)(ring_w - ring_r), (unsigned)underruns, (unsigned)overruns);
+				(unsigned)(ring_w - ring_r), (unsigned)underruns, (unsigned)overruns,
+				(unsigned)lowlag_late, (unsigned)lowlag_total);
 			XsdkPresentStats ps;
 			xsdk_present_stats(&ps);
 			xsdk_log_write("present: %u vblanks, %u flips, %u repeated (no frame ready), %u late flips, longest begin "
@@ -2326,6 +2597,7 @@ int main(void)
 			log_write_max = 0;
 			memset(&ss, 0, sizeof ss);
 			draw_us = wait_us = vwait = swait = gwait = 0;
+			lowlag_late = lowlag_total = 0;
 			pad_us = pad_max = loop_max = gskipped = gsame = 0;
 			video.us = video.max_us = sound.us = sound.max_us = gadget.us = gadget.max_us = 0;
 			us = tb_us(tb_read() - t);
