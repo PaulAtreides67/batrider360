@@ -21,9 +21,13 @@ instruction manual in English and Japanese.
 
 ## The game
 
-**Armed Police Batrider** (1998) is a vertical shooter by RAIZING / 8ing. Your team of riders flies through the
-stages, shooting enemies and collecting medals, power-ups and options. Each stage ends with a boss.
+**Armed Police Batrider** (1998) is a vertical shooter by RAIZING / 8ing. In the year 2014, Manhattan was plagued with unprecedented levels of crime. No measure of law enforcement seemed able to combat the strife and violence, and so a desperate plan was brought forth by GiganTech Cybertronics Corporation. This plan was the artificial island Zenovia, two kilometers south of Manhattan, which would be patrolled by GiganTech's own robotic creations. A rapid exodus from Manhattan to Zenovia resulted.
 
+However, by 2019, the promise of tranquility has not been fulfilled. Even with all the expansions to Zenovia the population influx called for, it has become something of a slum, except for the massive GiganTech headquarters. There have been quarrels over whether or not Zenovia should be regarded as being the jurisdiction of the United States, or just GiganTech. Crime has grown even more rapidly than Manhattan ever knew, partly because the GiganTech machines have been promoting everything EXCEPT law and order. The most horrific aspect, though, is the result of an intelligence investigation from the government.
+
+GiganTech's own executives, both then and now, are actually among the most dangerous criminals the country has ever known. Zenovia, far from being planned as a refuge from violence, was actually a trap and a testing ground for the weapons GiganTech plans to use to become the sole power of the underworld.
+
+Neither police nor armies are willing to commit against the mechanical forces that GiganTech commands and invade Zenovia. Therefore, nine fighters—three police, three convicts, and three psychics—have been drafted as "Zero-Cops", riding the BatRider airbikes against the forces invading Manhattan and charging into Zenovia to take down GiganTech's CEO and his ultimate weapon, known only as "Discharge".
 **CHASE!** is a new mode for the same game, made by Coin-Op Game Studio. It adds a chain to build, a medal magnet, a
 Chase Break that trades your multiplier for a screen full of medals, and a difficulty (rank) that never goes above 75%.
 
